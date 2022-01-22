@@ -34,6 +34,8 @@ public class StormProp {
         try {
             inputStream = new FileInputStream(configFile);
             properties.load(inputStream);
+            System.out.println("LOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADED");
+            System.out.println(properties.getProperty("override"));
         } catch (IOException e) {
             System.out.println("Using backup config file");
             try {
