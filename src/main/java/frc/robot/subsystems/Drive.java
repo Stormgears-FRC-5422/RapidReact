@@ -15,16 +15,22 @@ import utils.StormProp;
 public class Drive extends SubsystemBase {
 
 
-  public StormMotorType motorType = StormProp.getString("stormMotorType", "Spark").equals("Talon") ? StormMotorType.TALON : StormMotorType.SPARK;
+  public StormMotorType motorType;
   int frontLeftID = StormProp.getInt("frontLeftID", -1);
   int frontRightID = StormProp.getInt("frontRightID", -1);
   int rearRightID = StormProp.getInt("rearRightID", -1);
   int rearLeftID = StormProp.getInt("rearLeftID", -1);
 
+  boolean leftSideInverted = StormProp.getBoolean("leftSideInverted", false);
+  boolean rightSideInverted = StormProp.getBoolean("rightSideInverted", false);
+
   private DifferentialDrive differentialDrive = null;
 
 
   public Drive() {
+    String motorTypeProp = StormProp.getString("stormMotorType", "Spark");
+    if (motorTypeProp.equals("Spark")) motorType = StormMotorType.SPARK;
+    else if (motorTypeProp.equals("Talon")) motorType = StormMotorType.TALON;
     differentialDrive = getDifferentialDrive(motorType);
     differentialDrive.setSafetyEnabled(true);
   }
@@ -52,6 +58,10 @@ public class Drive extends SubsystemBase {
 
       leftSlave.follow(leftMaster);
       rightSlave.follow(rightMaster);
+
+      leftMaster.setInverted(leftSideInverted);
+      leftMaster.setInverted(rightSideInverted);
+
       differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
       return differentialDrive;
     } else {
@@ -68,6 +78,10 @@ public class Drive extends SubsystemBase {
         rightMaster.setNeutralMode(NeutralMode.Brake);
         leftSlave.setNeutralMode(NeutralMode.Brake);
         rightSlave.setNeutralMode(NeutralMode.Brake);
+
+        leftMaster.setInverted(leftSideInverted);
+        rightMaster.setInverted(rightSideInverted);
+
         differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
         return differentialDrive;
       }
