@@ -9,8 +9,8 @@ public class StormMotor {
     }
 
     public static StormMotorType motorType() {
-        if (Constants.motorType.equals("Spark")) return StormMotorType.SPARK;
-        else if (Constants.motorType.equals("Talon")) return StormMotorType.TALON;
+        if (Constants.MOTOR_TYPE.equals("Spark")) return StormMotorType.SPARK;
+        else if (Constants.MOTOR_TYPE.equals("Talon")) return StormMotorType.TALON;
         return StormMotorType.SPARK;
     }
 }

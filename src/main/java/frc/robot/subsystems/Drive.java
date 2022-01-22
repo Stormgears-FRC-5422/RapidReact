@@ -37,10 +37,10 @@ public class Drive extends SubsystemBase {
   public DifferentialDrive getDifferentialDrive(StormMotorType motorType){
     if (differentialDrive != null) return differentialDrive;
     if (motorType == StormMotorType.SPARK){
-      CANSparkMax leftMaster = new CANSparkMax(frontLeftID, CANSparkMaxLowLevel.MotorType.kBrushless);
-      CANSparkMax rightMaster = new CANSparkMax(frontRightID, CANSparkMaxLowLevel.MotorType.kBrushless);
-      CANSparkMax leftSlave = new CANSparkMax(rearLeftID, CANSparkMaxLowLevel.MotorType.kBrushless);
-      CANSparkMax rightSlave = new CANSparkMax(rearRightID, CANSparkMaxLowLevel.MotorType.kBrushless);
+      CANSparkMax leftMaster = new CANSparkMax(FRONT_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+      CANSparkMax rightMaster = new CANSparkMax(FRONT_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+      CANSparkMax leftSlave = new CANSparkMax(REAR_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+      CANSparkMax rightSlave = new CANSparkMax(REAR_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
       leftMaster.setIdleMode(CANSparkMax.IdleMode.kCoast);
       rightMaster.setIdleMode(CANSparkMax.IdleMode.kCoast);
@@ -50,17 +50,17 @@ public class Drive extends SubsystemBase {
       leftSlave.follow(leftMaster);
       rightSlave.follow(rightMaster);
 
-      leftMaster.setInverted(leftSideInverted);
-      leftMaster.setInverted(rightSideInverted);
+      leftMaster.setInverted(LEFT_SIDE_INVERTED);
+      leftMaster.setInverted(RIGHT_SIDE_INVERTED);
 
       differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
       return differentialDrive;
     } else {
       if (motorType == StormMotorType.TALON) {
-        WPI_TalonSRX leftMaster = new WPI_TalonSRX(frontLeftID);
-        WPI_TalonSRX rightMaster = new WPI_TalonSRX(frontRightID);
-        WPI_TalonSRX leftSlave = new WPI_TalonSRX(rearLeftID);
-        WPI_TalonSRX rightSlave = new WPI_TalonSRX(rearRightID);
+        WPI_TalonSRX leftMaster = new WPI_TalonSRX(FRONT_LEFT_ID);
+        WPI_TalonSRX rightMaster = new WPI_TalonSRX(FRONT_RIGHT_ID);
+        WPI_TalonSRX leftSlave = new WPI_TalonSRX(REAR_LEFT_ID);
+        WPI_TalonSRX rightSlave = new WPI_TalonSRX(REAR_RIGHT_ID);
 
         leftSlave.follow(leftMaster);
         rightSlave.follow(rightMaster);
@@ -70,8 +70,8 @@ public class Drive extends SubsystemBase {
         leftSlave.setNeutralMode(NeutralMode.Brake);
         rightSlave.setNeutralMode(NeutralMode.Brake);
 
-        leftMaster.setInverted(leftSideInverted);
-        rightMaster.setInverted(rightSideInverted);
+        leftMaster.setInverted(LEFT_SIDE_INVERTED);
+        rightMaster.setInverted(RIGHT_SIDE_INVERTED);
 
         differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
         return differentialDrive;
