@@ -10,27 +10,18 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import utils.StormProp;
+import utils.drive.StormMotor;
+import utils.drive.StormMotorType;
+
+import static frc.robot.Constants.*;
 
 public class Drive extends SubsystemBase {
-
-
-  public StormMotorType motorType;
-  int frontLeftID = StormProp.getInt("frontLeftID", -1);
-  int frontRightID = StormProp.getInt("frontRightID", -1);
-  int rearRightID = StormProp.getInt("rearRightID", -1);
-  int rearLeftID = StormProp.getInt("rearLeftID", -1);
-
-  boolean leftSideInverted = StormProp.getBoolean("leftSideInverted", false);
-  boolean rightSideInverted = StormProp.getBoolean("rightSideInverted", false);
-
+  private final StormMotorType motorType;
   private DifferentialDrive differentialDrive = null;
 
 
   public Drive() {
-    String motorTypeProp = StormProp.getString("stormMotorType", "Spark");
-    if (motorTypeProp.equals("Spark")) motorType = StormMotorType.SPARK;
-    else if (motorTypeProp.equals("Talon")) motorType = StormMotorType.TALON;
+    motorType = StormMotor.motorType();
     differentialDrive = getDifferentialDrive(motorType);
     differentialDrive.setSafetyEnabled(true);
   }
@@ -87,5 +78,9 @@ public class Drive extends SubsystemBase {
       }
     }
     return null;
+  }
+
+  public StormMotorType getMotorType() {
+    return motorType;
   }
 }

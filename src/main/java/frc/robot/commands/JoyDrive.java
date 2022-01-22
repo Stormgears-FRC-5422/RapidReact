@@ -5,14 +5,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.subsystems.Drive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.StormMotorType;
+import frc.robot.subsystems.Drive;
+import utils.drive.StormMotorType;
 
 /** An example command that uses an example subsystem. */
 public class JoyDrive extends CommandBase {
   private final Drive drive;
-  private StormMotorType motorType;
   private DifferentialDrive differentialDrive;
 
   /**
@@ -28,7 +27,7 @@ public class JoyDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    motorType = drive.motorType;
+    StormMotorType motorType = drive.getMotorType();
     differentialDrive = drive.getDifferentialDrive(motorType);
   }
 
