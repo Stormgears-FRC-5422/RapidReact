@@ -11,9 +11,9 @@ import frc.robot.subsystems.StormMotorType;
 
 /** An example command that uses an example subsystem. */
 public class JoyDrive extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Drive drive;
   private StormMotorType motorType;
+  private DifferentialDrive differentialDrive;
 
   /**
    * Creates a new ExampleCommand.
@@ -22,7 +22,6 @@ public class JoyDrive extends CommandBase {
    */
   public JoyDrive(Drive subsystem) {
     drive = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
 
@@ -30,19 +29,19 @@ public class JoyDrive extends CommandBase {
   @Override
   public void initialize() {
     motorType = drive.motorType;
+    differentialDrive = drive.getDifferentialDrive(motorType);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("driving ya boy");
-    DifferentialDrive differentialDrive = drive.getDifferentialDrive(motorType);
     differentialDrive.arcadeDrive(0.5, 0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override

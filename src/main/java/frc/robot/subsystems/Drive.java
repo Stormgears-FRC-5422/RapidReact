@@ -15,7 +15,7 @@ import utils.StormProp;
 public class Drive extends SubsystemBase {
 
 
-  public StormMotorType motorType = StormProp.getString("stormMotorType", "Spark").equals("Talon") ? StormMotorType.TALON : StormMotorType.SPARK;
+  public StormMotorType motorType;
   int frontLeftID = StormProp.getInt("frontLeftID", -1);
   int frontRightID = StormProp.getInt("frontRightID", -1);
   int rearRightID = StormProp.getInt("rearRightID", -1);
@@ -25,6 +25,9 @@ public class Drive extends SubsystemBase {
 
 
   public Drive() {
+    String motorTypeProp = StormProp.getString("stormMotorType", "Spark");
+    if (motorTypeProp.equals("Spark")) motorType = StormMotorType.SPARK;
+    else if (motorTypeProp.equals("Talon")) motorType = StormMotorType.TALON;
     differentialDrive = getDifferentialDrive(motorType);
     differentialDrive.setSafetyEnabled(true);
   }
