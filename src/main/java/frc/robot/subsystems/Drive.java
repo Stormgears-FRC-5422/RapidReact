@@ -51,7 +51,9 @@ public class Drive extends SubsystemBase {
       rightSlave.follow(rightMaster);
 
       leftMaster.setInverted(LEFT_SIDE_INVERTED);
-      leftMaster.setInverted(RIGHT_SIDE_INVERTED);
+      leftSlave.setInverted(LEFT_SIDE_INVERTED);
+      rightMaster.setInverted(RIGHT_SIDE_INVERTED);
+      rightSlave.setInverted(RIGHT_SIDE_INVERTED);
 
       differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
       return differentialDrive;
@@ -71,7 +73,9 @@ public class Drive extends SubsystemBase {
         rightSlave.setNeutralMode(NeutralMode.Brake);
 
         leftMaster.setInverted(LEFT_SIDE_INVERTED);
+        leftSlave.setInverted(LEFT_SIDE_INVERTED);
         rightMaster.setInverted(RIGHT_SIDE_INVERTED);
+        rightSlave.setInverted(RIGHT_SIDE_INVERTED);
 
         differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
         return differentialDrive;

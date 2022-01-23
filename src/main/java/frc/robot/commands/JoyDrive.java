@@ -4,14 +4,20 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 import utils.drive.StormMotorType;
+import utils.joysticks.DriveJoystick;
+import utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
 public class JoyDrive extends CommandBase {
   private final Drive drive;
+  private StormXboxController joystick;
   private DifferentialDrive differentialDrive;
 
   /**
@@ -19,8 +25,9 @@ public class JoyDrive extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public JoyDrive(Drive subsystem) {
+  public JoyDrive(Drive subsystem, StormXboxController joy) {
     drive = subsystem;
+    joystick = joy;
     addRequirements(subsystem);
   }
 
@@ -34,7 +41,11 @@ public class JoyDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    differentialDrive.arcadeDrive(0.5, 0);
+    double left, right;
+    left = joystick.getLeftJoystickY();
+    right = joystick.getRightJoystickX();
+    differentialDrive.arcadeDrive(left, -right);
+
   }
 
   // Called once the command ends or is interrupted.
