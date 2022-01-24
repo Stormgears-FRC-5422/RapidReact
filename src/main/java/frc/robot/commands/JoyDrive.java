@@ -4,38 +4,40 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Drive;
-import utils.drive.StormMotorType;
-import utils.joysticks.DriveJoystick;
+import utils.drive.Drive;
+import frc.robot.subsystems.SparkDrive;
+import frc.robot.subsystems.TalonDrive;
 import utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
 public class JoyDrive extends CommandBase {
-  private final Drive drive;
-  private StormXboxController joystick;
+  private Drive drive;
+  private final StormXboxController joystick;
   private DifferentialDrive differentialDrive;
-
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
   public JoyDrive(Drive subsystem, StormXboxController joy) {
-    drive = subsystem;
+    if (subsystem instanceof SparkDrive) {
+      drive = subsystem;
+      addRequirements((SparkDrive) drive);
+    }
+
+    if (subsystem instanceof TalonDrive) {
+      drive = subsystem;
+      addRequirements((TalonDrive) drive);
+    }
     joystick = joy;
-    addRequirements(subsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    StormMotorType motorType = drive.getMotorType();
-    differentialDrive = drive.getDifferentialDrive(motorType);
+    differentialDrive = drive.getDifferentialDrive();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

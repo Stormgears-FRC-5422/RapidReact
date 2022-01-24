@@ -16,15 +16,16 @@ import utils.StormProp;
  */
 public final class Constants {
 
-    public static final int FRONT_LEFT_ID = StormProp.getInt("frontLeftID", -1);
-    public static final int FRONT_RIGHT_ID = StormProp.getInt("frontRightID", -1);
-    public static final int REAR_RIGHT_ID = StormProp.getInt("rearRightID", -1);
-    public static final int REAR_LEFT_ID = StormProp.getInt("rearLeftID", -1);
+    public static final int FRONT_LEFT_ID = StormProp.getInt("frontLeftID", 11);
+    public static final int FRONT_RIGHT_ID = StormProp.getInt("frontRightID", 13);
+    public static final int REAR_RIGHT_ID = StormProp.getInt("rearRightID", 14);
+    public static final int REAR_LEFT_ID = StormProp.getInt("rearLeftID", 12);
     public static final boolean LEFT_SIDE_INVERTED = StormProp.getBoolean("leftSideInverted", false);
     public static final boolean RIGHT_SIDE_INVERTED = StormProp.getBoolean("rightSideInverted", false);
     public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "Spark");
+    public static final double NULL_SIZE = StormProp.getNumber("driveNullSize", 0.055);
 
     private Constants() {
         throw new IllegalStateException("Do not make a Constants class");
-    }
+    }   
 }

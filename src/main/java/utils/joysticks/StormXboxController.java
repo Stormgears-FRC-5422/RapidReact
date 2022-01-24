@@ -2,11 +2,10 @@ package utils.joysticks;
 
 
 import edu.wpi.first.wpilibj.Joystick;
-import utils.StormProp;
+import frc.robot.Constants;
 
 
 public class StormXboxController extends Joystick implements DriveJoystick {
-    private static final double nullSize = StormProp.getNumber("driveNullSize", 0.055);
     private double result; // temp value conveniently and quickly declared one time
 
     // sticks and triggers
@@ -48,13 +47,13 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     @Override
     public double getXSpeed(){
         result = getRawAxis(rightTrigger) - getRawAxis(leftTrigger);
-        return Math.abs(result) < nullSize ? 0 : result;
+        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
     }
 
     @Override
     public double getZRotation(){
         result = getRawAxis(zRotation);
-        return Math.abs(result) < nullSize ? 0 : result;
+        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
     }
 
     public boolean getAisPressed() {
@@ -85,13 +84,13 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     @Override
     public double getLeftSpeed() {
         result = getRawAxis(leftYAxis);
-        return Math.abs(result) < nullSize ? 0 : result;
+        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
     }
 
     @Override
     public double getRightSpeed() {
         result = getRawAxis(rightYAxis);
-        return Math.abs(result) < nullSize ? 0 : result;
+        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
     }
 
     public double getLeftJoystickX() {
