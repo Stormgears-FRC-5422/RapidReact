@@ -6,9 +6,12 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.JoyDrive;
-import frc.robot.subsystems.Drive;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.SparkDrive;
+import frc.robot.subsystems.TalonDrive;
+import utils.drive.Drive;
+import utils.drive.StormMotor;
+import utils.drive.StormMotorType;
 import utils.joysticks.StormXboxController;
 
 /**
@@ -18,15 +21,19 @@ import utils.joysticks.StormXboxController;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  public final Drive drive = new Drive();
-  public final StormXboxController djoystick = new StormXboxController(0);
 
+  private final Drive drive;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the button bindings
+    if (StormMotor.motorType() == StormMotorType.TALON) drive = new TalonDrive();
+    else drive = new SparkDrive();
     configureButtonBindings();
+  }
+
+  public final StormXboxController stormXboxController = new StormXboxController(0);
+
+  public Drive getDrive() {
+    return drive;
   }
 
   /**

@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.commands.JoyDrive;
 
 /**
@@ -15,7 +16,6 @@ import frc.robot.commands.JoyDrive;
  * project.
  */
 public class Robot extends TimedRobot {
-  private RobotContainer robotContainer;
 
 
   /**
@@ -26,8 +26,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-     robotContainer = new RobotContainer();
-     CommandScheduler.getInstance().setDefaultCommand(robotContainer.drive, new JoyDrive(robotContainer.drive,robotContainer.djoystick));
+    RobotContainer robotContainer = new RobotContainer();
+     CommandScheduler.getInstance().setDefaultCommand((Subsystem) robotContainer.getDrive(), new JoyDrive(robotContainer.getDrive(), robotContainer.stormXboxController));
   }
 
   /**
