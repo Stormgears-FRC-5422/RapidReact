@@ -1,9 +1,11 @@
-package frc.robot.subsystems;
+package utils.drive;
 
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import utils.drive.StormMotorType;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
 public interface Drive {
-    public StormMotorType motorType();
-    public DifferentialDrive getDifferentialDrive();
+    StormMotorType motorType();
+    DifferentialDrive getDifferentialDrive();
+    MotorController[] getMotors();
 }
