@@ -16,17 +16,17 @@ public class StormProp {
     private static final String path = "/home/lvuser/deploy";
     private static final String name = "config.properties";
     private static final String backUP = "config_backup.properties";
+    private static final File configFile = new File(path, name);
+    private static final HashMap<String, Double> m_number_map = new HashMap<>();
+    private static final HashMap<String, Integer> m_int_map = new HashMap<>();
+    private static final HashMap<String, Boolean> m_bool_map = new HashMap<>();
+    private static final HashMap<String, String> m_string_map = new HashMap<>();
     private static String overrideName = null;
-    private static File configFile = new File(path, name);
     private static File overrideConfigFile;
     private static Properties properties;
     private static Properties overrideProperties;
     private static boolean initialized = false;
     private static boolean overrideInit = false;
-    private static HashMap<String, Double> m_number_map = new HashMap<>();
-    private static HashMap<String, Integer> m_int_map = new HashMap<>();
-    private static HashMap<String, Boolean> m_bool_map = new HashMap<>();
-    private static HashMap<String, String> m_string_map = new HashMap<>();
 
     public static void init() {
         properties = new Properties();
@@ -99,45 +99,65 @@ public class StormProp {
     }
 
     public static String getString(String key, String defaultVal) {
-        String ret_val;
-        if (m_string_map.containsKey(key)) return (m_string_map.get(key));
-        else if (getPropString(key) != null) {
-            m_string_map.put(key, getPropString(key));
-            return (m_string_map.get(key));
-        } else {
+        try {
+            String ret_val;
+            if (m_string_map.containsKey(key)) return (m_string_map.get(key));
+            else if (getPropString(key) != null) {
+                m_string_map.put(key, getPropString(key));
+                return (m_string_map.get(key));
+            } else {
+                System.out.println("WARNING: default used for key " + key);
+                return (defaultVal);
+            }
+        } catch (Exception e) {
             System.out.println("WARNING: default used for key " + key);
             return (defaultVal);
         }
     }
 
     public static double getNumber(String key, Double defaultVal) {
-        if (m_number_map.containsKey(key)) return (m_number_map.get(key));
-        else if (getPropString(key) != null) {
-            m_number_map.put(key, Double.parseDouble(getPropString(key)));
-            return (m_number_map.get(key));
-        } else {
+        try {
+            if (m_number_map.containsKey(key)) return (m_number_map.get(key));
+            else if (getPropString(key) != null) {
+                m_number_map.put(key, Double.parseDouble(getPropString(key)));
+                return (m_number_map.get(key));
+            } else {
+                System.out.println("WARNING: default used for key " + key);
+                return (defaultVal);
+            }
+        } catch (Exception e) {
             System.out.println("WARNING: default used for key " + key);
             return (defaultVal);
         }
     }
 
     public static int getInt(String key, int defaultVal) {
-        if (m_int_map.containsKey(key)) return (m_int_map.get(key));
-        else if (getPropString(key) != null) {
-            m_int_map.put(key, Integer.parseInt(getPropString(key)));
-            return (m_int_map.get(key));
-        } else {
+        try {
+            if (m_int_map.containsKey(key)) return (m_int_map.get(key));
+            else if (getPropString(key) != null) {
+                m_int_map.put(key, Integer.parseInt(getPropString(key)));
+                return (m_int_map.get(key));
+            } else {
+                System.out.println("WARNING: default used for key " + key);
+                return (defaultVal);
+            }
+        } catch (Exception e) {
             System.out.println("WARNING: default used for key " + key);
             return (defaultVal);
         }
     }
 
     public static boolean getBoolean(String key, Boolean defaultVal) {
-        if (m_bool_map.containsKey(key)) return (m_bool_map.get(key));
-        else if (getPropString(key) != null) {
-            m_bool_map.put(key, getPropString(key).toLowerCase().equals("true"));
-            return (m_bool_map.get(key));
-        } else {
+        try {
+            if (m_bool_map.containsKey(key)) return (m_bool_map.get(key));
+            else if (getPropString(key) != null) {
+                m_bool_map.put(key, getPropString(key).equalsIgnoreCase("true"));
+                return (m_bool_map.get(key));
+            } else {
+                System.out.println("WARNING: default used for key " + key);
+                return (defaultVal);
+            }
+        } catch (Exception e) {
             System.out.println("WARNING: default used for key " + key);
             return (defaultVal);
         }
@@ -171,7 +191,7 @@ public class StormProp {
                 overrideProperties.setProperty(key, str);
                 if (m_int_map.containsKey(key)) m_int_map.put(key, Integer.parseInt(str));
                 else if (m_int_map.containsKey(key)) m_number_map.put(key, Double.parseDouble(str));
-                else if (m_bool_map.containsKey(key)) m_bool_map.put(key, str.toLowerCase().equals("true"));
+                else if (m_bool_map.containsKey(key)) m_bool_map.put(key, str.equalsIgnoreCase("true"));
                 else if (m_string_map.containsKey(key)) m_string_map.put(key, str);
             }
         }
