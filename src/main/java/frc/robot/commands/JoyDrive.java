@@ -44,9 +44,13 @@ public class JoyDrive extends CommandBase {
   @Override
   public void execute() {
     double left, right;
+    double slowmode=1;
     left = joystick.getLeftJoystickY();
-    right = joystick.getRightJoystickX();
-    differentialDrive.arcadeDrive(left, -right);
+    right = joystick.getLeftJoystickX();
+    if(joystick.getAisPressed()){
+      slowmode=0.5;
+    }
+    differentialDrive.arcadeDrive(slowmode*left, -slowmode*right);
 
   }
 
