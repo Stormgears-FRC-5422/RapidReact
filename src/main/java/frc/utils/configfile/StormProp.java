@@ -1,4 +1,4 @@
-package utils;
+package frc.utils.configfile;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

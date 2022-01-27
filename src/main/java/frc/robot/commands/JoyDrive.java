@@ -6,10 +6,10 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import utils.drive.Drive;
+import frc.utils.drive.Drive;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
-import utils.joysticks.StormXboxController;
+import frc.utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
 public class JoyDrive extends CommandBase {

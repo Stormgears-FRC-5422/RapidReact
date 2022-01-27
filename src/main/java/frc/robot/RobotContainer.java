@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
-import utils.drive.Drive;
-import utils.drive.StormMotor;
-import utils.drive.StormMotorType;
-import utils.joysticks.StormXboxController;
+import frc.utils.drive.Drive;
+import frc.utils.drive.StormMotor;
+import frc.utils.drive.StormMotorType;
+import frc.utils.joysticks.StormXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a

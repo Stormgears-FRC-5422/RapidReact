@@ -5,8 +5,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import utils.drive.Drive;
-import utils.drive.StormMotorType;
+import frc.utils.drive.Drive;
+import frc.utils.drive.StormMotorType;
 
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.REAR_RIGHT_ID;

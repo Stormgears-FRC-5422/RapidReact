@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import utils.StormProp;
+import frc.utils.configfile.StormProp;
 
 public class NavX extends SubsystemBase {
     //AHRS is the thingy for connectivity and to access state information

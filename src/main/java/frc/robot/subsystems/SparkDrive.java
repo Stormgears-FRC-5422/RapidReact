@@ -6,12 +6,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import utils.drive.Drive;
-import utils.drive.StormMotorType;
+import frc.utils.drive.Drive;
+import frc.utils.drive.StormMotorType;
 
 import static frc.robot.Constants.*;
 

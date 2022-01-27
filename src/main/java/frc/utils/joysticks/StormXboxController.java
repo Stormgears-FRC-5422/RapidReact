@@ -1,4 +1,4 @@
-package utils.joysticks;
+package frc.utils.joysticks;
 
 
 import edu.wpi.first.wpilibj.Joystick;
