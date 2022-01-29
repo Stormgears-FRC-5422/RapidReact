@@ -8,16 +8,30 @@ public class NavX extends SubsystemBase {
     //AHRS is the thingy for connectivity and to access state information
     private AHRS ahrs = null;
 
-    public NavX() {
-        if(StormProp.getBoolean("hasNavX", true)) {
+    public enum AngleType {
+        RADIANS,
+        DEGREES
+    }
+
+    public AngleType getAngleType() {
+        return angleType;
+    }
+
+    private AngleType angleType;
+
+    public NavX(AngleType at) {
+        if(StormProp.getBoolean("usingNavX", true)) {
             ahrs = new AHRS();
             ahrs.enableLogging(true);
         } else {
             System.out.println("NO NAVX IN USEEEEEEEEEEEE");
         }
+        angleType = at;
     }
 
     public double getAngle() {
-        return ahrs.getAngle();
+        if (angleType == AngleType.DEGREES) return ahrs.getAngle();
+        float angle = (float) ahrs.getAngle();
+        return angle * (Math.PI/180);
     }
 }
