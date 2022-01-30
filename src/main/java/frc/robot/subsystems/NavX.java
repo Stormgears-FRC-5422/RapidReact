@@ -31,7 +31,7 @@ public class NavX extends SubsystemBase {
 
     public double getAngle() {
         if (angleType == AngleType.DEGREES) return ahrs.getAngle();
-        float angle = (float) ahrs.getAngle();
+        double angle = ahrs.getAngle();
         return angle * (Math.PI/180);
     }
 }
