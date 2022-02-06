@@ -47,7 +47,7 @@ public class TalonDrive implements Drive {
 
     @Override
     public MotorController[] getMotors() {
-        return new MotorController[]{leftMaster, rightMaster, leftSlave, leftMaster};
+        return new MotorController[]{leftMaster, rightMaster, leftSlave, rightSlave};
     }
 
   @Override

@@ -8,19 +8,31 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.drive.Drive;
 import frc.utils.drive.StormMotorType;
 
 import static frc.robot.Constants.*;
 
-public class SparkDrive implements Drive {
+public class SparkDrive extends SubsystemBase /*implements Drive*/ {
     private final DifferentialDrive differentialDrive;
-    private final CANSparkMax leftMaster = new CANSparkMax(FRONT_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax rightMaster = new CANSparkMax(FRONT_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax leftSlave = new CANSparkMax(REAR_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax rightSlave = new CANSparkMax(REAR_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax leftMaster = new CANSparkMax(LEFT_MASTER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax rightMaster = new CANSparkMax(RIGHT_MASTER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax leftSlave = new CANSparkMax(LEFT_SLAVE_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax rightSlave = new CANSparkMax(RIGHT_SLAVE_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     public SparkDrive() {
+
+        System.out.println("In SparkDriveConstructor");
+        leftMaster.restoreFactoryDefaults();
+     //   leftSlave.restoreFactoryDefaults();
+        rightMaster.restoreFactoryDefaults();
+     //   rightSlave.restoreFactoryDefaults();
+
+        leftMaster.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+        leftSlave.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+        rightMaster.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+        rightSlave.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
 
         leftMaster.setIdleMode(CANSparkMax.IdleMode.kCoast);
         rightMaster.setIdleMode(CANSparkMax.IdleMode.kCoast);
@@ -39,35 +51,26 @@ public class SparkDrive implements Drive {
         differentialDrive.setSafetyEnabled(true);
     }
 
-    @Override
+/*    //@Override
     public MotorController[] getMotors() {
         return new MotorController[]{leftMaster, rightMaster, leftSlave, rightSlave};
     }
-
-  @Override
-  public void rotate(double zRotation) {
-    if (Math.abs(zRotation) > 1) {
-      System.out.println("Not valid " + zRotation);
-      zRotation = 1;
-    }
-    differentialDrive.arcadeDrive(0, zRotation);
-  }
-
+*/
     @Override
     public void periodic() {
     }
 
-    @Override
+    //@Override
     public void simulationPeriodic() {
     }
 
 
-    @Override
-    public StormMotorType motorType() {
-        return StormMotorType.SPARK;
-    }
+    // @Override
+    // public StormMotorType motorType() {
+    //     return StormMotorType.SPARK;
+    // }
 
-    @Override
+    // @Override
     public DifferentialDrive getDifferentialDrive() {
         return differentialDrive;
     }

@@ -6,14 +6,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+//import frc.utils.drive.Drive;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
-import frc.utils.drive.Drive;
 import frc.utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
-public class JoyDrive extends CommandBase {
-  private Drive drive;
+public class TestDrive extends CommandBase {
+  private SparkDrive drive;
   private final StormXboxController joystick;
   private DifferentialDrive differentialDrive;
   /**
@@ -21,16 +21,16 @@ public class JoyDrive extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public JoyDrive(Drive subsystem, StormXboxController joy) {
+  public TestDrive(SparkDrive subsystem, StormXboxController joy) {
     if (subsystem instanceof SparkDrive) {
       drive = subsystem;
-      addRequirements(drive);
+      addRequirements((SparkDrive) drive);
     }
 
-    if (subsystem instanceof TalonDrive) {
-      drive = subsystem;
-      addRequirements(drive);
-    }
+    // if (subsystem instanceof TalonDrive) {
+    //   drive = subsystem;
+    //   addRequirements((TalonDrive) drive);
+    // }
     joystick = joy;
   }
 
@@ -43,18 +43,23 @@ public class JoyDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double left;
-    double right;
+    double left, right;
     double slowmode=1;
     left = joystick.getLeftJoystickY();
-    right = joystick.getLeftJoystickX();
+    right = joystick.getRightJoystickY();
 
 //    System.out.println("left: " + left + "  right: " + right);
     if(joystick.getAisPressed()){
       slowmode=0.5;
     }
-    differentialDrive.arcadeDrive(slowmode*left, -slowmode*right);
+    //differentialDrive.arcadeDrive(slowmode*left, -slowmode*right);
+    differentialDrive.tankDrive(left,right,true);
 
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
   }
 
   // Returns true when the command should end.
