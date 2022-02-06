@@ -6,14 +6,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.utils.drive.Drive;
+//import frc.utils.drive.Drive;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
 import frc.utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
-public class JoyDrive extends CommandBase {
-  private Drive drive;
+public class TestDrive extends CommandBase {
+  private SparkDrive drive;
   private final StormXboxController joystick;
   private DifferentialDrive differentialDrive;
   /**
@@ -21,16 +21,16 @@ public class JoyDrive extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public JoyDrive(Drive subsystem, StormXboxController joy) {
+  public TestDrive(SparkDrive subsystem, StormXboxController joy) {
     if (subsystem instanceof SparkDrive) {
       drive = subsystem;
       addRequirements((SparkDrive) drive);
     }
 
-    if (subsystem instanceof TalonDrive) {
-      drive = subsystem;
-      addRequirements((TalonDrive) drive);
-    }
+    // if (subsystem instanceof TalonDrive) {
+    //   drive = subsystem;
+    //   addRequirements((TalonDrive) drive);
+    // }
     joystick = joy;
   }
 
@@ -46,13 +46,14 @@ public class JoyDrive extends CommandBase {
     double left, right;
     double slowmode=1;
     left = joystick.getLeftJoystickY();
-    right = joystick.getLeftJoystickX();
+    right = joystick.getRightJoystickY();
 
 //    System.out.println("left: " + left + "  right: " + right);
     if(joystick.getAisPressed()){
       slowmode=0.5;
     }
-    differentialDrive.arcadeDrive(slowmode*left, -slowmode*right);
+    //differentialDrive.arcadeDrive(slowmode*left, -slowmode*right);
+    differentialDrive.tankDrive(left,right,true);
 
   }
 

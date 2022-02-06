@@ -15,15 +15,29 @@ import frc.utils.configfile.StormProp;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final boolean useDrive = StormProp.getBoolean("useDrive", false);
+    public static final boolean useNavX = StormProp.getBoolean("useNavX", false);
+    public static final boolean useIntake = StormProp.getBoolean("useIntake", false);
+    public static final boolean useShooter = StormProp.getBoolean("useShooter", false);
+    public static final boolean useClimber = StormProp.getBoolean("useClimber", false);
+    public static final boolean useStatusLights = StormProp.getBoolean("useStatusLights", false);
 
-    public static final int FRONT_LEFT_ID = StormProp.getInt("frontLeftID", 11);
-    public static final int FRONT_RIGHT_ID = StormProp.getInt("frontRightID", 13);
-    public static final int REAR_RIGHT_ID = StormProp.getInt("rearRightID", 14);
-    public static final int REAR_LEFT_ID = StormProp.getInt("rearLeftID", 12);
+    public static final int FRONT_LEFT_ID = StormProp.getInt("frontLeftId", -1);
+    public static final int FRONT_RIGHT_ID = StormProp.getInt("frontRightId", -1);
+    public static final int REAR_RIGHT_ID = StormProp.getInt("rearRightId", -1);
+    public static final int REAR_LEFT_ID = StormProp.getInt("rearLeftId", -1);
+
+    public static final int LEFT_MASTER_ID = StormProp.getInt("leftMasterId", -1);
+    public static final int RIGHT_MASTER_ID = StormProp.getInt("rightMasterId", -1);
+    public static final int LEFT_SLAVE_ID = StormProp.getInt("leftSlaveId", -1);
+    public static final int RIGHT_SLAVE_ID = StormProp.getInt("rightSlaveId", -1);
+
     public static final boolean LEFT_SIDE_INVERTED = StormProp.getBoolean("leftSideInverted", false);
     public static final boolean RIGHT_SIDE_INVERTED = StormProp.getBoolean("rightSideInverted", false);
     public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "Spark");
+    public static final int SMART_CURRENT_LIMIT = StormProp.getInt("SparkMaxCurrentLimit", 1);
     public static final double NULL_SIZE = StormProp.getNumber("driveNullSize", 0.055);
+
 
     private Constants() {
         throw new IllegalStateException("Do not make a Constants class");
