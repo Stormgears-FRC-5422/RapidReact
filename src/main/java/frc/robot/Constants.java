@@ -38,6 +38,10 @@ public final class Constants {
     public static final int SMART_CURRENT_LIMIT = StormProp.getInt("SparkMaxCurrentLimit", 1);
     public static final double NULL_SIZE = StormProp.getNumber("driveNullSize", 0.055);
 
+    public static final int currentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
+    public static final double temperatureRampThreshold = StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
+    public static final double temperatureRampLimit = StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
+
 
     private Constants() {
         throw new IllegalStateException("Do not make a Constants class");

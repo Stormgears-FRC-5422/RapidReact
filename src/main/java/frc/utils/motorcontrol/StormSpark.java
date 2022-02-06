@@ -3,12 +3,15 @@ package frc.utils.motorcontrol;
 import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants;
 import frc.utils.configfile.StormProp;
 
+import java.lang.invoke.ConstantBootstraps;
+
 public class StormSpark extends CANSparkMax {
-    private static final int currentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
-    private static final double temperatureRampThreshold = StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
-    private static final double temperatureRampLimit = StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
+    private static final int currentLimit = Constants.currentLimit;
+    private static final double temperatureRampThreshold = Constants.temperatureRampThreshold;
+    private static final double temperatureRampLimit = Constants.temperatureRampLimit;
     private double delta;
     private double temp;
 
