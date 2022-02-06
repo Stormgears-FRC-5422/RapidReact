@@ -47,6 +47,8 @@ public class JoyDrive extends CommandBase {
     double slowmode=1;
     left = joystick.getLeftJoystickY();
     right = joystick.getLeftJoystickX();
+
+//    System.out.println("left: " + left + "  right: " + right);
     if(joystick.getAisPressed()){
       slowmode=0.5;
     }
