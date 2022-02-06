@@ -4,7 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
+//import com.revrobotics.CANSparkMax;
+import frc.utils.motorcontrol.StormSpark;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
@@ -16,28 +17,28 @@ import static frc.robot.Constants.*;
 
 public class SparkDrive extends SubsystemBase /*implements Drive*/ {
     private final DifferentialDrive differentialDrive;
-    private final CANSparkMax leftMaster = new CANSparkMax(LEFT_MASTER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax rightMaster = new CANSparkMax(RIGHT_MASTER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax leftSlave = new CANSparkMax(LEFT_SLAVE_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax rightSlave = new CANSparkMax(RIGHT_SLAVE_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final StormSpark leftMaster = new StormSpark(LEFT_MASTER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final StormSpark rightMaster = new StormSpark(RIGHT_MASTER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final StormSpark leftSlave = new StormSpark(LEFT_SLAVE_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final StormSpark rightSlave = new StormSpark(RIGHT_SLAVE_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     public SparkDrive() {
-
         System.out.println("In SparkDriveConstructor");
+
         leftMaster.restoreFactoryDefaults();
-     //   leftSlave.restoreFactoryDefaults();
+        leftSlave.restoreFactoryDefaults();
         rightMaster.restoreFactoryDefaults();
-     //   rightSlave.restoreFactoryDefaults();
+        rightSlave.restoreFactoryDefaults();
 
         leftMaster.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
         leftSlave.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
         rightMaster.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
         rightSlave.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
 
-        leftMaster.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        rightMaster.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        leftSlave.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        rightSlave.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        leftMaster.setIdleMode(StormSpark.IdleMode.kCoast);
+        rightMaster.setIdleMode(StormSpark.IdleMode.kCoast);
+        leftSlave.setIdleMode(StormSpark.IdleMode.kCoast);
+        rightSlave.setIdleMode(StormSpark.IdleMode.kCoast);
 
         leftMaster.setInverted(LEFT_SIDE_INVERTED);
         leftSlave.setInverted(LEFT_SIDE_INVERTED);
@@ -51,11 +52,11 @@ public class SparkDrive extends SubsystemBase /*implements Drive*/ {
         differentialDrive.setSafetyEnabled(true);
     }
 
-/*    //@Override
-    public MotorController[] getMotors() {
-        return new MotorController[]{leftMaster, rightMaster, leftSlave, rightSlave};
-    }
-*/
+//    //@Override
+//    public MotorController[] getMotors() {
+//        return new MotorController[]{leftMaster, rightMaster, leftSlave, rightSlave};
+//    }
+
     @Override
     public void periodic() {
     }
@@ -63,7 +64,6 @@ public class SparkDrive extends SubsystemBase /*implements Drive*/ {
     //@Override
     public void simulationPeriodic() {
     }
-
 
     // @Override
     // public StormMotorType motorType() {
@@ -74,6 +74,5 @@ public class SparkDrive extends SubsystemBase /*implements Drive*/ {
     public DifferentialDrive getDifferentialDrive() {
         return differentialDrive;
     }
-
 
 }
