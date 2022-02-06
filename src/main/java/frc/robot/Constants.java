@@ -42,6 +42,10 @@ public final class Constants {
   public static final double kD = StormProp.getNumber("alignD", 0.01);
   public static final double alignTolerance = StormProp.getNumber("toleranceDegrees", 2d);
 
+    public static final int currentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
+    public static final double temperatureRampThreshold = StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
+    public static final double temperatureRampLimit = StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
+
 
     private Constants() {
         throw new IllegalStateException("Do not make a Constants class");
