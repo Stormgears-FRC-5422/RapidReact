@@ -4,63 +4,46 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import frc.utils.drive.Drive;
-import frc.utils.drive.StormMotorType;
+import frc.utils.drive.StormDrive;
 
 import static frc.robot.Constants.*;
 
-public class TalonDrive implements Drive {
+public class TalonDrive extends StormDrive {
     private final DifferentialDrive differentialDrive;
 
-    private final WPI_TalonSRX leftMaster = new WPI_TalonSRX(FRONT_LEFT_ID);
-    private final WPI_TalonSRX rightMaster = new WPI_TalonSRX(FRONT_RIGHT_ID);
-    private final WPI_TalonSRX leftSlave = new WPI_TalonSRX(REAR_LEFT_ID);
-    private final WPI_TalonSRX rightSlave = new WPI_TalonSRX(REAR_RIGHT_ID);
+    private final WPI_TalonSRX masterLeft = new WPI_TalonSRX(MASTER_LEFT_ID);
+    private final WPI_TalonSRX masterRight = new WPI_TalonSRX(MASTER_RIGHT_ID);
+    private final WPI_TalonSRX slaveLeft = new WPI_TalonSRX(SLAVE_LEFT_ID);
+    private final WPI_TalonSRX slaveRight = new WPI_TalonSRX(SLAVE_RIGHT_ID);
 
     public TalonDrive() {
-        leftSlave.follow(leftMaster);
-        rightSlave.follow(rightMaster);
+        slaveLeft.follow(masterLeft);
+        slaveRight.follow(masterRight);
 
-        leftSlave.setNeutralMode(NeutralMode.Coast);
-        rightMaster.setNeutralMode(NeutralMode.Coast);
-        leftMaster.setNeutralMode(NeutralMode.Coast);
-        rightSlave.setNeutralMode(NeutralMode.Coast);
+        slaveLeft.setNeutralMode(NeutralMode.Coast);
+        masterRight.setNeutralMode(NeutralMode.Coast);
+        masterLeft.setNeutralMode(NeutralMode.Coast);
+        slaveRight.setNeutralMode(NeutralMode.Coast);
 
-        leftSlave.setInverted(LEFT_SIDE_INVERTED);
-        leftMaster.setInverted(LEFT_SIDE_INVERTED);
-        rightMaster.setInverted(RIGHT_SIDE_INVERTED);
-        rightSlave.setInverted(RIGHT_SIDE_INVERTED);
+        slaveLeft.setInverted(LEFT_SIDE_INVERTED);
+        masterLeft.setInverted(LEFT_SIDE_INVERTED);
+        masterRight.setInverted(RIGHT_SIDE_INVERTED);
+        slaveRight.setInverted(RIGHT_SIDE_INVERTED);
 
-        differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
+        differentialDrive = new DifferentialDrive(masterLeft, masterRight);
         differentialDrive.setSafetyEnabled(true);
     }
 
-    @Override
-    public StormMotorType motorType() {
-        return StormMotorType.TALON;
-    }
-
-    @Override
+    // @Override
     public DifferentialDrive getDifferentialDrive() {
         return differentialDrive;
     }
 
-    @Override
-    public MotorController[] getMotors() {
-        return new MotorController[]{leftMaster, rightMaster, leftSlave, rightSlave};
+    // @Override
+    protected MotorController[] getMotors()     {
+        return new MotorController[] {masterLeft, masterRight, slaveLeft, slaveRight};
     }
 
-  @Override
-  public void rotate(double zRotation) {
-    if (Math.abs(zRotation) > 1) {
-      System.out.println("Not valid " + zRotation);
-      zRotation = 1;
-    }
-    differentialDrive.arcadeDrive(0, zRotation);
-  }
-
-  @Override
-  public void periodic() {
-    Drive.super.periodic();
-  }
 }
+
+

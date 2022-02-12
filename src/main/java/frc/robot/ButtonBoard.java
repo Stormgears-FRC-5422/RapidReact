@@ -40,8 +40,12 @@ public class ButtonBoard {
 
     private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick){
         precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
-        reverseButton =   new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);
-//        intakeButton = new JoystickButton(driveJoystick, StormXboxController.leftButton);
+//        reverseButton =   new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);
+
+        // This is a test
+        reverseButton =   new JoystickButton(driveJoystick, StormXboxController.AButton);
+
+        //        intakeButton = new JoystickButton(driveJoystick, StormXboxController.leftButton);
 //
 //
 //        turretHomeButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);

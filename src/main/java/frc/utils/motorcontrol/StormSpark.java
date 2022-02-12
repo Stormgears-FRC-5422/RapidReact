@@ -15,7 +15,6 @@ public class StormSpark extends CANSparkMax {
     private double delta;
     private double temp;
 
-
     public StormSpark(int deviceID, MotorType type) {
         super(deviceID, type);
 

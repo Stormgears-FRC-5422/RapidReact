@@ -22,19 +22,21 @@ public final class Constants {
     public static final boolean useClimber = StormProp.getBoolean("useClimber", false);
     public static final boolean useStatusLights = StormProp.getBoolean("useStatusLights", false);
 
+    // MOTOR CONSTANTS
+    public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "");
+
     public static final int FRONT_LEFT_ID = StormProp.getInt("frontLeftId", -1);
     public static final int FRONT_RIGHT_ID = StormProp.getInt("frontRightId", -1);
     public static final int REAR_RIGHT_ID = StormProp.getInt("rearRightId", -1);
     public static final int REAR_LEFT_ID = StormProp.getInt("rearLeftId", -1);
 
-    public static final int LEFT_MASTER_ID = StormProp.getInt("leftMasterId", -1);
-    public static final int RIGHT_MASTER_ID = StormProp.getInt("rightMasterId", -1);
-    public static final int LEFT_SLAVE_ID = StormProp.getInt("leftSlaveId", -1);
-    public static final int RIGHT_SLAVE_ID = StormProp.getInt("rightSlaveId", -1);
+    public static final int MASTER_LEFT_ID = StormProp.getInt("masterLeftId", -1);
+    public static final int MASTER_RIGHT_ID = StormProp.getInt("masterRightId", -1);
+    public static final int SLAVE_LEFT_ID = StormProp.getInt("slaveLeftId", -1);
+    public static final int SLAVE_RIGHT_ID = StormProp.getInt("slaveRightId", -1);
 
     public static final boolean LEFT_SIDE_INVERTED = StormProp.getBoolean("leftSideInverted", false);
     public static final boolean RIGHT_SIDE_INVERTED = StormProp.getBoolean("rightSideInverted", false);
-    public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "Spark");
     public static final int SMART_CURRENT_LIMIT = StormProp.getInt("SparkMaxCurrentLimit", 1);
     public static final double NULL_SIZE = StormProp.getNumber("driveNullSize", 0.055);
   public static final double kP = StormProp.getNumber("alignP", 0.05);

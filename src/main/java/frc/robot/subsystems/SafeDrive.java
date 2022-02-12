@@ -61,10 +61,10 @@ public class SafeDrive extends SubsystemBase {
     public SafeDrive() {
         System.out.println("In SafeDrive() constructor");
 
-        leftMaster = new StormSpark(StormProp.getInt("leftMasterId", -1), MotorType.kBrushless);
-        leftSlave = new StormSpark(StormProp.getInt("leftSlaveId", -1), MotorType.kBrushless);
-        rightMaster = new StormSpark(StormProp.getInt("rightMasterId", -1), MotorType.kBrushless);
-        rightSlave = new StormSpark(StormProp.getInt("rightSlaveId", -1), MotorType.kBrushless);
+        leftMaster = new StormSpark(StormProp.getInt("masterLeftId", -1), MotorType.kBrushless);
+        leftSlave = new StormSpark(StormProp.getInt("slaveLeftId", -1), MotorType.kBrushless);
+        rightMaster = new StormSpark(StormProp.getInt("masterRightId", -1), MotorType.kBrushless);
+        rightSlave = new StormSpark(StormProp.getInt("slaveRightId", -1), MotorType.kBrushless);
 
         StormSpark.check(rightMaster.setIdleMode(idleMode), "set idle mode");
         StormSpark.check(leftMaster.setIdleMode(idleMode), "set idle mode");
