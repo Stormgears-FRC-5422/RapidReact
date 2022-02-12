@@ -4,11 +4,12 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SafeDrive;
+import frc.robot.subsystems.SparkDrive;
 import frc.utils.joysticks.DriveJoystick;
 
 
 public class SlewDrive extends CommandBase {
-    private final SafeDrive drive;
+    private final SparkDrive drive;
     private DriveJoystick joystick;
 
     private SlewRateLimiter limiter;
@@ -19,7 +20,7 @@ public class SlewDrive extends CommandBase {
 
     private double targetSpeed;
 
-    public SlewDrive(SafeDrive drive, DriveJoystick joystick) {
+    public SlewDrive(SparkDrive drive, DriveJoystick joystick) {
         System.out.println("Just created the SlewDrive command");
 
         addRequirements(drive);
@@ -27,8 +28,6 @@ public class SlewDrive extends CommandBase {
         this.drive = drive;
         this.joystick = joystick;
 
-        m_prev_slew_rate = drive.get_slew_rate();
-        m_prev_turn_slew_rate = drive.get_turn_slew_rate();
 //        positiveLimiter = new SlewRateLimiter(1.5);
         limiter = new SlewRateLimiter(m_prev_slew_rate);
 //        negativeLimiter = new SlewRateLimiter(2.5);
@@ -40,16 +39,6 @@ public class SlewDrive extends CommandBase {
     public void execute() {
         targetSpeed = joystick.getXSpeed();
         SmartDashboard.putNumber("joystick speed", targetSpeed);
-        if (drive.get_slew_rate() != m_prev_slew_rate) {
-            m_prev_slew_rate = drive.get_slew_rate();
-            limiter = new SlewRateLimiter(m_prev_slew_rate);
-        }       
-
-        if (drive.get_turn_slew_rate() != m_prev_turn_slew_rate) {
-            m_prev_slew_rate = drive.get_turn_slew_rate();
-            turn_limiter = new SlewRateLimiter(m_prev_turn_slew_rate);
-        }
-
-        drive.driveArcade(limiter.calculate(targetSpeed), turn_limiter.calculate(joystick.getZRotation()));
+        drive.getDifferentialDrive().arcadeDrive(targetSpeed , joystick.getZRotation());
     }
 }
