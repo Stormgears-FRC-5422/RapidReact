@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.TestDrive;
 //import frc.robot.commands.drive.TestDrive;
 import frc.robot.subsystems.SparkDrive;
+import frc.robot.subsystems.TalonDrive;
+import frc.utils.drive.StormDrive;
+import frc.utils.drive.StormMotor;
 import frc.utils.joysticks.StormXboxController;
 
 /**
@@ -21,7 +24,7 @@ public class RobotContainer {
    * Declare subsystems - initialize below
    */
   //private frc.robot.subsystems.SafeDrive drive;
-  private frc.robot.subsystems.SparkDrive drive;
+  private frc.utils.drive.StormDrive drive;
 //  private Intake intake;
 //  private Shooter shooter;
 //  private Climber climber;
@@ -46,11 +49,15 @@ public class RobotContainer {
 
   private void initSubsystems(){
     if(Constants.useDrive){
-      //drive = new SafeDrive();
-      drive = new SparkDrive();
-      // Eventually
-      // if (StormMotor.motorType() == StormMotorType.TALON) drive = new TalonDrive();
-      // else drive = new SparkDrive();
+      switch (Constants.MOTOR_TYPE) {
+        case "Spark":
+          drive = new SparkDrive();
+          break;
+        case "Talon":
+          drive = new TalonDrive();
+          break;
+        default:
+      }
     }
 /*
     if(Constants.useIntake){
@@ -86,8 +93,8 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     if(Constants.useDrive){
-     // buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
-     // buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
+      buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
+      buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
     }
 
 //    if(Constants.useShooter){
@@ -125,56 +132,19 @@ public class RobotContainer {
       climber.setDefaultCommand(new Climb(climber, () -> driveJoystick.getLeftJoystickY(), () -> driveJoystick.getRightJoystickY()));
     }
 
-    if(Robot.useControlPanel) {
-      controlPanel.setDefaultCommand(new MovePanel(controlPanel, driveJoystick::getAisPressed, driveJoystick::getBisPressed));
-    }
-
-    if (Robot.useTurret) {
-      //    turret.setDefaultCommand(new TurnTurret(turret, secondaryJoystick, StormProp.getNumber("turretSpeed", 0.1)));
-      turret.setDefaultCommand(new TurnTurret(turret, secondaryJoystick,0));
     }
 */
   }
 
   public void runTeleopInit() {
-//    TurretGoHome turretGoHome = null;
-//    if (turret.isInitialized())
-//      System.out.println("Turret has been initialized");
-//    else
-//    {
-//      turretGoHome = new TurretGoHome(turret, secondaryJoystick);
-//      turretGoHome.schedule();
-//      System.out.println("Turret homing is scheduled");
-//    }
   }
 
   // Run during autonomous init phase
   public SequentialCommandGroup getAutonomousCommand() {
     return null;
-//    SequentialCommandGroup autoSequence = new SequentialCommandGroup();
-//
-//    // Home turret if needed
-//    if (Robot.useTurret && !turret.isInitialized())
-//      autoSequence.addCommands(new TurretGoHome(turret,secondaryJoystick));
-//
-//    // Search target and lock on target
-//    if (Robot.useTurret) {
-//      autoSequence.addCommands(new SearchTarget(turret, vision, secondaryJoystick));
-//      autoSequence.addCommands(new LockOnTarget(turret, vision, true));
-//    }
-//
-//    // Auto shoot
-//    if (Robot.useShooter && Robot.useHopper)
-//      autoSequence.addCommands(new AutoShoot(shooter, hopper));
-//
-//    // Drive from the initiation line
-//    if (Robot.useDrive)
-//      autoSequence.addCommands(new CrossAutoLine(drive));
-//
-//    return autoSequence;
   }
 
-  public SparkDrive getDrive() {
+  public StormDrive getDrive() {
     return drive;
   }
 

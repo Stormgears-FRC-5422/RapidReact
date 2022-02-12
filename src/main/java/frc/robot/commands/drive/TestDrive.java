@@ -7,30 +7,22 @@ package frc.robot.commands.drive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 //import frc.utils.drive.Drive;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
+import frc.utils.drive.StormDrive;
+import frc.utils.drive.StormMotor;
 import frc.utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
 public class TestDrive extends CommandBase {
-  private SparkDrive drive;
+  private StormDrive drive;
   private final StormXboxController joystick;
   private DifferentialDrive differentialDrive;
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public TestDrive(SparkDrive subsystem, StormXboxController joy) {
-    if (subsystem instanceof SparkDrive) {
-      drive = subsystem;
-      addRequirements((SparkDrive) drive);
-    }
 
-    // if (subsystem instanceof TalonDrive) {
-    //   drive = subsystem;
-    //   addRequirements((TalonDrive) drive);
-    // }
+  public TestDrive(StormDrive stormDrive, StormXboxController joy) {
+    drive = stormDrive;
+    addRequirements(drive);
     joystick = joy;
   }
 
