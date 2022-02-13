@@ -1,37 +1,28 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.utils.configfile.StormProp;
 
 public class NavX extends SubsystemBase {
-    //AHRS is the thingy for connectivity and to access state information
-    private AHRS ahrs = null;
+  private final AHRS ahrs;
 
-    public enum AngleType {
-        RADIANS,
-        DEGREES
-    }
-
-    public AngleType getAngleType() {
-        return angleType;
-    }
-
-    private AngleType angleType;
-
-    public NavX(AngleType at) {
-        if(StormProp.getBoolean("usingNavX", true)) {
-            ahrs = new AHRS();
-            ahrs.enableLogging(true);
-        } else {
-            System.out.println("NO NAVX IN USEEEEEEEEEEEE");
-        }
-        angleType = at;
+  public NavX() {
+    ahrs = new AHRS();
+    ahrs.enableLogging(true);
     }
 
     public double getAngle() {
-        if (angleType == AngleType.DEGREES) return ahrs.getAngle();
-        double angle = ahrs.getAngle();
-        return angle * (Math.PI/180);
+    return Math.toRadians(getAngleDegrees());
+  }
+
+  public double getAngleDegrees() {
+    return ahrs.getYaw();
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("angle radians", getAngle());
+    SmartDashboard.putNumber("angle degrees", getAngleDegrees());
     }
 }

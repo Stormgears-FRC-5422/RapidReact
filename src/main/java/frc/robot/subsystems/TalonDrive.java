@@ -4,14 +4,12 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.drive.Drive;
 import frc.utils.drive.StormMotorType;
 
 import static frc.robot.Constants.*;
-import static frc.robot.Constants.REAR_RIGHT_ID;
 
-public class TalonDrive extends SubsystemBase implements Drive {
+public class TalonDrive implements Drive {
     private final DifferentialDrive differentialDrive;
 
     private final WPI_TalonSRX leftMaster = new WPI_TalonSRX(FRONT_LEFT_ID);
@@ -51,4 +49,18 @@ public class TalonDrive extends SubsystemBase implements Drive {
     public MotorController[] getMotors() {
         return new MotorController[]{leftMaster, rightMaster, leftSlave, leftMaster};
     }
+
+  @Override
+  public void rotate(double zRotation) {
+    if (Math.abs(zRotation) > 1) {
+      System.out.println("Not valid " + zRotation);
+      zRotation = 1;
+    }
+    differentialDrive.arcadeDrive(0, zRotation);
+  }
+
+  @Override
+  public void periodic() {
+    Drive.super.periodic();
+  }
 }

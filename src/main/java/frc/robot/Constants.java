@@ -24,6 +24,10 @@ public final class Constants {
     public static final boolean RIGHT_SIDE_INVERTED = StormProp.getBoolean("rightSideInverted", false);
     public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "Spark");
     public static final double NULL_SIZE = StormProp.getNumber("driveNullSize", 0.055);
+  public static final double alignkP = StormProp.getNumber("alignP", 0.05);
+  public static final double alignkI = StormProp.getNumber("alignI", 0.01);
+  public static final double alignkD = StormProp.getNumber("alignD", 0.01);
+  public static final double alignTolerance = StormProp.getNumber("toleranceDegrees", 2d);
 
     private Constants() {
         throw new IllegalStateException("Do not make a Constants class");

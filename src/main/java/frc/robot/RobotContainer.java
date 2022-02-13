@@ -7,6 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.JoyDrive;
+import frc.robot.commands.NavXAlign;
+import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
 import frc.utils.drive.Drive;
@@ -23,14 +27,26 @@ import frc.utils.joysticks.StormXboxController;
 public class RobotContainer {
 
   private final Drive drive;
+  public final StormXboxController stormXboxController;
+  private final NavX navX;
+  private final NavXAlign navXAlign;
+  private final JoyDrive joyDrive;
 
   public RobotContainer() {
+    stormXboxController = new StormXboxController(0);
+
     if (StormMotor.motorType() == StormMotorType.TALON) drive = new TalonDrive();
     else drive = new SparkDrive();
+    joyDrive = new JoyDrive(drive, stormXboxController);
+    drive.setDefaultCommand(joyDrive);
+
+    navX = new NavX();
+    navXAlign = new NavXAlign(drive, navX);
+
     configureButtonBindings();
+
   }
 
-  public final StormXboxController stormXboxController = new StormXboxController(0);
 
   public Drive getDrive() {
     return drive;
@@ -42,7 +58,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    JoystickButton align = new JoystickButton(stormXboxController, StormXboxController.AButton);
+    align.whileHeld(navXAlign);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

@@ -8,13 +8,12 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.drive.Drive;
 import frc.utils.drive.StormMotorType;
 
 import static frc.robot.Constants.*;
 
-public class SparkDrive extends SubsystemBase implements Drive {
+public class SparkDrive implements Drive {
     private final DifferentialDrive differentialDrive;
     private final CANSparkMax leftMaster = new CANSparkMax(FRONT_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final CANSparkMax rightMaster = new CANSparkMax(FRONT_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -44,6 +43,15 @@ public class SparkDrive extends SubsystemBase implements Drive {
     public MotorController[] getMotors() {
         return new MotorController[]{leftMaster, rightMaster, leftSlave, rightSlave};
     }
+
+  @Override
+  public void rotate(double zRotation) {
+    if (Math.abs(zRotation) > 1) {
+      System.out.println("Not valid " + zRotation);
+      zRotation = 1;
+    }
+    differentialDrive.arcadeDrive(0, zRotation);
+  }
 
     @Override
     public void periodic() {

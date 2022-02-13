@@ -8,4 +8,6 @@ public interface Drive extends Subsystem {
     StormMotorType motorType();
     DifferentialDrive getDifferentialDrive();
     MotorController[] getMotors();
+
+  void rotate(double Zrotation);
 }
