@@ -25,11 +25,6 @@ public final class Constants {
   // MOTOR CONSTANTS
   public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "");
 
-  public static final int FRONT_LEFT_ID = StormProp.getInt("frontLeftId", -1);
-  public static final int FRONT_RIGHT_ID = StormProp.getInt("frontRightId", -1);
-  public static final int REAR_RIGHT_ID = StormProp.getInt("rearRightId", -1);
-  public static final int REAR_LEFT_ID = StormProp.getInt("rearLeftId", -1);
-
   public static final int MASTER_LEFT_ID = StormProp.getInt("masterLeftId", -1);
   public static final int MASTER_RIGHT_ID = StormProp.getInt("masterRightId", -1);
   public static final int SLAVE_LEFT_ID = StormProp.getInt("slaveLeftId", -1);
