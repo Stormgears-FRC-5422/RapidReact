@@ -9,5 +9,5 @@ public interface Drive extends Subsystem {
     DifferentialDrive getDifferentialDrive();
     MotorController[] getMotors();
 
-  void rotate(double Zrotation);
+  void rotate(double zRotation);
 }

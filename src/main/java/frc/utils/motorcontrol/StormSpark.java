@@ -1,16 +1,12 @@
 package frc.utils.motorcontrol;
 
-import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.utils.configfile.StormProp;
 
 public class StormSpark extends CANSparkMax {
     private static final int currentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
-//    private static final double temperatureRampThreshold = StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
-//    private static final double temperatureRampLimit = StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
-//    private double delta;
-//    private double temp;
 
 
     public StormSpark(int deviceID, MotorType type) {

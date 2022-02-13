@@ -11,7 +11,7 @@ public class NavXAlign extends PIDCommand {
 
   public NavXAlign(Drive drive, NavX navX) {
     super(
-        new PIDController(alignkP, alignkI, alignkD),
+        new PIDController(kP, kI, kD),
         navX::getAngle,
         () -> SmartDashboard.getNumber("targetAngle", Math.toRadians(180)),
         drive::rotate,

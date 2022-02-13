@@ -6,9 +6,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.utils.drive.Drive;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
+import frc.utils.drive.Drive;
 import frc.utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
@@ -24,12 +24,12 @@ public class JoyDrive extends CommandBase {
   public JoyDrive(Drive subsystem, StormXboxController joy) {
     if (subsystem instanceof SparkDrive) {
       drive = subsystem;
-      addRequirements((SparkDrive) drive);
+      addRequirements(drive);
     }
 
     if (subsystem instanceof TalonDrive) {
       drive = subsystem;
-      addRequirements((TalonDrive) drive);
+      addRequirements(drive);
     }
     joystick = joy;
   }
@@ -43,7 +43,8 @@ public class JoyDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double left, right;
+    double left;
+    double right;
     double slowmode=1;
     left = joystick.getLeftJoystickY();
     right = joystick.getLeftJoystickX();
@@ -52,11 +53,6 @@ public class JoyDrive extends CommandBase {
     }
     differentialDrive.arcadeDrive(slowmode*left, -slowmode*right);
 
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
   }
 
   // Returns true when the command should end.
