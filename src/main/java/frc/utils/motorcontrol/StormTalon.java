@@ -1,7 +1,6 @@
 package frc.utils.motorcontrol;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import frc.robot.Constants;
 
 public class StormTalon extends WPI_TalonSRX {
 
