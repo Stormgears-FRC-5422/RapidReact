@@ -13,8 +13,8 @@ import java.util.Set;
 public class StormProp {
     // Maybe rename this file to something better
     private static final String path = "/home/lvuser/deploy";
-//    private static final String path = System.getProperty("user.dir") + "\\src\\main\\deploy";
-    private static final String name = "config.properties";
+  //    private static final String path = System.getProperty("user.dir") + "\\src\\main\\deploy";
+  private static final String name = "config.properties";
     private static final String backUP = "config_backup.properties";
     private static final File configFile = new File(path, name);
     private static final HashMap<String, Double> m_number_map = new HashMap<>();
@@ -29,8 +29,8 @@ public class StormProp {
     private static boolean overrideInit = false;
 
     public static void init() {
-        System.out.println("Running in directory " + System.getProperty("user.dir"));
-        System.out.println("Trying to use file " + configFile.getAbsolutePath());
+    System.out.println("Running in directory " + System.getProperty("user.dir"));
+    System.out.println("Trying to use file " + configFile.getAbsolutePath());
         properties = new Properties();
         FileInputStream inputStream = null;
         try {

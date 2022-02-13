@@ -6,17 +6,12 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-//import frc.utils.drive.Drive;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.subsystems.SparkDrive;
-import frc.robot.subsystems.TalonDrive;
 import frc.utils.drive.StormDrive;
-import frc.utils.drive.StormMotor;
 import frc.utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
 public class TestDrive extends CommandBase {
-  private StormDrive drive;
+  private final StormDrive drive;
   private final StormXboxController joystick;
   private DifferentialDrive differentialDrive;
 
@@ -40,19 +35,15 @@ public class TestDrive extends CommandBase {
     left = joystick.getLeftJoystickY();
     right = joystick.getRightJoystickY();
 
-//    System.out.println("left: " + left + "  right: " + right);
     if(joystick.getAisPressed()){
       slowmode=0.5;
     }
-    //differentialDrive.arcadeDrive(slowmode*left, -slowmode*right);
-    differentialDrive.tankDrive(left,right,true);
-
+    differentialDrive.tankDrive(left, right, true);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

@@ -25,7 +25,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-//    CommandScheduler.getInstance().setDefaultCommand((Subsystem) robotContainer.getDrive(), new TestDrive(robotContainer.getDrive(), robotContainer.stormXboxController));
   }
 
   /**

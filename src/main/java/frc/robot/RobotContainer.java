@@ -1,41 +1,26 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.drive.TestDrive;
-//import frc.robot.commands.drive.TestDrive;
+import frc.robot.commands.navX.NavXAlign;
+import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
 import frc.utils.drive.StormDrive;
-import frc.utils.drive.StormMotor;
 import frc.utils.joysticks.StormXboxController;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
- */
 public class RobotContainer {
-  /**
-   * Declare subsystems - initialize below
-   */
-  //private frc.robot.subsystems.SafeDrive drive;
-  private frc.utils.drive.StormDrive drive;
-//  private Intake intake;
-//  private Shooter shooter;
-//  private Climber climber;
-//  private StatusLights statusLights;
 
-  /**
-   * Joysticks and buttons
-   */
   private final StormXboxController driveJoystick;
   private final StormXboxController secondaryJoystick;
   private final ButtonBoard buttonBoard;
+
+  private StormDrive drive;
+  private NavX navX;
+
+  private TestDrive testDrive;
+  private NavXAlign navXAlign;
 
   public RobotContainer() {
     driveJoystick = new StormXboxController(0);
@@ -43,12 +28,13 @@ public class RobotContainer {
     buttonBoard = ButtonBoard.getInstance(driveJoystick, secondaryJoystick);
 
     initSubsystems();
+    initCommands();
     configureButtonBindings();
     configureDefaultCommands();
   }
 
-  private void initSubsystems(){
-    if(Constants.useDrive){
+  private void initSubsystems() {
+    if (Constants.useDrive) {
       switch (Constants.MOTOR_TYPE) {
         case "Spark":
           drive = new SparkDrive();
@@ -59,93 +45,30 @@ public class RobotContainer {
         default:
       }
     }
-/*
-    if(Constants.useIntake){
-      intake = new Intake();
-    }
+    if (Constants.useNavX) navX = new NavX();
+  }
 
-    if(Constants.useShooter){
-      shooter = new Shooter();
-    }
-
-    if(Constants.useControlPanel){
-      controlPanel = new ControlPanel();
-    }
-
-    if(Constants.useTurret) {
-      turret = new Turret();
-    }
-
-    if(Constants.useVision){
-      vision = new Vision();
-    }
-
-    if (Constants.useClimber) {
-      climber = new Climber();
-    }
-
-    if (Constants.useStatusLights) {
-      statusLights = StatusLights.getInstance(); //just to initialize
-      statusLights.setAscending(5);
-    }
-  */
+  private void initCommands() {
+    if (Constants.useDrive) testDrive = new TestDrive(drive, driveJoystick);
+    if (Constants.useNavX) navXAlign = new NavXAlign(drive, navX);
   }
 
   private void configureButtonBindings() {
-    if(Constants.useDrive){
+    if (Constants.useDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
     }
-
-//    if(Constants.useShooter){
-//      boolean useVelocity = StormProp.getBoolean("shooterUseVelocity", false);
-//      buttonBoard.shootTrigger.whileActiveContinuous(new ShootVariable(shooter, vision, () -> 0.0, useVelocity));
-//      buttonBoard.autoLineShootTrigger.whileActiveContinuous(new ShootVariable(shooter, vision, ()-> 1.0, useVelocity));
-//      buttonBoard.shooterDecreaseButton.whenPressed(new AdjustShooterPower(shooter,AdjustShooterPower.Direction.DOWN));
-//      buttonBoard.shooterIncreaseButton.whenPressed(new AdjustShooterPower(shooter,AdjustShooterPower.Direction.UP));
-//    }
-
+    if (Constants.useNavX) {
+      JoystickButton align = new JoystickButton(driveJoystick, StormXboxController.AButton);
+      align.whileHeld(navXAlign);
+    }
   }
 
   private void configureDefaultCommands() {
-    if (Constants.useDrive) {
-      System.out.println("Just created the Drive object");
-      drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
-//            drive.setDefaultCommand(new DiagnosticDrive(drive, ()-> driveJoystick.getRawAxis(1), ()-> driveJoystick.getRawAxis(0),
-//                                                               ()-> driveJoystick.getRawAxis(5), ()-> driveJoystick.getRawAxis(4)));
-    }
-/*
-    if(Robot.useHopper) {
-      hopper.setDefaultCommand(new ReloadHopper(hopper, driveJoystick::getLeftJoystickY));
-    }
-
-    if(Robot.useIntake) {
-      intake.setDefaultCommand(new IntakeBall(intake, () -> -driveJoystick.getLeftJoystickY()));
-    }
-
-    if(Robot.useShooter) {
-      shooter.setDefaultCommand(new SpinIndexRoller(shooter, driveJoystick::getLeftJoystickY));
-    }
-
-    // temp controls!
-    if(Robot.useClimber) {
-      climber.setDefaultCommand(new Climb(climber, () -> driveJoystick.getLeftJoystickY(), () -> driveJoystick.getRightJoystickY()));
-    }
-
-    }
-*/
+    if (Constants.useDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
   }
 
-  public void runTeleopInit() {
-  }
-
-  // Run during autonomous init phase
-  public SequentialCommandGroup getAutonomousCommand() {
+  public Command getAutonomousCommand() {
     return null;
   }
-
-  public StormDrive getDrive() {
-    return drive;
-  }
-
 }
