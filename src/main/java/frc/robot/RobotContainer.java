@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.drive.TestDrive;
 import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.NavX;
@@ -59,8 +58,7 @@ public class RobotContainer {
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
     }
     if (Constants.useNavX) {
-      JoystickButton align = new JoystickButton(driveJoystick, StormXboxController.AButton);
-      align.whileHeld(navXAlign);
+      buttonBoard.navXAlignButton.whileHeld(navXAlign);
     }
   }
 

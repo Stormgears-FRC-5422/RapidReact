@@ -7,20 +7,19 @@ import frc.utils.joysticks.StormXboxController;
 public class ButtonBoard {
   private static ButtonBoard instance;
   /** Initialize DRIVE JOYSTICK BUTTONS */
-  public JoystickButton precisionButton;
+  public final JoystickButton precisionButton;
 
-  public JoystickButton reverseButton;
+  public final JoystickButton reverseButton;
+  public final JoystickButton navXAlignButton;
+
   /** Initialize SECONDARY JOYSTICK BUTTONS */
   //    public Trigger shootTrigger;
   //    public Trigger autoLineShootTrigger;
 
   private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
     precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
-    //        reverseButton =   new JoystickButton(driveJoystick,
-    // StormXboxController.stickLeftButton);
-
-    // This is a test
     reverseButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
+    navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.YButton);
 
     //        intakeButton = new JoystickButton(driveJoystick, StormXboxController.leftButton);
     //
