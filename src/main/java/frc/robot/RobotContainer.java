@@ -8,14 +8,12 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.JoyDrive;
-import frc.robot.commands.NavXAlign;
+import frc.robot.commands.drive.TestDrive;
+import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
-import frc.utils.drive.Drive;
-import frc.utils.drive.StormMotor;
-import frc.utils.drive.StormMotorType;
+import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
 
 /**
@@ -25,33 +23,48 @@ import frc.utils.joysticks.StormXboxController;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  /** Joysticks and buttons */
+  private final StormXboxController driveJoystick;
 
-  private final Drive drive;
-  public final StormXboxController stormXboxController;
-  private final NavX navX;
-  private final NavXAlign navXAlign;
-  private final JoyDrive joyDrive;
+  private final StormXboxController secondaryJoystick;
+  private final ButtonBoard buttonBoard;
+  /** Declare subsystems - initialize below */
+  private StormDrive drive;
+
+  private NavX navX;
+  private TestDrive testDrive;
+  private NavXAlign navXAlign;
 
   public RobotContainer() {
-    stormXboxController = new StormXboxController(0);
+    driveJoystick = new StormXboxController(0);
+    secondaryJoystick = new StormXboxController(1);
+    buttonBoard = ButtonBoard.getInstance(driveJoystick, secondaryJoystick);
 
-    if (StormMotor.motorType() == StormMotorType.TALON) drive = new TalonDrive();
-    else drive = new SparkDrive();
-    joyDrive = new JoyDrive(drive, stormXboxController);
-    drive.setDefaultCommand(joyDrive);
-
-    navX = new NavX();
-    navXAlign = new NavXAlign(drive, navX);
-
+    initSubsystems();
+    initCommands();
     configureButtonBindings();
-
+    configureDefaultCommands();
   }
 
-
-  public Drive getDrive() {
-    return drive;
+  private void initSubsystems() {
+    if (Constants.useDrive) {
+      switch (Constants.MOTOR_TYPE) {
+        case "Spark":
+          drive = new SparkDrive();
+          break;
+        case "Talon":
+          drive = new TalonDrive();
+          break;
+        default:
+      }
+    }
+    if (Constants.useNavX) navX = new NavX();
   }
 
+  private void initCommands() {
+    if (Constants.useDrive) testDrive = new TestDrive(drive, driveJoystick);
+    if (Constants.useNavX) navXAlign = new NavXAlign(drive, navX);
+  }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -59,8 +72,18 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    JoystickButton align = new JoystickButton(stormXboxController, StormXboxController.AButton);
-    align.whileHeld(navXAlign);
+    if (Constants.useDrive) {
+      buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
+      buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
+    }
+    if (Constants.useNavX) {
+      JoystickButton align = new JoystickButton(driveJoystick, StormXboxController.AButton);
+      align.whileHeld(navXAlign);
+    }
+  }
+
+  private void configureDefaultCommands() {
+    if (Constants.useDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
   }
 
   /**

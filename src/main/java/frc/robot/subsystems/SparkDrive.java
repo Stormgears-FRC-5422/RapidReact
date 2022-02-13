@@ -4,73 +4,58 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import frc.utils.drive.Drive;
-import frc.utils.drive.StormMotorType;
+import frc.utils.drive.StormDrive;
+import frc.utils.motorcontrol.StormSpark;
 
 import static frc.robot.Constants.*;
 
-public class SparkDrive implements Drive {
+public class SparkDrive extends StormDrive {
     private final DifferentialDrive differentialDrive;
-    private final CANSparkMax leftMaster = new CANSparkMax(FRONT_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax rightMaster = new CANSparkMax(FRONT_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax leftSlave = new CANSparkMax(REAR_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax rightSlave = new CANSparkMax(REAR_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final StormSpark masterLeft =
+      new StormSpark(MASTER_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final StormSpark masterRight =
+      new StormSpark(MASTER_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final StormSpark slaveLeft =
+      new StormSpark(SLAVE_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final StormSpark slaveRight =
+      new StormSpark(SLAVE_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     public SparkDrive() {
+    masterLeft.restoreFactoryDefaults();
+    slaveLeft.restoreFactoryDefaults();
+    masterRight.restoreFactoryDefaults();
+    slaveRight.restoreFactoryDefaults();
 
-        leftMaster.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        rightMaster.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        leftSlave.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        rightSlave.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    masterLeft.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+    slaveLeft.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+    masterRight.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+    slaveRight.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
 
-        leftMaster.setInverted(LEFT_SIDE_INVERTED);
-        leftSlave.setInverted(LEFT_SIDE_INVERTED);
-        rightMaster.setInverted(RIGHT_SIDE_INVERTED);
-        rightSlave.setInverted(RIGHT_SIDE_INVERTED);
+    masterLeft.setIdleMode(StormSpark.IdleMode.kCoast);
+    masterRight.setIdleMode(StormSpark.IdleMode.kCoast);
+    slaveLeft.setIdleMode(StormSpark.IdleMode.kCoast);
+    slaveRight.setIdleMode(StormSpark.IdleMode.kCoast);
 
-        leftSlave.follow(leftMaster);
-        rightSlave.follow(rightMaster);
+    masterLeft.setInverted(LEFT_SIDE_INVERTED);
+    slaveLeft.setInverted(LEFT_SIDE_INVERTED);
+    masterRight.setInverted(RIGHT_SIDE_INVERTED);
+    slaveRight.setInverted(RIGHT_SIDE_INVERTED);
 
-        differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
+    slaveLeft.follow(masterLeft);
+    slaveRight.follow(masterRight);
+
+    differentialDrive = new DifferentialDrive(masterLeft, masterRight);
         differentialDrive.setSafetyEnabled(true);
     }
 
-    @Override
-    public MotorController[] getMotors() {
-        return new MotorController[]{leftMaster, rightMaster, leftSlave, rightSlave};
-    }
-
-  @Override
-  public void rotate(double zRotation) {
-    if (Math.abs(zRotation) > 1) {
-      System.out.println("Not valid " + zRotation);
-      zRotation = 1;
-    }
-    differentialDrive.arcadeDrive(0, zRotation);
-  }
-
-    @Override
-    public void periodic() {
-    }
-
-    @Override
-    public void simulationPeriodic() {
-    }
-
-
-    @Override
-    public StormMotorType motorType() {
-        return StormMotorType.SPARK;
-    }
-
-    @Override
     public DifferentialDrive getDifferentialDrive() {
         return differentialDrive;
     }
 
-
+  protected MotorController[] getMotors() {
+    return new MotorController[] {masterLeft, masterRight, slaveLeft, slaveRight};
+  }
 }

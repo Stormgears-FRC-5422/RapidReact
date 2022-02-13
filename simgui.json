@@ -1,5 +1,34 @@
 {
   "HALProvider": {
+    "Other Devices": {
+      "SPARK MAX [11]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [12]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [13]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [14]": {
+        "header": {
+          "open": true
+        }
+      }
+    },
+    "RoboRIO": {
+      "window": {
+        "visible": true
+      }
+    }
+  },
+  "HALProvider": {
     "RoboRIO": {
       "window": {
         "visible": true
@@ -10,6 +39,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/NavX": "Subsystem",
+      "/LiveWindow/Drive": "Subsystem",
       "/LiveWindow/SparkDrive": "Subsystem",
       "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
