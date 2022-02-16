@@ -19,47 +19,21 @@ public class ButtonBoard {
      */
     public JoystickButton precisionButton;
     public JoystickButton reverseButton;
-//    public JoystickButton turretHomeButton;
-//    //public JoystickButton searchTargetButton;
-//    public JoystickButton visionTestButton;
-//    public JoystickButton lockOnTargetButton;
-//    public JoystickButton intakeButton;
-//    public JoystickButton turretLeftButton;
-//    public JoystickButton turretRightButton;
 
-//    public DpadButton shooterIncreaseButton;
-//    public DpadButton shooterDecreaseButton;
+    public JoystickButton selectIntakeButton;
+    public JoystickButton selectFeederButton;
+    public JoystickButton selectShooterButton;
 
     /**
      * Initialize SECONDARY JOYSTICK BUTTONS
      */
-//    public Trigger shootTrigger;
-//    public Trigger autoLineShootTrigger;
-
-
 
     private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick){
         precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
-//        reverseButton =   new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);
-
-        // This is a test
         reverseButton =   new JoystickButton(driveJoystick, StormXboxController.AButton);
 
-        //        intakeButton = new JoystickButton(driveJoystick, StormXboxController.leftButton);
-//
-//
-//        turretHomeButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
-////        searchTargetButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
-//        visionTestButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
-//        lockOnTargetButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);  // Y
-//        turretLeftButton = new JoystickButton(secondaryJoystick,StormXboxController.leftButton);
-//        turretRightButton = new JoystickButton(secondaryJoystick,StormXboxController.rightButton);
-//
-//        shooterIncreaseButton = new DpadButton(secondaryJoystick,DpadButton.Direction.UP);
-//        shooterDecreaseButton = new DpadButton(secondaryJoystick,DpadButton.Direction.DOWN);
-//
-//
-//        shootTrigger = new Trigger(() -> secondaryJoystick.getRawAxis(StormXboxController.rightTrigger) >= 0.85);
-//        autoLineShootTrigger = new Trigger(() -> secondaryJoystick.getRawAxis(StormXboxController.leftTrigger) >= 0.85);
+        selectIntakeButton = new JoystickButton(driveJoystick, StormXboxController.BButton);
+        selectFeederButton = new JoystickButton(driveJoystick, StormXboxController.XButton);
+        selectShooterButton = new JoystickButton(driveJoystick, StormXboxController.YButton);
     }
 }

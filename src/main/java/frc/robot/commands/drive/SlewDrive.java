@@ -3,8 +3,7 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SafeDrive;
-import frc.robot.subsystems.SparkDrive;
+import frc.robot.subsystems.drive.SparkDrive;
 import frc.utils.joysticks.DriveJoystick;
 
 

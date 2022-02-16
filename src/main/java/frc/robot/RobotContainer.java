@@ -7,10 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drive.TestDrive;
 //import frc.robot.commands.drive.TestDrive;
-import frc.robot.subsystems.SparkDrive;
-import frc.robot.subsystems.TalonDrive;
+import frc.robot.commands.intake.TestIntake;
+import frc.robot.subsystems.drive.SparkDrive;
+import frc.robot.subsystems.drive.TalonDrive;
+import frc.robot.subsystems.intake.Intake;
 import frc.utils.drive.StormDrive;
-import frc.utils.drive.StormMotor;
 import frc.utils.joysticks.StormXboxController;
 
 /**
@@ -25,7 +26,8 @@ public class RobotContainer {
    */
   //private frc.robot.subsystems.SafeDrive drive;
   private frc.utils.drive.StormDrive drive;
-//  private Intake intake;
+  private Intake intake;
+
 //  private Shooter shooter;
 //  private Climber climber;
 //  private StatusLights statusLights;
@@ -59,11 +61,12 @@ public class RobotContainer {
         default:
       }
     }
-/*
+
     if(Constants.useIntake){
       intake = new Intake();
-    }
+    } else System.out.println("Intake disabled");
 
+/*
     if(Constants.useShooter){
       shooter = new Shooter();
     }
@@ -97,6 +100,12 @@ public class RobotContainer {
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
     }
 
+    if(Constants.useIntake) {
+      buttonBoard.selectIntakeButton.whenPressed(intake::setModeIntake);
+      buttonBoard.selectFeederButton.whenPressed(intake::setModeFeeder);
+      buttonBoard.selectShooterButton.whenPressed(intake::setModeShooter);
+    }
+
 //    if(Constants.useShooter){
 //      boolean useVelocity = StormProp.getBoolean("shooterUseVelocity", false);
 //      buttonBoard.shootTrigger.whileActiveContinuous(new ShootVariable(shooter, vision, () -> 0.0, useVelocity));
@@ -111,10 +120,13 @@ public class RobotContainer {
     if (Constants.useDrive) {
       System.out.println("Just created the Drive object");
       drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
-//            drive.setDefaultCommand(new DiagnosticDrive(drive, ()-> driveJoystick.getRawAxis(1), ()-> driveJoystick.getRawAxis(0),
-//                                                               ()-> driveJoystick.getRawAxis(5), ()-> driveJoystick.getRawAxis(4)));
     }
-/*
+
+    if(Constants.useIntake) {
+      intake.setDefaultCommand(new TestIntake(intake, driveJoystick));
+    }
+
+    /*
     if(Robot.useHopper) {
       hopper.setDefaultCommand(new ReloadHopper(hopper, driveJoystick::getLeftJoystickY));
     }
