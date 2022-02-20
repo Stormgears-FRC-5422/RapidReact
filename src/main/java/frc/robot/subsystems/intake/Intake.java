@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -22,10 +23,13 @@ public class Intake extends SubsystemBase {
 
         if (Constants.useIntake) {
             intakeMotor = new StormSpark(Constants.INTAKE_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+            intakeMotor.setInverted(true);
+
         }
 
         if (Constants.useFeeder) {
             feederMotor = new StormSpark(Constants.FEEDER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+            feederMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         }
 
         if (Constants.useShooter) {

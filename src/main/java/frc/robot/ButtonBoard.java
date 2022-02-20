@@ -33,7 +33,7 @@ public class ButtonBoard {
         reverseButton =   new JoystickButton(driveJoystick, StormXboxController.AButton);
 
         selectIntakeButton = new JoystickButton(driveJoystick, StormXboxController.BButton);
-        selectFeederButton = new JoystickButton(driveJoystick, StormXboxController.XButton);
-        selectShooterButton = new JoystickButton(driveJoystick, StormXboxController.YButton);
+        selectFeederButton = new JoystickButton(driveJoystick, StormXboxController.YButton);
+        selectShooterButton = new JoystickButton(driveJoystick, StormXboxController.XButton);
     }
 }
