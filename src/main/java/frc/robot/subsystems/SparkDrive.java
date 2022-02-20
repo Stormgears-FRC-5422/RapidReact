@@ -5,8 +5,11 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.RelativeEncoder;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import frc.robot.Constants;
 import frc.utils.drive.StormDrive;
 import frc.utils.motorcontrol.StormSpark;
 
@@ -40,12 +43,33 @@ public class SparkDrive extends StormDrive {
     slaveLeft.setInverted(LEFT_SIDE_INVERTED);
     masterRight.setInverted(RIGHT_SIDE_INVERTED);
     slaveRight.setInverted(RIGHT_SIDE_INVERTED);
+    //Set Position multiplier for actual encoder readout
+//    masterLeft.getEncoder().setPositionConversionFactor(Constants.RATIO);
+//    masterRight.getEncoder().setPositionConversionFactor(Constants.RATIO);
+//    slaveLeft.getEncoder().setPositionConversionFactor(Constants.RATIO);
+//    slaveRight.getEncoder().setPositionConversionFactor(Constants.RATIO);
 
     slaveLeft.follow(masterLeft);
     slaveRight.follow(masterRight);
 
     differentialDrive = new DifferentialDrive(masterLeft, masterRight);
         differentialDrive.setSafetyEnabled(true);
+    }
+
+    public double getDistance() {
+        double distance = 0;
+        StormSpark[] motors = getStormSpark();
+        for (StormSpark motor:motors) {
+            RelativeEncoder encoder = motor.getEncoder();
+            double encoderDistance = encoder.getPosition();
+            distance+=encoderDistance;
+        }
+        return distance;
+    }
+
+    public double calculateDriveVel(double goal) {
+        double currDist = getDistance();
+        return drivePID.calculate(currDist, goal);
     }
 
     public DifferentialDrive getDifferentialDrive() {
@@ -56,11 +80,13 @@ public class SparkDrive extends StormDrive {
         return new MotorController[] {masterLeft, masterRight, slaveLeft, slaveRight};
     }
 
-    @Override
-    public void periodic() {
+    private StormSpark[] getStormSpark() {
+        return new StormSpark[] {masterLeft, masterRight, slaveLeft, slaveRight};
     }
 
-    public void simulationPeriodic() {
+    public void ResetEncoders() {
+        for (StormSpark spark: getStormSpark()) {
+            spark.getEncoder().setPosition(0d);
+        }
     }
-
 }

@@ -38,9 +38,9 @@ public class RobotContainer {
         case "Spark":
           drive = new SparkDrive();
           break;
-        case "Talon":
-          drive = new TalonDrive();
-          break;
+//        case "Talon":
+//          drive = new TalonDrive();
+//          break;
         default:
       }
     }
@@ -61,6 +61,10 @@ public class RobotContainer {
       buttonBoard.navXAlignButton.whileHeld(navXAlign);
     }
   }
+
+//  private Command GetAutonomousCommand() {
+//    return Command;
+//  }
 
   private void configureDefaultCommands() {
     if (Constants.useDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
