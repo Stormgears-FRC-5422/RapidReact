@@ -17,6 +17,7 @@ import frc.utils.configfile.StormProp;
 public final class Constants {
     public static final boolean useDrive = StormProp.getBoolean("useDrive", false);
     public static final boolean useNavX = StormProp.getBoolean("useNavX", false);
+    public static final boolean diagnostic = StormProp.getBoolean("useDiagnostic", false);
     public static final boolean useIntake = StormProp.getBoolean("useIntake", false);
     public static final boolean useFeeder = StormProp.getBoolean("useFeeder", false);
     public static final boolean useShooter = StormProp.getBoolean("useShooter", false);
@@ -25,11 +26,6 @@ public final class Constants {
 
     // MOTOR CONSTANTS
     public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "");
-
-    public static final int FRONT_LEFT_ID = StormProp.getInt("frontLeftId", -1);
-    public static final int FRONT_RIGHT_ID = StormProp.getInt("frontRightId", -1);
-    public static final int REAR_RIGHT_ID = StormProp.getInt("rearRightId", -1);
-    public static final int REAR_LEFT_ID = StormProp.getInt("rearLeftId", -1);
 
     public static final int MASTER_LEFT_ID = StormProp.getInt("masterLeftId", -1);
     public static final int MASTER_RIGHT_ID = StormProp.getInt("masterRightId", -1);

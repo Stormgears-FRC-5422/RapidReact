@@ -6,13 +6,12 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-//import frc.utils.drive.Drive;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
 public class TestDrive extends CommandBase {
-  private StormDrive drive;
+  private final StormDrive drive;
   private final StormXboxController joystick;
   private DifferentialDrive differentialDrive;
 
@@ -32,16 +31,9 @@ public class TestDrive extends CommandBase {
   @Override
   public void execute() {
     double left, right;
-    double slowmode=1;
     left = joystick.getLeftJoystickY();
-    right = joystick.getRightJoystickY();
-
-//    System.out.println("left: " + left + "  right: " + right);
-    if(joystick.getAisPressed()){
-      slowmode=0.5;
-    }
-    //differentialDrive.arcadeDrive(slowmode*left, -slowmode*right);
-    differentialDrive.tankDrive(left,right,true);
+    right = joystick.getRightJoystickX();
+    differentialDrive.arcadeDrive(left * 0.6, -right * 0.6, true);
 
   }
 

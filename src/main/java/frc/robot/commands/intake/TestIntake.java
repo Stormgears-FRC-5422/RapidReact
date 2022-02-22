@@ -1,18 +1,18 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.utils.joysticks.DriveJoystick;
 
 public class TestIntake extends CommandBase {
-    private final Intake intake;
-    private DriveJoystick joystick;
+    private final DiagnosticIntake diagnosticIntake;
+    private final DriveJoystick joystick;
 
-    public TestIntake(Intake intake, DriveJoystick joystick){
+    public TestIntake(DiagnosticIntake diagnosticIntake, DriveJoystick joystick) {
         System.out.println("Creating Intake Command");
-        addRequirements(intake);
+        addRequirements(diagnosticIntake);
 
-        this.intake = intake;
+        this.diagnosticIntake = diagnosticIntake;
         this.joystick = joystick;
     }
 
@@ -22,6 +22,6 @@ public class TestIntake extends CommandBase {
         double l = joystick.getLeftTrigger();
 
         //System.out.println("Right: " + r + " left: " + l);
-        intake.set(r - l);
+        diagnosticIntake.set(r - l);
     }
 }
