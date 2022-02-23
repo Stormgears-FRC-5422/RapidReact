@@ -60,7 +60,7 @@ public class RobotContainer {
 
   private void initCommands() {
     if (Constants.useIntake && Constants.useFeeder) load = new Load(intake, feeder);
-    if (Constants.useShooter && Constants.useFeeder) shoot = new Shoot(feeder, shooter);
+    if (Constants.useShooter && Constants.useFeeder && Constants.useIntake) shoot = new Shoot(feeder, shooter, intake);
   }
 
   private void initSubsystems() {

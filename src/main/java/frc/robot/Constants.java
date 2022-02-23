@@ -44,6 +44,7 @@ public final class Constants {
     public static final int SHOOTER_ID = StormProp.getInt("shooterId", -1);
     public static final int INTAKE_ID = StormProp.getInt("intakeId", -1);
     public static final int FEEDER_ID = StormProp.getInt("feederId", -1);
+    public static final double shooterLowRPM = StormProp.getNumber("shooterLowRPM", 0d);
 
     private Constants() {
         throw new IllegalStateException("Do not make a Constants class");
