@@ -31,7 +31,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void on() {
-        setSpeed(0.3);
+        setSpeed(Constants.intakeSpeed);
     }
 
     public void off() {

@@ -19,9 +19,7 @@ public class Feeder extends SubsystemBase {
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         Shuffleboard.getTab("Shooter").addNumber("FeederSpeed", this::getSpeed);
-        Shuffleboard.getTab("Shooter").addBoolean("tripped", this::getLimit);
-        Shuffleboard.getTab("Shooter").addBoolean("enabled", limitSwitch::isEnabled);
-
+        Shuffleboard.getTab("Shooter").addBoolean("LimitTripped", this::getLimit);
     }
 
     @Override
@@ -52,6 +50,6 @@ public class Feeder extends SubsystemBase {
     }
 
     public void on() {
-        setSpeed(0.25);
+        setSpeed(Constants.feederSpeed);
     }
 }

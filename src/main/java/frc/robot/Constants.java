@@ -24,7 +24,6 @@ public final class Constants {
     public static final boolean useClimber = StormProp.getBoolean("useClimber", false);
     public static final boolean useStatusLights = StormProp.getBoolean("useStatusLights", false);
 
-    // MOTOR CONSTANTS
     public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "");
 
     public static final int MASTER_LEFT_ID = StormProp.getInt("masterLeftId", -1);
@@ -44,9 +43,17 @@ public final class Constants {
     public static final int SHOOTER_ID = StormProp.getInt("shooterId", -1);
     public static final int INTAKE_ID = StormProp.getInt("intakeId", -1);
     public static final int FEEDER_ID = StormProp.getInt("feederId", -1);
-    public static final double shooterLowRPM = StormProp.getNumber("shooterLowRPM", 0d);
+
+    public static final double feederSpeed = StormProp.getNumber("feederSpeed", 0.0);
+    public static final double intakeSpeed = StormProp.getNumber("intakeSpeed", 0.0);
+
+    public static final double shooterP = StormProp.getNumber("shooterP", 0.0);
+    public static final double shooterI = StormProp.getNumber("shooterI", 0.0);
+    public static final double shooterD = StormProp.getNumber("shooterD", 0.0);
+    public static final double shooterF = StormProp.getNumber("shooterF", 0.0);
+    public static final double shooterLowRPM = StormProp.getNumber("shooterLowRPM", 0.0);
 
     private Constants() {
         throw new IllegalStateException("Do not make a Constants class");
-    }   
+    }
 }

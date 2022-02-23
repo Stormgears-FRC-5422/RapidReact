@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.utils.motorcontrol.StormSpark;
 
+import static frc.robot.Constants.*;
+
 public class Shooter extends SubsystemBase {
 
     private final StormSpark motor = new StormSpark(Constants.SHOOTER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -15,17 +17,19 @@ public class Shooter extends SubsystemBase {
 
     public Shooter() {
         motor.setInverted(false);
-        motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         motor.getEncoder().setVelocityConversionFactor(1 / 60d); //from rpm to rps
-//        pidController.setP(0.005);
-        pidController.setP(0);
-        pidController.setI(0);
-        pidController.setD(0);
-//        pidController.setD(-.02);
-        pidController.setOutputRange(-1, 1);
-        pidController.setFF(0.011);
+        setupPID();
         Shuffleboard.getTab("Shooter").addBoolean("ready2shoot", this::isReady);
         Shuffleboard.getTab("Shooter").addNumber("Speed", this::getSpeed);
+    }
+
+    private void setupPID() {
+        pidController.setP(shooterP);
+        pidController.setI(shooterI);
+        pidController.setD(shooterD);
+        pidController.setFF(shooterF);
+        pidController.setOutputRange(-1, 1);
     }
 
     public double getSpeed() {
