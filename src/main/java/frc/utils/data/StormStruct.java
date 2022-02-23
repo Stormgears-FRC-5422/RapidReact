@@ -7,15 +7,17 @@ import java.util.HashMap;
 import java.util.Vector;
 
 public class StormStruct {
-    // Describes a data structure that has been published and described in network tables
-    // Can unpack binary data once intialized
-    private String[] m_fieldNames;
-    private HashMap<String,Integer> m_fields;  // key is field name, data is position index in binary data
-    private HashMap<String,Integer> m_sizes;    // key is field name, data is byte size in binary data
+  // Describes a data structure that has been published and described in network tables
+  // Can unpack binary data once intialized
+  private final String[] m_fieldNames;
+  private final HashMap<String, Integer>
+      m_fields; // key is field name, data is position index in binary data
+  private final HashMap<String, Integer>
+      m_sizes; // key is field name, data is byte size in binary data
     private int m_struct_size;
-    private int m_typeid;
-    private NetworkTableInstance m_ntinst;
-    
+  private final int m_typeid;
+  private final NetworkTableInstance m_ntinst;
+
     /**  
      * Populate HashMap fields and size
     * 

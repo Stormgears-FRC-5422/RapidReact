@@ -24,19 +24,25 @@ public final class Constants {
     public static final boolean useClimber = StormProp.getBoolean("useClimber", false);
     public static final boolean useStatusLights = StormProp.getBoolean("useStatusLights", false);
 
-    public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "");
+    // MOTOR CONSTANTS
+  public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "");
 
-    public static final int MASTER_LEFT_ID = StormProp.getInt("masterLeftId", -1);
-    public static final int MASTER_RIGHT_ID = StormProp.getInt("masterRightId", -1);
-    public static final int SLAVE_LEFT_ID = StormProp.getInt("slaveLeftId", -1);
-    public static final int SLAVE_RIGHT_ID = StormProp.getInt("slaveRightId", -1);
+  public static final int MASTER_LEFT_ID = StormProp.getInt("masterLeftId", -1);
+  public static final int MASTER_RIGHT_ID = StormProp.getInt("masterRightId", -1);
+  public static final int SLAVE_LEFT_ID = StormProp.getInt("slaveLeftId", -1);
+  public static final int SLAVE_RIGHT_ID = StormProp.getInt("slaveRightId", -1);
 
     public static final boolean LEFT_SIDE_INVERTED = StormProp.getBoolean("leftSideInverted", false);
     public static final boolean RIGHT_SIDE_INVERTED = StormProp.getBoolean("rightSideInverted", false);
     public static final int SMART_CURRENT_LIMIT = StormProp.getInt("SparkMaxCurrentLimit", 1);
     public static final double NULL_SIZE = StormProp.getNumber("driveNullSize", 0.055);
 
-    public static final int currentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
+  public static final double alignP = StormProp.getNumber("alignP", 0.05);
+  public static final double alignI = StormProp.getNumber("alignI", 0.01);
+  public static final double alignD = StormProp.getNumber("alignD", 0.01);
+  public static final double alignTolerance = StormProp.getNumber("toleranceDegrees", 2d);
+
+  public static final int currentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
     public static final double temperatureRampThreshold = StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
     public static final double temperatureRampLimit = StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
 

@@ -18,14 +18,17 @@
     {
       "name": "WPIlibUnitTests",
       "workingDirectory": "${workspaceFolder}/build/jni/release",
-      "vmargs": [ "-Djava.library.path=${workspaceFolder}/build/jni/release" ],
+      "vmargs": [
+        "-Djava.library.path=${workspaceFolder}/build/jni/release"
+      ],
       "env": {
-        "LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release" ,
+        "LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release",
         "DYLD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release"
       }
-    },
+    }
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
   "wpilib.selectDefaultSimulateExtension": false,
-  "wpilib.stopSimulationOnEntry": true
+  "wpilib.stopSimulationOnEntry": true,
+  "wpilib.deployOffline": true
 }
