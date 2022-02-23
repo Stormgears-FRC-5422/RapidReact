@@ -33,8 +33,7 @@ public final class Constants {
   public static final int SLAVE_RIGHT_ID = StormProp.getInt("slaveRightId", -1);
 
   public static final boolean LEFT_SIDE_INVERTED = StormProp.getBoolean("leftSideInverted", false);
-  public static final boolean RIGHT_SIDE_INVERTED =
-      StormProp.getBoolean("rightSideInverted", false);
+  public static final boolean RIGHT_SIDE_INVERTED = StormProp.getBoolean("rightSideInverted", false);
 
   public static final int SMART_CURRENT_LIMIT = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double NULL_SIZE = StormProp.getNumber("driveNullSize", 0.055);
@@ -45,10 +44,8 @@ public final class Constants {
   public static final double alignTolerance = StormProp.getNumber("toleranceDegrees", 2d);
 
   public static final int currentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
-  public static final double temperatureRampThreshold =
-      StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
-  public static final double temperatureRampLimit =
-      StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
+  public static final double temperatureRampThreshold = StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
+  public static final double temperatureRampLimit = StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
 
   public static final int SHOOTER_ID = StormProp.getInt("shooterId", -1);
   public static final int INTAKE_ID = StormProp.getInt("intakeId", -1);
