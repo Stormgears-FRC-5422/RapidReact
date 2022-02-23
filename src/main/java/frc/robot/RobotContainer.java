@@ -18,6 +18,8 @@ import frc.robot.subsystems.drive.TalonDrive;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
 
+import static frc.robot.Constants.*;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -59,17 +61,16 @@ public class RobotContainer {
   }
 
   private void initCommands() {
-    if (!Constants.diagnostic) {
-      if (Constants.useIntake && Constants.useFeeder) load = new Load(intake, feeder);
-      if (Constants.useShooter && Constants.useFeeder && Constants.useIntake)
-        shoot = new Shoot(feeder, shooter, intake);
+    if (!diagnostic && useFeeder) {
+      if (useIntake) load = new Load(intake, feeder);
+      if (useShooter) shoot = new Shoot(feeder, shooter);
     }
   }
 
 
   private void initSubsystems() {
-    if (Constants.useDrive) {
-      switch (Constants.MOTOR_TYPE) {
+    if (useDrive) {
+      switch (MOTOR_TYPE) {
         case "Spark":
           drive = new SparkDrive();
           break;
@@ -80,35 +81,35 @@ public class RobotContainer {
       }
     }
 
-    if (Constants.diagnostic) diagnosticIntake = new DiagnosticIntake();
+    if (diagnostic) diagnosticIntake = new DiagnosticIntake();
     else {
-      if (Constants.useShooter) shooter = new Shooter();
-      if (Constants.useFeeder) feeder = new Feeder();
-      if (Constants.useIntake) intake = new Intake();
+      if (useShooter) shooter = new Shooter();
+      if (useFeeder) feeder = new Feeder();
+      if (useIntake) intake = new Intake();
     }
   }
 
   private void configureButtonBindings() {
-    if (Constants.useDrive) {
+    if (useDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
     }
-    if (Constants.diagnostic) {
-      if (Constants.useIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
-      if (Constants.useFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
-      if (Constants.useShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
+    if (diagnostic) {
+      if (useIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
+      if (useFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
+      if (useShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
     } else {
-      if (Constants.useIntake && Constants.useFeeder) buttonBoard.loadButton.whileHeld(load);
-      if (Constants.useShooter && Constants.useFeeder) buttonBoard.shootButton.whileHeld(shoot);
+      if (useIntake && useFeeder) buttonBoard.loadButton.whileHeld(load);
+      if (useShooter && useFeeder) buttonBoard.shootButton.whileHeld(shoot);
     }
   }
 
   private void configureDefaultCommands() {
-    if (Constants.useDrive) {
+    if (useDrive) {
       drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
     }
 
-    if (Constants.diagnostic) {
+    if (diagnostic) {
       diagnosticIntake.setDefaultCommand(new TestIntake(diagnosticIntake, driveJoystick));
     }
 
