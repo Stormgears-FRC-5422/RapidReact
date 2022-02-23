@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.drive;
 
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
@@ -31,10 +32,10 @@ public class SparkDrive extends StormDrive {
     masterRight.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
     slaveRight.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
 
-    masterLeft.setIdleMode(StormSpark.IdleMode.kCoast);
-    masterRight.setIdleMode(StormSpark.IdleMode.kCoast);
-    slaveLeft.setIdleMode(StormSpark.IdleMode.kCoast);
-    slaveRight.setIdleMode(StormSpark.IdleMode.kCoast);
+    masterLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    masterRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    slaveLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    slaveRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
     masterLeft.setInverted(LEFT_SIDE_INVERTED);
     slaveLeft.setInverted(LEFT_SIDE_INVERTED);
@@ -55,12 +56,4 @@ public class SparkDrive extends StormDrive {
     protected MotorController[] getMotors()     {
         return new MotorController[] {masterLeft, masterRight, slaveLeft, slaveRight};
     }
-
-    @Override
-    public void periodic() {
-    }
-
-    public void simulationPeriodic() {
-    }
-
 }

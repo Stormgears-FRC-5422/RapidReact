@@ -1,20 +1,17 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.TestDrive;
 import frc.robot.commands.intake.Load;
 import frc.robot.commands.intake.Shoot;
 import frc.robot.commands.intake.TestIntake;
+import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
 import frc.robot.subsystems.ballHandler.Intake;
 import frc.robot.subsystems.ballHandler.Shooter;
 import frc.robot.subsystems.drive.SparkDrive;
 import frc.robot.subsystems.drive.TalonDrive;
-import frc.robot.commands.navX.NavXAlign;
-import frc.robot.subsystems.NavX;
-import frc.robot.subsystems.SparkDrive;
-import frc.robot.subsystems.TalonDrive;
+import frc.robot.subsystems.sensors.NavX;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
 
@@ -63,7 +60,7 @@ public class RobotContainer {
       if (useIntake) load = new Load(intake, feeder);
       if (useShooter) shoot = new Shoot(feeder, shooter);
     }
-    if (useNavX) navX = new NavXAlign(drive, navX);
+    if (useNavX) navXAlign = new NavXAlign(drive, navX);
   }
 
   private void initSubsystems() {
@@ -101,9 +98,7 @@ public class RobotContainer {
       if (useIntake && useFeeder) buttonBoard.loadButton.whileHeld(load);
       if (useShooter && useFeeder) buttonBoard.shootButton.whileHeld(shoot);
     }
-    if (useNavX) {
-      buttonBoard.navXAlignButton.whileHeld(navXAlign);
-    }
+    if (useNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
   }
 
   private void configureDefaultCommands() {

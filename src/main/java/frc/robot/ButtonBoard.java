@@ -7,7 +7,6 @@ import frc.utils.joysticks.StormXboxController;
 public class ButtonBoard {
     private static ButtonBoard instance;
 
-
     public static ButtonBoard getInstance(GenericHID driveJoystick, GenericHID secondaryJoystick) {
         if (instance == null) instance = new ButtonBoard(driveJoystick, secondaryJoystick);
         return instance;
@@ -18,6 +17,8 @@ public class ButtonBoard {
      */
     public final JoystickButton precisionButton;
     public final JoystickButton reverseButton;
+
+  public final JoystickButton navXAlignButton;
 
     public final JoystickButton selectIntakeButton;
     public final JoystickButton selectFeederButton;
@@ -33,6 +34,8 @@ public class ButtonBoard {
     private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
         precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
         reverseButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
+
+    navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
 
         selectIntakeButton = new JoystickButton(driveJoystick, StormXboxController.BButton);
         selectFeederButton = new JoystickButton(driveJoystick, StormXboxController.XButton);
