@@ -3,7 +3,7 @@
 
 ##Subsystems
 - [Drive](/src/main/java/frc/robot/subsystems/drive)
-- [Ball Handler](/src/main/java/frc/robot/subsystems/ballhandler)
+- [Ball Handler](/src/main/java/frc/robot/subsystems/ballHandler)
     - [Intake](/src/main/java/frc/robot/subsystems/ballHandler/Intake.java)
     - [Feeder](/src/main/java/frc/robot/subsystems/ballHandler/Feeder.java)
     - [Shooter](/src/main/java/frc/robot/subsystems/ballHandler/Shooter.java))
@@ -11,9 +11,9 @@
 - Climber **_#TODO_**
 
 ##Commands
-- Drive
+- [Drive](/src/main/java/frc/robot/commands/drive)
     - [Arcade Drive](/src/main/java/frc/robot/commands/drive/TestDrive.java)
-- Ball Handler
+- [Ball Handler](/src/main/java/frc/robot/commands/ballHandler)
     - [Load](/src/main/java/frc/robot/commands/ballHandler/Load.java)
     - [Shoot](/src/main/java/frc/robot/commands/ballHandler/Shoot.java)
 - Climber **_#TODO_**
