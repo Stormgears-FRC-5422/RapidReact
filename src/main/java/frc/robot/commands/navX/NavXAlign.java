@@ -12,7 +12,7 @@ public class NavXAlign extends PIDCommand {
 
   public NavXAlign(StormDrive drive, NavX navX) {
     super(
-        new PIDController(alignP, alignI, alignD),
+        new PIDController(kAlignP, kAlignI, kAlignD),
         navX::getAngle,
         () -> SmartDashboard.getNumber("targetAngle", Math.toRadians(180)),
         drive::rotate,
@@ -23,7 +23,7 @@ public class NavXAlign extends PIDCommand {
   public void initialize() {
     super.initialize();
     getController().enableContinuousInput(-Math.PI, Math.PI);
-    getController().setTolerance(Math.toRadians(alignTolerance));
+    getController().setTolerance(Math.toRadians(kAlignTolerance));
     SmartDashboard.putData("align PID", this.m_controller);
   }
 }

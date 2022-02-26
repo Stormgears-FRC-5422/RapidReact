@@ -5,14 +5,13 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.utils.motorcontrol.StormSpark;
 
 import static frc.robot.Constants.*;
 
-public class Shooter extends SubsystemBase {
 
-    private final StormSpark motor = new StormSpark(Constants.SHOOTER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+public class Shooter extends SubsystemBase {
+    private final StormSpark motor = new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final SparkMaxPIDController pidController = motor.getPIDController();
 
     public Shooter() {
@@ -25,10 +24,10 @@ public class Shooter extends SubsystemBase {
     }
 
     private void setupPID() {
-        pidController.setP(shooterP);
-        pidController.setI(shooterI);
-        pidController.setD(shooterD);
-        pidController.setFF(shooterF);
+        pidController.setP(kShooterP);
+        pidController.setI(kShooterI);
+        pidController.setD(kShooterD);
+        pidController.setFF(kShooterF);
         pidController.setOutputRange(-1, 1);
     }
 
@@ -42,7 +41,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean isReady() {
-        return getSpeed() >= 0.95 * Constants.shooterLowRPM;
+        return getSpeed() >= 0.95 * kShooterLowRPM;
     }
 
     public void off() {

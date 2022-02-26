@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 
 public class StormSpark extends CANSparkMax {
-  private static final int currentLimit = Constants.currentLimit;
-  private static final double temperatureRampThreshold = Constants.temperatureRampThreshold;
-  private static final double temperatureRampLimit = Constants.temperatureRampLimit;
+  private static final int currentLimit = Constants.kCurrentLimit;
+  private static final double temperatureRampThreshold = Constants.kTemperatureRampThreshold;
+  private static final double temperatureRampLimit = Constants.kTemperatureRampLimit;
   private final double delta;
   private double temp;
 

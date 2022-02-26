@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -15,6 +15,8 @@ import frc.utils.filters.Filter;
 import frc.utils.motorcontrol.StormSpark;
 
 import java.util.Map;
+
+import static java.lang.Math.*;
 
 import static edu.wpi.first.wpilibj.DriverStation.reportWarning;
 
@@ -68,18 +70,18 @@ public class SafeDrive extends SubsystemBase {
     StormSpark.check(leftSlave.follow(leftMaster), "set follower mode");
     StormSpark.check(rightSlave.follow(rightMaster), "set follower mode");
 
-    rightMasterCurrent = new ExponentialAverage(() -> rightMaster.getOutputCurrent());
-    rightSlaveCurrent = new ExponentialAverage(() -> rightSlave.getOutputCurrent());
-    leftMasterCurrent = new ExponentialAverage(() -> leftMaster.getOutputCurrent());
-    leftSlaveCurrent = new ExponentialAverage(() -> leftSlave.getOutputCurrent());
+    rightMasterCurrent = new ExponentialAverage(rightMaster::getOutputCurrent);
+    rightSlaveCurrent = new ExponentialAverage(rightSlave::getOutputCurrent);
+    leftMasterCurrent = new ExponentialAverage(leftMaster::getOutputCurrent);
+    leftSlaveCurrent = new ExponentialAverage(leftSlave::getOutputCurrent);
 
-    rightMasterTemp = new ExponentialAverage(() -> rightMaster.getMotorTemperature());
-    rightSlaveTemp = new ExponentialAverage(() -> rightSlave.getMotorTemperature());
-    leftMasterTemp = new ExponentialAverage(() -> leftMaster.getMotorTemperature());
-    leftSlaveTemp = new ExponentialAverage(() -> leftSlave.getMotorTemperature());
+    rightMasterTemp = new ExponentialAverage(rightMaster::getMotorTemperature);
+    rightSlaveTemp = new ExponentialAverage(rightSlave::getMotorTemperature);
+    leftMasterTemp = new ExponentialAverage(leftMaster::getMotorTemperature);
+    leftSlaveTemp = new ExponentialAverage(leftSlave::getMotorTemperature);
 
     delta =
-        Math.max(
+        max(
             temperatureRampLimit - temperatureRampThreshold,
             1.0); // Safety margin - don't want divide by 0!
 
@@ -126,13 +128,13 @@ public class SafeDrive extends SubsystemBase {
     SmartDashboard.putNumber("Drive LeftS Temp", leftSlaveTemp.update());
 
     temp =
-        Math.max(
-            Math.max(rightMaster.getMotorTemperature(), leftMaster.getMotorTemperature()),
-            Math.max(rightSlave.getMotorTemperature(), leftSlave.getMotorTemperature()));
+        max(
+            max(rightMaster.getMotorTemperature(), leftMaster.getMotorTemperature()),
+            max(rightSlave.getMotorTemperature(), leftSlave.getMotorTemperature()));
 
     double multiplier = 1;
     if (temp > temperatureRampThreshold) {
-      multiplier = Math.max((temperatureRampLimit - temp) / delta, 0.0);
+      multiplier = max((temperatureRampLimit - temp) / delta, 0.0);
     }
 
     if (tempWarningCount++ % 100 == 0) {
@@ -162,7 +164,7 @@ public class SafeDrive extends SubsystemBase {
     SmartDashboard.putNumber("Drive Z", z);
 
     // TODO: These are sticky and never getting reset to 0. Test effect of resetting in else
-    if (Math.abs(x) > 0.15 && Math.abs(z) > 0.1) {
+    if (abs(x) > 0.15 && abs(z) > 0.1) {
       StormSpark.check(leftMaster.setOpenLoopRampRate(0.1), "set ramp rate");
       StormSpark.check(rightMaster.setOpenLoopRampRate(0.1), "set ramp rate");
     }
@@ -172,7 +174,7 @@ public class SafeDrive extends SubsystemBase {
 
     x = reverse ? -x : x;
 
-    if (Math.abs(x) < 0.1) {
+    if (abs(x) < 0.1) {
       differentialDrive.arcadeDrive(x, z);
     } else {
       differentialDrive.curvatureDrive(x, z, false);
@@ -190,14 +192,14 @@ public class SafeDrive extends SubsystemBase {
   public void diagnosticDrive(double leftM, double leftS, double rightM, double rightS) {
     // We usually only want to run one motor at a time in this mode, or run them at the same rate.
     // We don't want one motor to drag on the other on either side of the chassis
-    if (Math.abs(leftM) > Math.abs(leftS)) {
+    if (abs(leftM) > abs(leftS)) {
       leftS = idleMode == CANSparkMax.IdleMode.kCoast ? 0 : leftM;
-    } else if (Math.abs(leftM) < Math.abs(leftS)) {
+    } else if (abs(leftM) < abs(leftS)) {
       leftM = idleMode == CANSparkMax.IdleMode.kCoast ? 0 : leftS;
     }
 
-    if (Math.abs(rightM) > Math.abs(rightS)) rightS = 0;
-    else if (Math.abs(rightM) < Math.abs(rightS)) rightM = 0;
+    if (abs(rightM) > abs(rightS)) rightS = 0;
+    else if (abs(rightM) < abs(rightS)) rightM = 0;
 
     leftMaster.set(leftM);
     leftSlave.set(leftS);

@@ -56,16 +56,16 @@ public class RobotContainer {
   }
 
   private void initCommands() {
-    if (!diagnostic && useFeeder) {
-      if (useIntake) load = new Load(intake, feeder);
-      if (useShooter) shoot = new Shoot(feeder, shooter);
+    if (!kDiagnostic && kUseFeeder) {
+      if (kUseIntake) load = new Load(intake, feeder);
+      if (kUseShooter) shoot = new Shoot(feeder, shooter);
     }
-    if (useNavX) navXAlign = new NavXAlign(drive, navX);
+    if (kUseNavX) navXAlign = new NavXAlign(drive, navX);
   }
 
   private void initSubsystems() {
-    if (useDrive) {
-      switch (MOTOR_TYPE) {
+    if (kUseDrive) {
+      switch (kMotorType) {
         case "Spark":
           drive = new SparkDrive();
           break;
@@ -75,35 +75,35 @@ public class RobotContainer {
         default:
       }
     }
-    if (useNavX) navX = new NavX();
+    if (kUseNavX) navX = new NavX();
 
-    if (diagnostic) diagnosticIntake = new DiagnosticIntake();
+    if (kDiagnostic) diagnosticIntake = new DiagnosticIntake();
     else {
-      if (useShooter) shooter = new Shooter();
-      if (useFeeder) feeder = new Feeder();
-      if (useIntake) intake = new Intake();
+      if (kUseShooter) shooter = new Shooter();
+      if (kUseFeeder) feeder = new Feeder();
+      if (kUseIntake) intake = new Intake();
     }
   }
 
   private void configureButtonBindings() {
-    if (useDrive) {
+    if (kUseDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
     }
-    if (diagnostic) {
-      if (useIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
-      if (useFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
-      if (useShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
+    if (kDiagnostic) {
+      if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
+      if (kUseFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
+      if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
     } else {
-      if (useIntake && useFeeder) buttonBoard.loadButton.whileHeld(load);
-      if (useShooter && useFeeder) buttonBoard.shootButton.whileHeld(shoot);
+      if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
+      if (kUseShooter && kUseFeeder) buttonBoard.shootButton.whileHeld(shoot);
     }
-    if (useNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
+    if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
   }
 
   private void configureDefaultCommands() {
-    if (useDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
-    if (diagnostic) diagnosticIntake.setDefaultCommand(new TestIntake(diagnosticIntake, driveJoystick));
+    if (kUseDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
+    if (kDiagnostic) diagnosticIntake.setDefaultCommand(new TestIntake(diagnosticIntake, driveJoystick));
   }
 
   public StormDrive getDrive() {

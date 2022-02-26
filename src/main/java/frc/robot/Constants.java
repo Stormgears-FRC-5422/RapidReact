@@ -15,50 +15,50 @@ import frc.utils.configfile.StormProp;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final boolean useDrive = StormProp.getBoolean("useDrive", false);
-  public static final boolean useNavX = StormProp.getBoolean("useNavX", false);
-  public static final boolean diagnostic = StormProp.getBoolean("useDiagnostic", false);
-  public static final boolean useIntake = StormProp.getBoolean("useIntake", false);
-  public static final boolean useFeeder = StormProp.getBoolean("useFeeder", false);
-  public static final boolean useShooter = StormProp.getBoolean("useShooter", false);
-  public static final boolean useClimber = StormProp.getBoolean("useClimber", false);
-  public static final boolean useStatusLights = StormProp.getBoolean("useStatusLights", false);
+  public static final boolean kUseDrive = StormProp.getBoolean("useDrive", false);
+  public static final boolean kUseNavX = StormProp.getBoolean("useNavX", false);
+  public static final boolean kDiagnostic = StormProp.getBoolean("useDiagnostic", false);
+  public static final boolean kUseIntake = StormProp.getBoolean("useIntake", false);
+  public static final boolean kUseFeeder = StormProp.getBoolean("useFeeder", false);
+  public static final boolean kUseShooter = StormProp.getBoolean("useShooter", false);
+  public static final boolean kUseClimber = StormProp.getBoolean("useClimber", false);
+  public static final boolean kUseStatusLights = StormProp.getBoolean("useStatusLights", false);
 
   // MOTOR CONSTANTS
-  public static final String MOTOR_TYPE = StormProp.getString("stormMotorType", "");
+  public static final String kMotorType = StormProp.getString("stormMotorType", "");
 
-  public static final int MASTER_LEFT_ID = StormProp.getInt("masterLeftId", -1);
-  public static final int MASTER_RIGHT_ID = StormProp.getInt("masterRightId", -1);
-  public static final int SLAVE_LEFT_ID = StormProp.getInt("slaveLeftId", -1);
-  public static final int SLAVE_RIGHT_ID = StormProp.getInt("slaveRightId", -1);
+  public static final int kMasterLeftId = StormProp.getInt("masterLeftId", -1);
+  public static final int kMasterRightId = StormProp.getInt("masterRightId", -1);
+  public static final int kSlaveLeftId = StormProp.getInt("slaveLeftId", -1);
+  public static final int kSlaveRightId = StormProp.getInt("slaveRightId", -1);
 
-  public static final boolean LEFT_SIDE_INVERTED = StormProp.getBoolean("leftSideInverted", false);
-  public static final boolean RIGHT_SIDE_INVERTED = StormProp.getBoolean("rightSideInverted", false);
+  public static final boolean kLeftSideInverted = StormProp.getBoolean("leftSideInverted", false);
+  public static final boolean kRightSideInverted = StormProp.getBoolean("rightSideInverted", false);
 
-  public static final int SMART_CURRENT_LIMIT = StormProp.getInt("SparkMaxCurrentLimit", 1);
-  public static final double NULL_SIZE = StormProp.getNumber("driveNullSize", 0.055);
+  public static final int kSmartCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
+  public static final double kNullSize = StormProp.getNumber("driveNullSize", 0.055);
 
-  public static final double alignP = StormProp.getNumber("alignP", 0.05);
-  public static final double alignI = StormProp.getNumber("alignI", 0.01);
-  public static final double alignD = StormProp.getNumber("alignD", 0.01);
-  public static final double alignTolerance = StormProp.getNumber("toleranceDegrees", 2d);
+  public static final double kAlignP = StormProp.getNumber("alignP", 0.05);
+  public static final double kAlignI = StormProp.getNumber("alignI", 0.01);
+  public static final double kAlignD = StormProp.getNumber("alignD", 0.01);
+  public static final double kAlignTolerance = StormProp.getNumber("toleranceDegrees", 2d);
 
-  public static final int currentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
-  public static final double temperatureRampThreshold = StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
-  public static final double temperatureRampLimit = StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
+  public static final int kCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
+  public static final double kTemperatureRampThreshold = StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
+  public static final double kTemperatureRampLimit = StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
 
-  public static final int SHOOTER_ID = StormProp.getInt("shooterId", -1);
-  public static final int INTAKE_ID = StormProp.getInt("intakeId", -1);
-  public static final int FEEDER_ID = StormProp.getInt("feederId", -1);
+  public static final int kShooterId = StormProp.getInt("shooterId", -1);
+  public static final int kIntakeId = StormProp.getInt("intakeId", -1);
+  public static final int kFeederId = StormProp.getInt("feederId", -1);
 
-  public static final double feederSpeed = StormProp.getNumber("feederSpeed", 0.0);
-  public static final double intakeSpeed = StormProp.getNumber("intakeSpeed", 0.0);
+  public static final double kFeederSpeed = StormProp.getNumber("feederSpeed", 0.0);
+  public static final double kIntakeSpeed = StormProp.getNumber("intakeSpeed", 0.0);
 
-  public static final double shooterP = StormProp.getNumber("shooterP", 0.0);
-  public static final double shooterI = StormProp.getNumber("shooterI", 0.0);
-  public static final double shooterD = StormProp.getNumber("shooterD", 0.0);
-  public static final double shooterF = StormProp.getNumber("shooterF", 0.0);
-  public static final double shooterLowRPM = StormProp.getNumber("shooterLowRPM", 0.0);
+  public static final double kShooterP = StormProp.getNumber("shooterP", 0.0);
+  public static final double kShooterI = StormProp.getNumber("shooterI", 0.0);
+  public static final double kShooterD = StormProp.getNumber("shooterD", 0.0);
+  public static final double kShooterF = StormProp.getNumber("shooterF", 0.0);
+  public static final double kShooterLowRPM = StormProp.getNumber("shooterLowRPM", 0.0);
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");

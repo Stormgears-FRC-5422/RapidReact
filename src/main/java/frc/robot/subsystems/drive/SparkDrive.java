@@ -16,37 +16,37 @@ import static frc.robot.Constants.*;
 public class SparkDrive extends StormDrive {
     private final DifferentialDrive differentialDrive;
 
-    private final StormSpark masterLeft = new StormSpark(MASTER_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final StormSpark masterRight = new StormSpark(MASTER_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final StormSpark slaveLeft = new StormSpark(SLAVE_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final StormSpark slaveRight = new StormSpark(SLAVE_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final StormSpark masterLeft = new StormSpark(kMasterLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final StormSpark masterRight = new StormSpark(kMasterRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final StormSpark slaveLeft = new StormSpark(kSlaveLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final StormSpark slaveRight = new StormSpark(kSlaveRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     public SparkDrive() {
-    masterLeft.restoreFactoryDefaults();
-    slaveLeft.restoreFactoryDefaults();
-    masterRight.restoreFactoryDefaults();
-    slaveRight.restoreFactoryDefaults();
+        masterLeft.restoreFactoryDefaults();
+        slaveLeft.restoreFactoryDefaults();
+        masterRight.restoreFactoryDefaults();
+        slaveRight.restoreFactoryDefaults();
 
-    masterLeft.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
-    slaveLeft.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
-    masterRight.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
-    slaveRight.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
+        masterLeft.setSmartCurrentLimit(kSmartCurrentLimit);
+        slaveLeft.setSmartCurrentLimit(kSmartCurrentLimit);
+        masterRight.setSmartCurrentLimit(kSmartCurrentLimit);
+        slaveRight.setSmartCurrentLimit(kSmartCurrentLimit);
 
-    masterLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    masterRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    slaveLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    slaveRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        masterLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        masterRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        slaveLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        slaveRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-    masterLeft.setInverted(LEFT_SIDE_INVERTED);
-    slaveLeft.setInverted(LEFT_SIDE_INVERTED);
-    masterRight.setInverted(RIGHT_SIDE_INVERTED);
-    slaveRight.setInverted(RIGHT_SIDE_INVERTED);
+        masterLeft.setInverted(kLeftSideInverted);
+        slaveLeft.setInverted(kLeftSideInverted);
+        masterRight.setInverted(kRightSideInverted);
+        slaveRight.setInverted(kRightSideInverted);
 
-    slaveLeft.follow(masterLeft);
-    slaveRight.follow(masterRight);
+        slaveLeft.follow(masterLeft);
+        slaveRight.follow(masterRight);
 
-    differentialDrive = new DifferentialDrive(masterLeft, masterRight);
-        differentialDrive.setSafetyEnabled(true);
+        differentialDrive = new DifferentialDrive(masterLeft, masterRight);
+            differentialDrive.setSafetyEnabled(true);
     }
 
     public DifferentialDrive getDifferentialDrive() {

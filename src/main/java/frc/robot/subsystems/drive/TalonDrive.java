@@ -11,34 +11,34 @@ import static frc.robot.Constants.*;
 public class TalonDrive extends StormDrive {
     private final DifferentialDrive differentialDrive;
 
-  private final WPI_TalonSRX masterLeft = new WPI_TalonSRX(MASTER_LEFT_ID);
-  private final WPI_TalonSRX masterRight = new WPI_TalonSRX(MASTER_RIGHT_ID);
-  private final WPI_TalonSRX slaveLeft = new WPI_TalonSRX(SLAVE_LEFT_ID);
-  private final WPI_TalonSRX slaveRight = new WPI_TalonSRX(SLAVE_RIGHT_ID);
+    private final WPI_TalonSRX masterLeft = new WPI_TalonSRX(kMasterLeftId);
+    private final WPI_TalonSRX masterRight = new WPI_TalonSRX(kMasterRightId);
+    private final WPI_TalonSRX slaveLeft = new WPI_TalonSRX(kSlaveLeftId);
+    private final WPI_TalonSRX slaveRight = new WPI_TalonSRX(kSlaveRightId);
 
     public TalonDrive() {
-    slaveLeft.follow(masterLeft);
-    slaveRight.follow(masterRight);
+      slaveLeft.follow(masterLeft);
+      slaveRight.follow(masterRight);
 
-    slaveLeft.setNeutralMode(NeutralMode.Coast);
-    masterRight.setNeutralMode(NeutralMode.Coast);
-    masterLeft.setNeutralMode(NeutralMode.Coast);
-    slaveRight.setNeutralMode(NeutralMode.Coast);
+      slaveLeft.setNeutralMode(NeutralMode.Coast);
+      masterRight.setNeutralMode(NeutralMode.Coast);
+      masterLeft.setNeutralMode(NeutralMode.Coast);
+      slaveRight.setNeutralMode(NeutralMode.Coast);
 
-    slaveLeft.setInverted(LEFT_SIDE_INVERTED);
-    masterLeft.setInverted(LEFT_SIDE_INVERTED);
-    masterRight.setInverted(RIGHT_SIDE_INVERTED);
-    slaveRight.setInverted(RIGHT_SIDE_INVERTED);
+      slaveLeft.setInverted(kLeftSideInverted);
+      masterLeft.setInverted(kLeftSideInverted);
+      masterRight.setInverted(kRightSideInverted);
+      slaveRight.setInverted(kRightSideInverted);
 
-    differentialDrive = new DifferentialDrive(masterLeft, masterRight);
-        differentialDrive.setSafetyEnabled(true);
+      differentialDrive = new DifferentialDrive(masterLeft, masterRight);
+          differentialDrive.setSafetyEnabled(true);
     }
 
     public DifferentialDrive getDifferentialDrive() {
-        return differentialDrive;
-    }
+          return differentialDrive;
+      }
 
-  protected MotorController[] getMotors() {
-    return new MotorController[] {masterLeft, masterRight, slaveLeft, slaveRight};
-  }
+    protected MotorController[] getMotors() {
+      return new MotorController[] {masterLeft, masterRight, slaveLeft, slaveRight};
+    }
 }

@@ -47,13 +47,13 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     @Override
     public double getXSpeed(){
         result = getRawAxis(rightTrigger) - getRawAxis(leftTrigger);
-        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
+        return Math.abs(result) < Constants.kNullSize ? 0 : result;
     }
 
     @Override
     public double getZRotation(){
         result = getRawAxis(zRotation);
-        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
+        return Math.abs(result) < Constants.kNullSize ? 0 : result;
     }
 
     public boolean getAisPressed() {
@@ -84,13 +84,13 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     @Override
     public double getLeftSpeed() {
         result = getRawAxis(leftYAxis);
-        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
+        return Math.abs(result) < Constants.kNullSize ? 0 : result;
     }
 
     @Override
     public double getRightSpeed() {
         result = getRawAxis(rightYAxis);
-        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
+        return Math.abs(result) < Constants.kNullSize ? 0 : result;
     }
 
     public double getLeftJoystickX() {

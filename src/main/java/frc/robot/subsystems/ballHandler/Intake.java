@@ -3,12 +3,14 @@ package frc.robot.subsystems.ballHandler;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.utils.motorcontrol.StormSpark;
+
+import static frc.robot.Constants.*;
+import static java.lang.Math.*;
 
 public class Intake extends SubsystemBase {
 
-    private final StormSpark motor = new StormSpark(Constants.INTAKE_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final StormSpark motor = new StormSpark(kIntakeId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private double speed = 0;
 
     public Intake() {
@@ -21,7 +23,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        this.speed = Math.copySign(Math.min(Math.abs(speed), 1), speed);
+        this.speed = copySign(min(abs(speed), 1), speed);
     }
 
     @Override
@@ -31,7 +33,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void on() {
-        setSpeed(Constants.intakeSpeed);
+        setSpeed(kIntakeSpeed);
     }
 
     public void off() {

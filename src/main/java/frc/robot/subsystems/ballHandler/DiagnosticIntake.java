@@ -3,37 +3,38 @@ package frc.robot.subsystems.ballHandler;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.utils.motorcontrol.StormSpark;
 
+import static frc.robot.Constants.*;
+
 public class DiagnosticIntake extends SubsystemBase {
-    public DiagnosticIntake() {
-        System.out.println("Creating Intake Subsystem");
-
-        if (Constants.useIntake)
-            intakeMotor = new StormSpark(Constants.INTAKE_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-        intakeMotor.setInverted(true);
-        if (Constants.useFeeder) {
-            feederMotor = new StormSpark(Constants.FEEDER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-            feederMotor.setInverted(false);
-        }
-
-        if (Constants.useShooter) {
-            shooterMotor = new StormSpark(Constants.SHOOTER_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-            shooterMotor.setInverted(false);
-        }
-
-
-        setModeIntake();
-    }
-
     StormSpark intakeMotor;
     StormSpark feederMotor;
     StormSpark shooterMotor;
-
     StormSpark activeMotor;
 
     private TestMode mode = TestMode.intake;
+
+    public DiagnosticIntake() {
+        System.out.println("Creating Intake Subsystem");
+
+        if (kUseIntake) {
+            intakeMotor = new StormSpark(kIntakeId, CANSparkMaxLowLevel.MotorType.kBrushless);
+            intakeMotor.setInverted(true);
+        }
+
+        if (kUseFeeder) {
+            feederMotor = new StormSpark(kFeederId, CANSparkMaxLowLevel.MotorType.kBrushless);
+            feederMotor.setInverted(false);
+        }
+
+        if (kUseShooter) {
+            shooterMotor = new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless);
+            shooterMotor.setInverted(false);
+        }
+
+        setModeIntake();
+    }
 
     public void set(double speed) {
         if (mode == TestMode.shooter) {

@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ballHandler.Feeder;
 import frc.robot.subsystems.ballHandler.Shooter;
 
-import static frc.robot.Constants.shooterLowRPM;
+import static frc.robot.Constants.kShooterLowRPM;
 
 public class Shoot extends CommandBase {
     private final Feeder feeder;
@@ -25,7 +25,7 @@ public class Shoot extends CommandBase {
     public void execute() {
         feeder.setLimit(!shooter.isReady());
         feeder.on();
-        shooter.setSpeed(shooterLowRPM);
+        shooter.setSpeed(kShooterLowRPM);
     }
 
     @Override
