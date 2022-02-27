@@ -181,14 +181,6 @@ public class SafeDrive extends SubsystemBase {
     }
   }
 
-  public double get_slew_rate() {
-    return (m_slew_rate_value);
-  }
-
-  public double get_turn_slew_rate() {
-    return (m_turn_slew_rate_value);
-  }
-
   public void diagnosticDrive(double leftM, double leftS, double rightM, double rightS) {
     // We usually only want to run one motor at a time in this mode, or run them at the same rate.
     // We don't want one motor to drag on the other on either side of the chassis

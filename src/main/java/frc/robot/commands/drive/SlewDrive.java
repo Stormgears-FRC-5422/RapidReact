@@ -1,43 +1,68 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drive.SparkDrive;
+import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.DriveJoystick;
-
+import frc.utils.joysticks.StormXboxController;
 
 public class SlewDrive extends CommandBase {
-    private final SparkDrive drive;
-    private DriveJoystick joystick;
+    private final StormDrive drive;
+    private final StormXboxController joystick;
+    private final DifferentialDrive differentialDrive;
 
-    private SlewRateLimiter limiter;
-    private SlewRateLimiter turn_limiter;
+    private double prevSlewRate;
+    private double prevTurnSlewRate;
 
-    private double m_prev_slew_rate;
-    private double m_prev_turn_slew_rate;
+    protected SlewRateLimiter limiter;
+    protected SlewRateLimiter turnLimiter;
 
-    private double targetSpeed;
-
-    public SlewDrive(SparkDrive drive, DriveJoystick joystick) {
+    public SlewDrive(StormDrive drive, StormXboxController joystick) {
         System.out.println("Just created the SlewDrive command");
-
         addRequirements(drive);
 
         this.drive = drive;
         this.joystick = joystick;
+        differentialDrive = drive.getDifferentialDrive();
 
-//        positiveLimiter = new SlewRateLimiter(1.5);
-        limiter = new SlewRateLimiter(m_prev_slew_rate);
-//        negativeLimiter = new SlewRateLimiter(2.5);
-        turn_limiter = new SlewRateLimiter(m_prev_turn_slew_rate);
+        prevSlewRate = drive.getSlewRate();
+        prevTurnSlewRate = drive.getTurnSlewRate();
+        System.out.println("Initial slewRate: " + prevSlewRate + "  initial turnSlewRate: " + prevTurnSlewRate);
 
+        limiter = new SlewRateLimiter(prevSlewRate);
+        turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
     }
 
     @Override
     public void execute() {
-        targetSpeed = joystick.getXSpeed();
+        double targetSpeed = joystick.getLeftJoystickY();
+        double targetZRotation = -joystick.getRightJoystickX();
+
         SmartDashboard.putNumber("joystick speed", targetSpeed);
-        drive.getDifferentialDrive().arcadeDrive(targetSpeed , joystick.getZRotation());
+
+        if (drive.getSlewRate() != prevSlewRate) {
+            System.out.println("updated slewRate: " + prevSlewRate);
+            prevSlewRate = drive.getSlewRate();
+            limiter = new SlewRateLimiter(prevSlewRate);
+        }
+
+        if (drive.getTurnSlewRate() != prevTurnSlewRate) {
+            System.out.println("updated turnSlewRate: " + prevSlewRate);
+            prevTurnSlewRate = drive.getTurnSlewRate();
+            turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
+        }
+
+        differentialDrive.arcadeDrive(limiter.calculate(targetSpeed), turnLimiter.calculate(targetZRotation));
+    }
+
+    @Override
+    public void end(boolean interrupted) {}
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

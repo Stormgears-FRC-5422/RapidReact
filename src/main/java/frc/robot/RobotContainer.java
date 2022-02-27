@@ -1,10 +1,10 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.commands.ballHandler.Load;
-import frc.robot.commands.ballHandler.Shoot;
-import frc.robot.commands.ballHandler.TestIntake;
+import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.drive.TestDrive;
+import frc.robot.commands.intake.Load;
+import frc.robot.commands.intake.Shoot;
+import frc.robot.commands.intake.TestIntake;
 import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
@@ -97,16 +97,16 @@ public class RobotContainer {
       if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
     } else {
       if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
-      if (kUseShooter && kUseFeeder){
-        buttonBoard.shootButton.whileHeld(shoot);
-        buttonBoard.toggleShootingHeightButton.whenPressed(new InstantCommand(shoot::toggleMode));
-      }
+      if (kUseShooter && kUseFeeder) buttonBoard.shootButton.whileHeld(shoot);
     }
     if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
   }
 
   private void configureDefaultCommands() {
-    if (kUseDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
+    //if (kUseDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
+
+    if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
+
     if (kDiagnostic) diagnosticIntake.setDefaultCommand(new TestIntake(diagnosticIntake, driveJoystick));
   }
 

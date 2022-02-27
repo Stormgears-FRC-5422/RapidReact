@@ -33,8 +33,9 @@ public class TestDrive extends CommandBase {
     double left, right;
     left = joystick.getLeftJoystickY();
     right = joystick.getRightJoystickX();
-    differentialDrive.arcadeDrive(left * 0.6, -right * 0.6, true);
 
+    //System.out.println("Left: " + left + "  Right: " + right);
+    differentialDrive.arcadeDrive(left * 0.6, -right * 0.6, true);
   }
 
   // Called once the command ends or is interrupted.
