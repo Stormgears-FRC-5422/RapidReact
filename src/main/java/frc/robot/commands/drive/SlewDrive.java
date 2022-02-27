@@ -42,6 +42,7 @@ public class SlewDrive extends CommandBase {
         double targetZRotation = -joystick.getRightJoystickX();
 
         SmartDashboard.putNumber("joystick speed", targetSpeed);
+        SmartDashboard.putNumber("joystick rotation", targetZRotation);
 
         if (drive.getSlewRate() != prevSlewRate) {
             System.out.println("updated slewRate: " + prevSlewRate);
@@ -55,7 +56,7 @@ public class SlewDrive extends CommandBase {
             turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
         }
 
-        differentialDrive.arcadeDrive(limiter.calculate(targetSpeed), turnLimiter.calculate(targetZRotation));
+        differentialDrive.arcadeDrive(limiter.calculate(targetSpeed), turnLimiter.calculate(targetZRotation), true);
     }
 
     @Override

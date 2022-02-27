@@ -1,10 +1,11 @@
 package frc.robot;
 
+
 import frc.robot.commands.drive.SlewDrive;
+import frc.robot.commands.ballHandler.Load;
+import frc.robot.commands.ballHandler.Shoot;
+import frc.robot.commands.ballHandler.TestIntake;
 import frc.robot.commands.drive.TestDrive;
-import frc.robot.commands.intake.Load;
-import frc.robot.commands.intake.Shoot;
-import frc.robot.commands.intake.TestIntake;
 import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
