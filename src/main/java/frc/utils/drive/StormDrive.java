@@ -44,5 +44,23 @@ public abstract class StormDrive extends SubsystemBase {
     System.out.println("precision = " + precision);
   }
 
+  // Set the PID reference
+  public void setPositionReference(double setPoint) {};
+  // Reset the encoder position
+  public void resetPosition() {};
+  // Set the acceleration profile
+  public void setMaxAccel(double velocity) {};
+  // Set the velocity profile
+  public void setMaxVelocity(double velocity) {};
+  
+  // provide method to access encoder distance
+  public double getDistance() {
+    return(0);
+  }
+  // provide method to access encoder velocity
+  public double getVelocity() {
+    return(0);
+  }
+
   protected abstract MotorController[] getMotors();
 }
