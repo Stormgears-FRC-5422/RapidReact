@@ -26,6 +26,9 @@ public final class Constants {
 
   // MOTOR CONSTANTS
   public static final String kMotorType = StormProp.getString("stormMotorType", "");
+  public static final double kSlewRate = StormProp.getNumber("slewRate", 0.0);
+  public static final double kTurnSlewRate = StormProp.getNumber("turnSlewRate", 0.0);
+
 
   public static final int kMasterLeftId = StormProp.getInt("masterLeftId", -1);
   public static final int kMasterRightId = StormProp.getInt("masterRightId", -1);

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.drive.TestDrive;
 import frc.robot.commands.intake.Load;
 import frc.robot.commands.intake.Shoot;
@@ -102,7 +103,10 @@ public class RobotContainer {
   }
 
   private void configureDefaultCommands() {
-    if (kUseDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
+    //if (kUseDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
+
+    if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
+
     if (kDiagnostic) diagnosticIntake.setDefaultCommand(new TestIntake(diagnosticIntake, driveJoystick));
   }
 
