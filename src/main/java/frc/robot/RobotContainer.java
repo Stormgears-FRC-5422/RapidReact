@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.TestDrive;
 import frc.robot.commands.navX.NavXAlign;
+import frc.robot.commands.drive.DriveDistance;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.TalonDrive;
@@ -54,6 +55,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     if (Constants.useDrive) {
+      buttonBoard.autoDriveTestButton.whenPressed(new DriveDistance(drive,6));
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
     }

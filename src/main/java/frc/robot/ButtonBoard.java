@@ -11,6 +11,7 @@ public class ButtonBoard {
 
   public final JoystickButton reverseButton;
   public final JoystickButton navXAlignButton;
+  public final JoystickButton autoDriveTestButton;
 
   /** Initialize SECONDARY JOYSTICK BUTTONS */
   //    public Trigger shootTrigger;
@@ -20,6 +21,7 @@ public class ButtonBoard {
     precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
     reverseButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
     navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.YButton);
+    autoDriveTestButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
 
     //        intakeButton = new JoystickButton(driveJoystick, StormXboxController.leftButton);
     //
