@@ -35,7 +35,7 @@ public class ButtonBoard {
         precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
         reverseButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
 
-    navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
+        navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
 
         selectIntakeButton = new JoystickButton(driveJoystick, StormXboxController.BButton);
         selectFeederButton = new JoystickButton(driveJoystick, StormXboxController.XButton);

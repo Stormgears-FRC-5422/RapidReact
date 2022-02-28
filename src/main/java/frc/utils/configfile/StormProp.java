@@ -5,54 +5,56 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 public class StormProp {
     // Maybe rename this file to something better
     private static final String path = "/home/lvuser/deploy";
-  //    private static final String path = System.getProperty("user.dir") + "\\src\\main\\deploy";
-  private static final String name = "config.properties";
+    private static final String name = "config.properties";
     private static final String backUP = "config_backup.properties";
     private static final File configFile = new File(path, name);
+    private static File overrideConfigFile;
+
+    // In support of auto-detection
+    private static final String rcPath = "/home/lvuser";
+    private static final String rcName = ".stormrc";
+    private static final File rcFile = new File(rcPath, rcName);
+
     private static final HashMap<String, Double> m_number_map = new HashMap<>();
     private static final HashMap<String, Integer> m_int_map = new HashMap<>();
     private static final HashMap<String, Boolean> m_bool_map = new HashMap<>();
     private static final HashMap<String, String> m_string_map = new HashMap<>();
     private static String overrideName = null;
-    private static File overrideConfigFile;
     private static Properties properties;
     private static Properties overrideProperties;
+    private static Properties rcProperties;
     private static boolean initialized = false;
     private static boolean overrideInit = false;
+    private static boolean rcInit = false;
 
     public static void init() {
-    System.out.println("Running in directory " + System.getProperty("user.dir"));
-    System.out.println("Trying to use file " + configFile.getAbsolutePath());
+        System.out.println("Running in directory " + System.getProperty("user.dir"));
+        System.out.println("Trying to use file " + configFile.getAbsolutePath());
         properties = new Properties();
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(configFile);
             properties.load(inputStream);
             System.out.println("LOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADED");
-            System.out.println(properties.getProperty("override"));
         } catch (IOException e) {
             System.out.println("Using backup config file");
             try {
                 inputStream = new FileInputStream(new File("/home/lvuser/deploy", backUP));
                 properties.load(inputStream);
             } catch (IOException w) {
-                System.out.println("Failed to find back up file");
+                System.out.println("Failed to find back up file. " + e.getMessage());
             }
-
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    System.out.println("Error coming from config. This should not run");
+                    System.out.println("Error coming from config. This should not run. "  + e.getMessage());
                 }
             }
         }
@@ -64,14 +66,40 @@ public class StormProp {
 
     public static void overrideInit() {
         overrideName = properties.getProperty("override");
+
+        if ( overrideName.toLowerCase().equals("auto")) {
+            System.out.println("Using AUTOMATIC configuration");
+            rcProperties = new Properties();
+            FileInputStream rcStream = null;
+            try {
+                System.out.println("rcFile path: " + rcFile.getAbsolutePath());
+                rcStream = new FileInputStream(rcFile);
+                rcProperties.load(rcStream);
+                System.out.println("autoConfig setting " + rcProperties.getProperty("autoConfig"));
+                overrideName = properties.getProperty(rcProperties.getProperty("autoConfig"));
+            } catch (Exception e) {
+                System.out.println("Failed to find autoConfig file... " + e.getMessage());
+            } finally {
+                if (rcStream != null) {
+                    try {
+                        rcStream.close();
+                    } catch (IOException e) {
+                        System.out.println("Error coming from autoConfig. This should not run. " + e.getMessage());
+                    }
+                }
+            }
+        }
+
+        System.out.println("Using override file " + overrideName);
         overrideConfigFile = new File(path, overrideName);
         overrideProperties = new Properties();
+
         FileInputStream OverrideInputStream = null;
         try {
             OverrideInputStream = new FileInputStream(overrideConfigFile);
             overrideProperties.load(OverrideInputStream);
         } catch (IOException e) {
-            System.out.println("No override file detected");
+            System.out.println("!!! No override file detected !!!");
         }
         if (OverrideInputStream != null) {
             try {
@@ -80,8 +108,8 @@ public class StormProp {
                 System.out.println("Error coming from override config. This should not run");
             }
         }
-        overrideInit = true;
 
+        overrideInit = true;
     }
 
     private static String getPropString(String key) {
