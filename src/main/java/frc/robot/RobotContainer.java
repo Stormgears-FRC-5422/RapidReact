@@ -87,6 +87,8 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    if (!kUseController) {return;}
+
     if (kUseDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);

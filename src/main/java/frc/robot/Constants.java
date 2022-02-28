@@ -15,6 +15,7 @@ import frc.utils.configfile.StormProp;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final boolean kUseController = StormProp.getBoolean("useController", false);
   public static final boolean kUseDrive = StormProp.getBoolean("useDrive", false);
   public static final boolean kUseNavX = StormProp.getBoolean("useNavX", false);
   public static final boolean kDiagnostic = StormProp.getBoolean("useDiagnostic", false);
