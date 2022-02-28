@@ -15,7 +15,7 @@ public class Shooter extends SubsystemBase {
 
     public Shooter() {
         motor.setInverted(false);
-        motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor.getEncoder().setVelocityConversionFactor(1 / 60d); //from rpm to rps
         setupPID();
     }
