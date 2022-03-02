@@ -54,6 +54,8 @@ public abstract class StormDrive extends SubsystemBase {
 
   // Set the PID reference
   public void setPositionReference(double setPoint) {};
+  // Set the PID reference
+  public void setPositionReferenceWithVelocity(double setPoint, double velocity) {};
   // Reset the encoder position
   public void resetPosition() {};
   // Set the acceleration profile

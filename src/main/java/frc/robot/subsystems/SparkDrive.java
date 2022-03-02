@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANPIDController.AccelStrategy;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -22,8 +21,7 @@ import static frc.robot.Constants.*;
 
 public class SparkDrive extends StormDrive {
     private final DifferentialDrive differentialDrive;
-    private final TrapezoidProfile.Constraints m_profile_contstraints;
-    private final SimpleMotorFeedforward m_ff;
+    private SimpleMotorFeedforward m_ff_left,m_ff_right;
 
     private final StormSpark masterLeft = new StormSpark(MASTER_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark masterRight = new StormSpark(MASTER_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -33,8 +31,8 @@ public class SparkDrive extends StormDrive {
     public final SparkMaxPIDController m_left_controller = masterLeft.getPIDController();
     public final SparkMaxPIDController m_right_controller = masterRight.getPIDController();
 
-    public final PIDController m_wpi_left_controller;
-    public final PIDController m_wpi_right_controller;
+    private PIDController m_wpi_left_controller;
+    private PIDController m_wpi_right_controller;
     private final boolean m_use_spark_control = false;
 
     
@@ -56,33 +54,39 @@ public class SparkDrive extends StormDrive {
         masterRight.restoreFactoryDefaults();
         slaveRight.restoreFactoryDefaults();
         
+        // Set current limits
         masterLeft.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
         slaveLeft.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
         masterRight.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
         slaveRight.setSmartCurrentLimit(SMART_CURRENT_LIMIT);
         
+        // Configure Idle mode
         masterLeft.setIdleMode(StormSpark.IdleMode.kCoast);
         masterRight.setIdleMode(StormSpark.IdleMode.kCoast);
         slaveLeft.setIdleMode(StormSpark.IdleMode.kCoast); 
         slaveRight.setIdleMode(StormSpark.IdleMode.kCoast);
         
+        // Configure Motor inversions
         masterLeft.setInverted(LEFT_SIDE_INVERTED);
         slaveLeft.setInverted(LEFT_SIDE_INVERTED);
         masterRight.setInverted(RIGHT_SIDE_INVERTED);
         slaveRight.setInverted(RIGHT_SIDE_INVERTED);
-    
+
+        // Configure Follower Mode
         slaveLeft.follow(masterLeft);
         slaveRight.follow(masterRight);
         
+        // Create differential drive object
         differentialDrive = new DifferentialDrive(masterLeft, masterRight);
         differentialDrive.setSafetyEnabled(true);
 
-        //  Configure for meters/s
+        //  Configure encoders for meters/s
         masterLeft.getEncoder().setPositionConversionFactor(kConversionFactor[0]);
         masterRight.getEncoder().setPositionConversionFactor(kConversionFactor[1]);
         masterLeft.getEncoder().setVelocityConversionFactor(kConversionFactor[0]/60d);
         masterRight.getEncoder().setVelocityConversionFactor(kConversionFactor[1]/60d);
 
+        // Setup PID controllers
         setup_controllers();
 }
 
@@ -108,20 +112,31 @@ public class SparkDrive extends StormDrive {
         return new MotorController[] {masterLeft, masterRight, slaveLeft, slaveRight};
     }
 
+    // Engage the PID controllers to move the robot to the incremental setpoint
     public void setPositionReference(double setPoint) {
-        setPositionReferenceWithFeedForward(setPoint);
+        setPositionReferenceWithVelocity(setPoint,0);
     }
 
-    public void setPositionReferenceWithFeedForward(double setPoint,double velocity) {
+    // Engage the PID controllers to move the robot to the incremental setpoint (use velocity for feed forward)
+    public void setPositionReferenceWithVelocity(double setPoint,double velocity) {
+        // velocity used for WPILib control. Spark controller already knows the velocity
         if (m_use_spark_control) {
+            // SetReference on the Spark controller will engage the motors
             m_left_controller.setReference(setPoint,CANSparkMax.ControlType.kSmartMotion);
             m_right_controller.setReference(setPoint,CANSparkMax.ControlType.kSmartMotion);
         }
         else {
+            // Get PID output 
             double left_out = m_wpi_left_controller.calculate(masterLeft.getEncoder().getPosition(), setPoint);
             double right_out = m_wpi_right_controller.calculate(masterRight.getEncoder().getPosition(), setPoint);
-            masterLeft.setVoltage(left_out + velocity);
-            masterRight.setVoltage(right_out + velocity);
+
+            // Get Feedforward
+            double ff_left_out = m_ff_left.calculate(velocity);
+            double ff_right_out = m_ff_right.calculate(velocity);
+
+            // Apply to motors
+            masterLeft.setVoltage(left_out + ff_left_out);
+            masterRight.setVoltage(right_out + ff_right_out);
         }
         SmartDashboard.putNumber("Drive Position Target", setPoint);
     }
@@ -164,10 +179,11 @@ public class SparkDrive extends StormDrive {
             // SmartMotion parameters (trapezoid) set from command
             // Command has to manage end position as relative or absolute.  It may reset encoder position
             // to make relative move commands work.
-            private double kP[] = {.1,.1}; 
-            private double kI[] = {.000,.000};
-            private double kD[] = {0,0}; 
-            private double kIz[] = {0,0}; 
+            double kP[] = {.1,.1}; 
+            double kI[] = {.000,.000};
+            double kD[] = {0,0}; 
+            double kIz[] = {0,0}; 
+            double kFF[] = {0,0};
 
             m_left_controller.setP(kP[0]);
             m_left_controller.setI(kI[0]);
@@ -183,9 +199,6 @@ public class SparkDrive extends StormDrive {
             m_right_controller.setFF(kFF[1]);
             m_right_controller.setOutputRange(-1,1);
 
-            m_left_controller.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal,0);
-            m_right_controller.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal,0);
-
             m_left_controller.setSmartMotionAllowedClosedLoopError(0,0);
             m_right_controller.setSmartMotionAllowedClosedLoopError(0,0);
             m_left_controller.setSmartMotionMinOutputVelocity(0, 0);
@@ -194,14 +207,17 @@ public class SparkDrive extends StormDrive {
             m_right_controller.setIZone(0);
         }
         else {
-            private double kP[] = {5e-5,5e-5}; 
-            private double kI[] = {1e-6,1e-6};
-            private double kD[] = {0,0};
+            // Using WPILib pid controller.  The command must have and manage the trapezoid object.  The drive 
+            // subsystem doesn't know about it and expects the command to pass position and velocity setpoints
+            double kP[] = {5e-5,5e-5}; 
+            double kI[] = {1e-6,1e-6};
+            double kD[] = {0,0};
 
             m_wpi_left_controller = new PIDController(kP[0],kI[0],kD[0]);
             m_wpi_right_controller = new PIDController(kP[1],kI[1],kD[1]);
 
-            m_ff = new SimpleMotorFeedforward(0,kV[0]);
+            m_ff_left = new SimpleMotorFeedforward(0,kV[0]);
+            m_ff_right = new SimpleMotorFeedforward(0,kV[1]);
 
         }
     }

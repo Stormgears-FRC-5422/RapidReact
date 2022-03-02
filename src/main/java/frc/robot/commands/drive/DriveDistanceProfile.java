@@ -9,46 +9,28 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class DriveDistanceProfile extends TrapezoidProfileCommand {
     StormDrive m_drive;
-    double m_distance;
 
-    public DriveDistance(StormDrive drive,double distance) {
+    public DriveDistanceProfile(TrapezoidProfile profile,StormDrive drive) {
+        super(profile,state -> execute_pid(drive,state),drive);
         m_drive = drive;
-        m_distance = distance;
-        addRequirements(drive);
     }
 
     public void initialize() {
+        super.initialize();
         m_drive.setBrakeMode();
         m_drive.resetPosition();
-
-        m_drive.setMaxAccel(.3);
-        m_drive.setMaxVelocity(1);
     }
 
-    public void exexcute_pid(TrapezoidProfile.State state) {
-        m_drive.setPositionReference(state.position);
+    private static void execute_pid(StormDrive drive,TrapezoidProfile.State state) {
+        drive.setPositionReferenceWithVelocity(state.position,state.velocity);
 
     }
-    public void execute() {
-        m_drive.setPositionReference(m_distance);
-        SmartDashboard.putString("DriveDistance", "execute");
-        SmartDashboard.putNumber("Distance", m_drive.getDistance());
-    }
-
     public void end(boolean interrupted) {
+        super.end(interrupted);
         m_drive.getDifferentialDrive().arcadeDrive(0, 0);
         m_drive.getDifferentialDrive().setSafetyEnabled(true);
         m_drive.setCoastMode();  // should restore the mode instead of assuming
         SmartDashboard.putString("DriveDistance", "finished");
-    }
-
-    public boolean isFinished() {
-        if ( m_drive.getDistance() > (0.98 * m_distance) && m_drive.getVelocity() < 0.0001) {
-            return(true);
-        }
-        else {
-            return(false);
-        }
     }
 
 }
