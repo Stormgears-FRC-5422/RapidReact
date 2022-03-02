@@ -1,15 +1,9 @@
 package frc.robot;
 
-import frc.robot.commands.drive.SlewDrive;
-
-import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
-import frc.robot.commands.drive.TestDrive;
-import frc.robot.commands.intake.Load;
-import frc.robot.commands.intake.Shoot;
-import frc.robot.commands.intake.TestIntake;
+import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
@@ -41,6 +35,7 @@ public class RobotContainer {
   private Shooter shooter;
   private Feeder feeder;
   private Intake intake;
+  private TestIntake testIntake;
 
   private Load load;
   private Shoot shoot;
@@ -62,10 +57,10 @@ public class RobotContainer {
   }
 
   private void initCommands() {
-    if (!kDiagnostic && kUseFeeder) {
-      if (kUseIntake) load = new Load(intake, feeder);
-      if (kUseShooter) shoot = new Shoot(feeder, shooter);
-    }
+    if (!kDiagnostic) {
+      if (kUseIntake && kUseFeeder) load = new Load(intake, feeder);
+      if (kUseShooter && kUseFeeder) shoot = new Shoot(feeder, shooter);
+    } else testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
     if (kUseNavX) navXAlign = new NavXAlign(drive, navX);
   }
 
@@ -92,7 +87,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    if (!kUseController) {return;}
+    if (!kUseController) return;
 
     if (kUseDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
@@ -110,11 +105,8 @@ public class RobotContainer {
   }
 
   private void configureDefaultCommands() {
-    //if (kUseDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
-
     if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
-
-    if (kDiagnostic) diagnosticIntake.setDefaultCommand(new TestIntake(diagnosticIntake, driveJoystick));
+    if (kDiagnostic) diagnosticIntake.setDefaultCommand(testIntake);
   }
 
   public StormDrive getDrive() {

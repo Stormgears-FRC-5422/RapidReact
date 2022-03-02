@@ -2,12 +2,12 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.drive.SparkDrive;
 import frc.utils.drive.StormDrive;
-import frc.utils.joysticks.DriveJoystick;
 import frc.utils.joysticks.StormXboxController;
+
+import static frc.robot.Constants.kXPrecision;
+import static frc.robot.Constants.kZPrecision;
 
 public class SlewDrive extends CommandBase {
     private final StormDrive drive;
@@ -38,10 +38,8 @@ public class SlewDrive extends CommandBase {
 
     @Override
     public void execute() {
-        double targetSpeed = joystick.getLeftJoystickY();
-        double targetZRotation = -joystick.getRightJoystickX();
-
-        SmartDashboard.putNumber("joystick speed", targetSpeed);
+        double targetSpeed = (drive.getPrecision() ? kXPrecision : 1 ) * joystick.getTriggerSpeed();
+        double targetZRotation = (drive.getPrecision() ? kZPrecision : 1 ) * joystick.getLeftJoystickX();
 
         if (drive.getSlewRate() != prevSlewRate) {
             System.out.println("updated slewRate: " + prevSlewRate);

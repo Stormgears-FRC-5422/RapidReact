@@ -41,11 +41,13 @@ public final class Constants {
 
   public static final int kSmartCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double kNullSize = StormProp.getNumber("driveNullSize", 0.055);
+  public static final double kXPrecision = StormProp.getNumber("xPrecision", 0.0);
+  public static final double kZPrecision = StormProp.getNumber("zPrecision", 0.0);
 
   public static final double kAlignP = StormProp.getNumber("alignP", 0.05);
   public static final double kAlignI = StormProp.getNumber("alignI", 0.01);
   public static final double kAlignD = StormProp.getNumber("alignD", 0.01);
-  public static final double kAlignTolerance = StormProp.getNumber("toleranceDegrees", 2d);
+  public static final double kAlignTolerance = StormProp.getNumber("toleranceDegrees", 2.0);
 
   public static final int kCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double kTemperatureRampThreshold = StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);

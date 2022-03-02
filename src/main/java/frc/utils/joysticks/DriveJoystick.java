@@ -2,7 +2,7 @@ package frc.utils.joysticks;
 
 
 public interface DriveJoystick {
-    double getXSpeed();
+    double getTriggerSpeed();
 
     double getZRotation();
 

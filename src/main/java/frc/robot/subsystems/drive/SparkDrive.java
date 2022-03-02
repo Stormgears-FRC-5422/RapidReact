@@ -6,18 +6,12 @@ package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.drive.StormDrive;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.filters.Filter;
 import frc.utils.motorcontrol.StormSpark;
-
-import java.util.Map;
 
 import static edu.wpi.first.wpilibj.DriverStation.reportWarning;
 import static frc.robot.Constants.*;

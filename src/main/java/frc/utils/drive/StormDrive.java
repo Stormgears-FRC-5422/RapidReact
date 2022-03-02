@@ -1,6 +1,5 @@
 package frc.utils.drive;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -11,8 +10,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.Map;
 
-import static frc.robot.Constants.*;
-import static java.lang.Math.*;
+import static frc.robot.Constants.kSlewRate;
+import static frc.robot.Constants.kTurnSlewRate;
+import static java.lang.Math.abs;
 
 public abstract class StormDrive extends SubsystemBase {
   protected boolean reverse = false;
@@ -44,7 +44,7 @@ public abstract class StormDrive extends SubsystemBase {
     System.out.println("reverse = " + reverse);
   }
 
-  public boolean getPrecisions() {
+  public boolean getPrecision() {
     return this.precision;
   }
 
@@ -54,7 +54,6 @@ public abstract class StormDrive extends SubsystemBase {
 
   public void togglePrecision() {
     precision = !precision;
-    System.out.println("precision = " + precision);
   }
 
   protected abstract MotorController[] getMotors();

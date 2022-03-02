@@ -18,7 +18,7 @@ public class ButtonBoard {
     public final JoystickButton precisionButton;
     public final JoystickButton reverseButton;
 
-  public final JoystickButton navXAlignButton;
+    public final JoystickButton navXAlignButton;
 
     public final JoystickButton selectIntakeButton;
     public final JoystickButton selectFeederButton;
@@ -38,13 +38,16 @@ public class ButtonBoard {
 
         navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
 
-        selectIntakeButton = new JoystickButton(driveJoystick, StormXboxController.BButton);
-        selectFeederButton = new JoystickButton(driveJoystick, StormXboxController.XButton);
-        selectShooterButton = new JoystickButton(driveJoystick, StormXboxController.YButton);
 
-        shootButton = new JoystickButton(driveJoystick, StormXboxController.rightButton);
-        loadButton = new JoystickButton(driveJoystick, StormXboxController.leftButton);
+        shootButton = new JoystickButton(driveJoystick, StormXboxController.rightBumper);
+        loadButton = new JoystickButton(driveJoystick, StormXboxController.leftBumper);
 
         toggleShootingHeightButton = new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);
+
+        selectIntakeButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
+        selectFeederButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
+        selectShooterButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);
     }
+
+
 }

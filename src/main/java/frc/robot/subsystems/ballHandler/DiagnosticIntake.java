@@ -16,7 +16,6 @@ public class DiagnosticIntake extends SubsystemBase {
     private TestMode mode = TestMode.intake;
 
     public DiagnosticIntake() {
-        System.out.println("Creating Intake Subsystem");
 
         if (kUseIntake) {
             intakeMotor = new StormSpark(kIntakeId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -43,12 +42,13 @@ public class DiagnosticIntake extends SubsystemBase {
             SmartDashboard.putNumber("Shooter Velocity", activeMotor.getEncoder().getVelocity());
         }
         if (mode == TestMode.intake) {
+            speed *= 0.5;
             SmartDashboard.putNumber("intake speed", speed);
         }
         if (mode == TestMode.feeder) {
             speed *= 0.25;
         }
-        activeMotor.set(speed);
+        if (activeMotor != null ) activeMotor.set(speed);
     }
 
     public void setModeIntake() {
