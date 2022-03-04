@@ -13,10 +13,12 @@ public abstract class StormDrive extends SubsystemBase {
   private double pDrive = Constants.kPDrive;
   private double iDrive = Constants.kIDrive;
   private double dDrive = Constants.kDDrive;
-
-  protected PIDController drivePID = new PIDController(pDrive, iDrive, dDrive);
-  public PIDController getController() {return drivePID;}
-  public abstract double calculateDriveVel(double goal);
+  //PID controller for drive
+  protected PIDController drivePID = new PIDController(Constants.kPDrive, Constants.kIDrive, Constants.kDDrive);
+  public abstract double calculateDriveVel(double goalRadians);
+  //PID controller for rotation
+  protected PIDController rotatePID = new PIDController(Constants.kPRotate, Constants.kIRotate, Constants.kDRotate);
+  public abstract double calculateRotateVel(double goalRadians);
 
   public abstract void ResetEncoders();
   public abstract double getDistance();

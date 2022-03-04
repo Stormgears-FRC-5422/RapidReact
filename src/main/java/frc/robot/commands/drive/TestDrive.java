@@ -6,18 +6,20 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.SparkDrive;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
 
 /** An example command that uses an example subsystem. */
 public class TestDrive extends CommandBase {
-  private final StormDrive drive;
+  private final SparkDrive drive;
   private final StormXboxController joystick;
   private DifferentialDrive differentialDrive;
 
-  public TestDrive(StormDrive stormDrive, StormXboxController joy) {
-    drive = stormDrive;
-    addRequirements(drive);
+  public TestDrive(SparkDrive sparkDrive, StormXboxController joy) {
+    this.drive = sparkDrive;
+    addRequirements(sparkDrive);
     joystick = joy;
   }
 

@@ -47,6 +47,8 @@ public final class Constants {
   public static final double kPDrive = StormProp.getNumber("pDrive", 1.0);
   public static final double kIDrive = StormProp.getNumber("iDrive", 0.0);
   public static final double kDDrive = StormProp.getNumber("dDrive", 0.0);
+  public static final double kMAXVEL = StormProp.getNumber("kMaxVelocity", 0d);
+  public static final double kMAXACC = StormProp.getNumber("kMaxAcceleration", 0d);
 
   public static final int currentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double temperatureRampThreshold =
@@ -54,8 +56,17 @@ public final class Constants {
   public static final double temperatureRampLimit =
       StormProp.getInt("SparkMaxTemperatureRampLimit", 55);
 
-  public static final double kMAXVEL = StormProp.getNumber("kMaxVelocity", 0d);
-  public static final double kMAXACC = StormProp.getNumber("kMaxAcceleration", 0d);
+  //Constants for trapezoidal PID rotation
+  //PID Constants
+  public static final double kPRotate = StormProp.getNumber("kPRotation", 1d);
+  public static final double kIRotate = StormProp.getNumber("kIRotation", 0d);;
+  public static final double kDRotate = StormProp.getNumber("kDRotation", 0d);;
+  //Trapezoidal Constants
+  public static final double kMAXVELROTATE = StormProp.getNumber("kMAXVELRotate", 0d);
+  public static final double kMAXACCROTATE = StormProp.getNumber("kMAXACCRotate", 0d);
+  //Feedforward Values
+  public static double FFRadiansToPOutks = StormProp.getNumber("FFks", 1d);
+  public static double FFRadiansToPOutkv = StormProp.getNumber("FFkv", 1d);
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");

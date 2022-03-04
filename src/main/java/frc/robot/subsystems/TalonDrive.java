@@ -43,6 +43,11 @@ public class TalonDrive extends StormDrive {
     }
 
     @Override
+    public double calculateRotateVel(double goalRadians) {
+        return 0d;
+    }
+
+    @Override
     public void ResetEncoders() {
 
     }

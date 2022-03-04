@@ -1,7 +1,11 @@
 package frc.robot;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.TestDrive;
+import frc.robot.commands.drive.TrapezoidalPIDDrive;
+import frc.robot.commands.drive.TrapezoidalPIDRotate;
 import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SparkDrive;
@@ -15,11 +19,14 @@ public class RobotContainer {
   private final StormXboxController secondaryJoystick;
   private final ButtonBoard buttonBoard;
 
-  private StormDrive drive;
+  private SparkDrive drive;
   private NavX navX;
 
   private TestDrive testDrive;
   private NavXAlign navXAlign;
+  private TrapezoidalPIDRotate trapRotate;
+
+  private TrapezoidProfile.State goalState = new TrapezoidProfile.State(45, 0);
 
   public RobotContainer() {
     driveJoystick = new StormXboxController(0);
@@ -33,23 +40,18 @@ public class RobotContainer {
   }
 
   private void initSubsystems() {
-    if (Constants.useDrive) {
-      switch (Constants.MOTOR_TYPE) {
-        case "Spark":
-          drive = new SparkDrive();
-          break;
-//        case "Talon":
-//          drive = new TalonDrive();
-//          break;
-        default:
-      }
-    }
     if (Constants.useNavX) navX = new NavX();
+    if (Constants.useDrive) {
+      drive = new SparkDrive();
+    }
   }
 
   private void initCommands() {
     if (Constants.useDrive) testDrive = new TestDrive(drive, driveJoystick);
     if (Constants.useNavX) navXAlign = new NavXAlign(drive, navX);
+
+    //Init trapezoidal rotate command
+    trapRotate = new TrapezoidalPIDRotate(drive, navX, goalState);
   }
 
   private void configureButtonBindings() {
@@ -58,13 +60,9 @@ public class RobotContainer {
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
     }
     if (Constants.useNavX) {
-      buttonBoard.navXAlignButton.whileHeld(navXAlign);
+      buttonBoard.navXAlignButton.whenPressed(trapRotate);
     }
   }
-
-//  private Command GetAutonomousCommand() {
-//    return Command;
-//  }
 
   private void configureDefaultCommands() {
     if (Constants.useDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
