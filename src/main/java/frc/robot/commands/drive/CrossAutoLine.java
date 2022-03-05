@@ -1,7 +1,7 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SafeDrive;
+import frc.robot.subsystems.drive.SafeDrive;
 
 public class CrossAutoLine extends CommandBase {
   private final SafeDrive drive;

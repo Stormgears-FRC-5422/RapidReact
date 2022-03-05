@@ -1,28 +1,50 @@
 package frc.robot;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.drive.TestDrive;
+import frc.robot.commands.ballHandler.Load;
+import frc.robot.commands.ballHandler.Shoot;
+import frc.robot.commands.ballHandler.TestIntake;
+import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.navX.NavXAlign;
-import frc.robot.commands.drive.DriveDistance;
 import frc.robot.commands.drive.DriveDistanceProfile;
-import frc.robot.subsystems.NavX;
-import frc.robot.subsystems.SparkDrive;
-import frc.robot.subsystems.TalonDrive;
+import frc.robot.subsystems.ballHandler.DiagnosticIntake;
+import frc.robot.subsystems.ballHandler.Feeder;
+import frc.robot.subsystems.ballHandler.Intake;
+import frc.robot.subsystems.ballHandler.Shooter;
+import frc.robot.subsystems.drive.SparkDrive;
+import frc.robot.subsystems.drive.TalonDrive;
+import frc.robot.subsystems.sensors.NavX;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
 
+import static frc.robot.Constants.*;
+
+/**
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * subsystems, commands, and button mappings) should be declared here.
+ */
 public class RobotContainer {
+
+  /**
+   * Declare subsystems - initialize below
+   */
+  private StormDrive drive;
+  private NavX navX;
+  private DiagnosticIntake diagnosticIntake;
+
+  private Shooter shooter;
+  private Feeder feeder;
+  private Intake intake;
+  private TestIntake testIntake;
+
+  private Load load;
+  private Shoot shoot;
+  private NavXAlign navXAlign;
 
   private final StormXboxController driveJoystick;
   private final StormXboxController secondaryJoystick;
   private final ButtonBoard buttonBoard;
-
-  private StormDrive drive;
-  private NavX navX;
-
-  private TestDrive testDrive;
-  private NavXAlign navXAlign;
 
   public RobotContainer() {
     driveJoystick = new StormXboxController(0);
@@ -35,9 +57,17 @@ public class RobotContainer {
     configureDefaultCommands();
   }
 
+  private void initCommands() {
+    if (!kDiagnostic) {
+      if (kUseIntake && kUseFeeder) load = new Load(intake, feeder);
+      if (kUseShooter && kUseFeeder) shoot = new Shoot(feeder, shooter);
+    } else testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
+    if (kUseNavX) navXAlign = new NavXAlign(drive, navX);
+  }
+
   private void initSubsystems() {
-    if (Constants.useDrive) {
-      switch (Constants.MOTOR_TYPE) {
+    if (kUseDrive) {
+      switch (kMotorType) {
         case "Spark":
           drive = new SparkDrive();
           break;
@@ -47,30 +77,41 @@ public class RobotContainer {
         default:
       }
     }
-    if (Constants.useNavX) navX = new NavX();
-  }
+    if (kUseNavX) navX = new NavX();
 
-  private void initCommands() {
-    if (Constants.useDrive) testDrive = new TestDrive(drive, driveJoystick);
-    if (Constants.useNavX) navXAlign = new NavXAlign(drive, navX);
+    if (kDiagnostic) diagnosticIntake = new DiagnosticIntake();
+    else {
+      if (kUseShooter) shooter = new Shooter();
+      if (kUseFeeder) feeder = new Feeder();
+      if (kUseIntake) intake = new Intake();
+    }
   }
 
   private void configureButtonBindings() {
-    if (Constants.useDrive) {
-      buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(3,1,.5,drive));
+    if (!kUseController) return;
+
+    if (kUseDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
+      buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(3,1,.5,drive));
     }
-    if (Constants.useNavX) {
-      buttonBoard.navXAlignButton.whileHeld(navXAlign);
+    if (kDiagnostic) {
+      if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
+      if (kUseFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
+      if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
+    } else {
+      if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
+      if (kUseShooter && kUseFeeder) buttonBoard.shootButton.whileHeld(shoot);
     }
+    if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
   }
 
   private void configureDefaultCommands() {
-    if (Constants.useDrive) drive.setDefaultCommand(new TestDrive(drive, driveJoystick));
+    if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
+    if (kDiagnostic) diagnosticIntake.setDefaultCommand(testIntake);
   }
 
-  public Command getAutonomousCommand() {
-    return null;
+  public StormDrive getDrive() {
+    return drive;
   }
 }

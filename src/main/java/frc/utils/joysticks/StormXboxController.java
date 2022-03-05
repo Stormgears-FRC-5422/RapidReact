@@ -2,8 +2,9 @@ package frc.utils.joysticks;
 
 
 import edu.wpi.first.wpilibj.Joystick;
-import frc.robot.Constants;
 
+import static frc.robot.Constants.kNullSize;
+import static java.lang.Math.abs;
 
 public class StormXboxController extends Joystick implements DriveJoystick {
     private double result; // temp value conveniently and quickly declared one time
@@ -22,8 +23,8 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     public static final int BButton = 2;
     public static final int XButton = 3;
     public static final int YButton = 4;
-    public static final int leftButton = 5;
-    public static final int rightButton = 6;
+    public static final int leftBumper = 5;
+    public static final int rightBumper = 6;
     public static final int littleLeftButton = 7;
     public static final int littleRightButton = 8;
     public static final int stickLeftButton = 9;
@@ -45,15 +46,15 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     }
 
     @Override
-    public double getXSpeed(){
+    public double getTriggerSpeed(){
         result = getRawAxis(rightTrigger) - getRawAxis(leftTrigger);
-        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
+        return abs(result) < kNullSize ? 0 : result;
     }
 
     @Override
     public double getZRotation(){
         result = getRawAxis(zRotation);
-        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
+        return abs(result) < kNullSize ? 0 : result;
     }
 
     public boolean getAisPressed() {
@@ -84,13 +85,13 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     @Override
     public double getLeftSpeed() {
         result = getRawAxis(leftYAxis);
-        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
+        return abs(result) < kNullSize ? 0 : result;
     }
 
     @Override
     public double getRightSpeed() {
         result = getRawAxis(rightYAxis);
-        return Math.abs(result) < Constants.NULL_SIZE ? 0 : result;
+        return abs(result) < kNullSize ? 0 : result;
     }
 
     public double getLeftJoystickX() {

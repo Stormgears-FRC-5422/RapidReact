@@ -6,11 +6,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 
 public class StormSpark extends CANSparkMax {
-  private static final int currentLimit = Constants.currentLimit;
-  private static final double temperatureRampThreshold = Constants.temperatureRampThreshold;
-  private static final double temperatureRampLimit = Constants.temperatureRampLimit;
+  private static final int currentLimit = Constants.kCurrentLimit;
+  private static final double temperatureRampThreshold = Constants.kTemperatureRampThreshold;
+  private static final double temperatureRampLimit = Constants.kTemperatureRampLimit;
   private final double delta;
-  private double temp;
 
     public StormSpark(int deviceID, MotorType type) {
         super(deviceID, type);
@@ -25,11 +24,15 @@ public class StormSpark extends CANSparkMax {
   }
 
   @Override
+  // We should probably have a way to coordinate this ramp among multiple motors
+  // The drive class already does this for its set speed, but the robot will pull left or right if
+  // left and right motors are getting different results in this method.
   public void set(double speed) {
     // if the temperature is too high, start ramping down.
     // reduce speed to 0 at temperatureRampLimit
     // start ramping down at temperatureRampThreshold
-    temp = getMotorTemperature();
+
+      double temp = getMotorTemperature();
 
     if (temp > temperatureRampThreshold) {
       speed *= Math.max((temperatureRampLimit - temp) / delta, 0.0);

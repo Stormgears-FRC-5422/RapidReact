@@ -31,14 +31,11 @@ public class TestDrive extends CommandBase {
   @Override
   public void execute() {
     double left, right;
-    double slowmode=1;
     left = joystick.getLeftJoystickY();
-    right = joystick.getRightJoystickY();
+    right = joystick.getRightJoystickX();
 
-    if(joystick.getAisPressed()){
-      slowmode=0.5;
-    }
-    differentialDrive.tankDrive(left, right, true);
+    //System.out.println("Left: " + left + "  Right: " + right);
+    differentialDrive.arcadeDrive(left * 0.6, -right * 0.6, true);
   }
 
   // Called once the command ends or is interrupted.

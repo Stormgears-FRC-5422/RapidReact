@@ -1,7 +1,7 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SafeDrive;
+import frc.robot.subsystems.drive.SafeDrive;
 import frc.utils.joysticks.DriveJoystick;
 
 
@@ -43,7 +43,7 @@ public class JoyDrive extends CommandBase {
         }
 
         if (++count % 50 == 0)
-            System.out.println("OUTPUT: " + previousTarget + "    TARGET: " + targetSpeed + "JOY VAL: " +  joystick.getXSpeed());
+            System.out.println("OUTPUT: " + previousTarget + "    TARGET: " + targetSpeed + "JOY VAL: " +  joystick.getTriggerSpeed());
 
         drive.driveArcade(targetSpeed,joystick.getZRotation());
         previousTarget = targetSpeed;
