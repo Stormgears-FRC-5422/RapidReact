@@ -37,9 +37,9 @@ public class Shoot extends PIDCommand {
     public void execute() {
         super.execute();
         if (!isReady()){
-            feeder.setLimit(false);
+            feeder.setLimit(true);
             getController().reset();
-        } else feeder.setLimit(true);
+        } else feeder.setLimit(false);
         feeder.on();
     }
 

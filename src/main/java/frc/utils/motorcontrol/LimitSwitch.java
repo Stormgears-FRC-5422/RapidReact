@@ -11,13 +11,8 @@ public class LimitSwitch extends DigitalInput {
         this.enabled = enabled;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
     public void disable() {
         enabled = false;
-
     }
 
     public void enable() {
