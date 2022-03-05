@@ -36,7 +36,10 @@ public class Shoot extends PIDCommand {
     @Override
     public void execute() {
         super.execute();
-        feeder.setLimit(!isReady());
+        if (!isReady()){
+            feeder.setLimit(false);
+            getController().reset();
+        } else feeder.setLimit(true);
         feeder.on();
     }
 
@@ -47,7 +50,7 @@ public class Shoot extends PIDCommand {
     }
 
     private boolean isReady() {
-        return shooter.getSpeed() >= 0.95 * shooter.mode.rps;
+        return shooter.getSpeed() >= (0.98 * shooter.mode.rps) && shooter.getSpeed() <= (1.02 * shooter.mode.rps);
     }
 
     public void toggleMode() {
@@ -72,5 +75,8 @@ public class Shoot extends PIDCommand {
         builder.addDoubleProperty("P Value", this.getController()::getP, this.getController()::setP);
         builder.addDoubleProperty("I Value", this.getController()::getI, this.getController()::setI);
         builder.addDoubleProperty("D Value", this.getController()::getD, this.getController()::setD);
+        builder.addDoubleProperty("adjust", shooter::getAdjust, shooter::setAdjust);
+        builder.addDoubleProperty("voltage", () -> shooter.output, null);
+        builder.addDoubleProperty("pidOutput", () -> shooter.pidOutput, null);
     }
 }

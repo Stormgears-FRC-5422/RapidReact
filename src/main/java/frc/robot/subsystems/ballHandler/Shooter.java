@@ -12,6 +12,9 @@ import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
 
+    public double output;
+    public double pidOutput;
+
     public enum Height{
         LOW(kShooterLowRPS),
         HIGH(kShooterHighRPS);
@@ -28,20 +31,14 @@ public class Shooter extends SubsystemBase {
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(kShooterS, kShooterV, kShooterA);
     public Height mode = Height.LOW;
 
+    private double adjust = 0;
+
     public Shooter() {
         motor.setInverted(false);
         motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         motor.getEncoder().setVelocityConversionFactor(1 / 60d); //from rpm to rps
-//        setupPID();
     }
 
-//    private void setupPID() {
-//        pidController.setP(kShooterP);
-//        pidController.setI(kShooterI);
-//        pidController.setD(kShooterD);
-//        pidController.setFF(kShooterF);
-//        pidController.setOutputRange(-1, 1);
-//    }
 
     public double getSpeed() {
         return motor.getEncoder().getVelocity();
@@ -54,6 +51,8 @@ public class Shooter extends SubsystemBase {
 
     public void off() {
         setSpeed(0);
+        output = 0;
+        pidOutput = 0;
     }
 
     public double setpoint() {
@@ -61,10 +60,16 @@ public class Shooter extends SubsystemBase {
     }
 
     public void runToSpeed(double pidOutput){
-//        if (pidOutput < 0) {
-//            motor.setVoltage(0);
-//            return;
-//        }
-        motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), 0));
+        this.pidOutput = pidOutput;
+        output = pidOutput + feedforward.calculate(setpoint(), 0);
+        motor.setVoltage(output);
+    }
+
+    public void setAdjust(double adjust) {
+        this.adjust = adjust;
+    }
+
+    public double getAdjust(){
+        return adjust;
     }
 }
