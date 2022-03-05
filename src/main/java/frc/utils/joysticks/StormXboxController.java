@@ -30,7 +30,6 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     public static final int stickLeftButton = 9;
     public static final int stickRightButton = 10;
 
-
     public StormXboxController(int port) {
         super(port);
     }
@@ -73,6 +72,9 @@ public class StormXboxController extends Joystick implements DriveJoystick {
         return getRawButtonPressed(YButton);
     }
 
+    public boolean getBackIsPressed() {
+        return getRawButtonPressed(littleLeftButton);
+    }
 
     public boolean getRotateIsPressed() {
         return getRawButtonPressed(littleRightButton);
