@@ -16,12 +16,15 @@ import frc.utils.motorcontrol.StormSpark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.MathUtil;
 
 import static frc.robot.Constants.*;
 
 public class SparkDrive extends StormDrive {
     private final DifferentialDrive differentialDrive;
     private SimpleMotorFeedforward m_ff_left,m_ff_right;
+
+            
 
     private final StormSpark masterLeft = new StormSpark(MASTER_LEFT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark masterRight = new StormSpark(MASTER_RIGHT_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -39,8 +42,7 @@ public class SparkDrive extends StormDrive {
     // PID coefficients -- FIXME move to config file
     // These are tuned to the robot so they are private to the drive subsystem.  Commands 
     // should not know about them (or care)
-    private double kV[] = {0.19,0.19}; // R2D2 on stand 
-    private double kMaxOutput[] = {1,1}; 
+    private double kMaxOutput[] = {3,3}; 
     private double kMinOutput[] = {-1,-1};
     private double gearBoxRatio = 10.71;
     private double wheelCircumference = 24 * .0254;  // 8 inch wheels
@@ -127,8 +129,10 @@ public class SparkDrive extends StormDrive {
         }
         else {
             // Get PID output 
-            double left_out = m_wpi_left_controller.calculate(masterLeft.getEncoder().getPosition(), setPoint);
-            double right_out = m_wpi_right_controller.calculate(masterRight.getEncoder().getPosition(), setPoint);
+            double left_out = MathUtil.clamp(m_wpi_left_controller.calculate(masterLeft.getEncoder().getPosition(), setPoint),-kMaxOutput[0],kMaxOutput[0]);
+            double right_out = MathUtil.clamp(m_wpi_right_controller.calculate(masterRight.getEncoder().getPosition(), setPoint),-kMaxOutput[1],kMaxOutput[1]);
+
+            SmartDashboard.putNumber("Drive Position PID output", left_out);
 
             // Get Feedforward
             double ff_left_out = m_ff_left.calculate(velocity);
@@ -169,6 +173,7 @@ public class SparkDrive extends StormDrive {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Drive Current Speed", masterLeft.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Drive Current Position", masterLeft.getEncoder().getPosition());
     }
 
     public void simulationPeriodic() {
@@ -209,8 +214,11 @@ public class SparkDrive extends StormDrive {
         else {
             // Using WPILib pid controller.  The command must have and manage the trapezoid object.  The drive 
             // subsystem doesn't know about it and expects the command to pass position and velocity setpoints
-            double kP[] = {5e-5,5e-5}; 
-            double kI[] = {1e-6,1e-6};
+            double kV[] = {2.3,2.3}; // R2D2 on stand, voltage output 
+            double kP[] = {25,25}; 
+//            double kP[] = {0,0}; 
+            //double kI[] = {1e-6,1e-6};
+            double kI[] = {0,0};
             double kD[] = {0,0};
 
             m_wpi_left_controller = new PIDController(kP[0],kI[0],kD[0]);

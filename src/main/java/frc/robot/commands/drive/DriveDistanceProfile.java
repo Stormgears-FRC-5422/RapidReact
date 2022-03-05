@@ -15,9 +15,17 @@ public class DriveDistanceProfile extends TrapezoidProfileCommand {
         m_drive = drive;
     }
 
+    public DriveDistanceProfile(double distance, double velocity, double acceleration,StormDrive drive) {
+        super(new TrapezoidProfile(new TrapezoidProfile.Constraints(velocity,acceleration),new TrapezoidProfile.State(distance,0)),
+              state -> execute_pid(drive,state),
+              drive);
+        m_drive = drive;
+    }
+
     public void initialize() {
         super.initialize();
         m_drive.setBrakeMode();
+        m_drive.getDifferentialDrive().setSafetyEnabled(false);
         m_drive.resetPosition();
     }
 
@@ -27,6 +35,7 @@ public class DriveDistanceProfile extends TrapezoidProfileCommand {
     }
     public void end(boolean interrupted) {
         super.end(interrupted);
+        m_drive.getDifferentialDrive().setSafetyEnabled(true);
         m_drive.getDifferentialDrive().arcadeDrive(0, 0);
         m_drive.getDifferentialDrive().setSafetyEnabled(true);
         m_drive.setCoastMode();  // should restore the mode instead of assuming
