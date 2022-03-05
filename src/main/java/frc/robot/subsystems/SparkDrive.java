@@ -132,7 +132,8 @@ public class SparkDrive extends StormDrive {
             double left_out = MathUtil.clamp(m_wpi_left_controller.calculate(masterLeft.getEncoder().getPosition(), setPoint),-kMaxOutput[0],kMaxOutput[0]);
             double right_out = MathUtil.clamp(m_wpi_right_controller.calculate(masterRight.getEncoder().getPosition(), setPoint),-kMaxOutput[1],kMaxOutput[1]);
 
-            SmartDashboard.putNumber("Drive Position PID output", left_out);
+            SmartDashboard.putNumber("Drive Position Left PID output", left_out);
+            SmartDashboard.putNumber("Drive Position Rifgt PID output", right_out);
 
             // Get Feedforward
             double ff_left_out = m_ff_left.calculate(velocity);
@@ -172,8 +173,10 @@ public class SparkDrive extends StormDrive {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Drive Current Speed", masterLeft.getEncoder().getVelocity());
-        SmartDashboard.putNumber("Drive Current Position", masterLeft.getEncoder().getPosition());
+        SmartDashboard.putNumber("Left Drive Current Speed", masterLeft.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Left Drive Current Position", masterLeft.getEncoder().getPosition());
+        SmartDashboard.putNumber("Right Drive Current Speed", masterRight.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Right Drive Current Position", masterRight.getEncoder().getPosition());
     }
 
     public void simulationPeriodic() {
@@ -215,7 +218,7 @@ public class SparkDrive extends StormDrive {
             // Using WPILib pid controller.  The command must have and manage the trapezoid object.  The drive 
             // subsystem doesn't know about it and expects the command to pass position and velocity setpoints
             double kV[] = {2.3,2.3}; // R2D2 on stand, voltage output 
-            double kP[] = {25,25}; 
+            double kP[] = {45,45}; 
 //            double kP[] = {0,0}; 
             //double kI[] = {1e-6,1e-6};
             double kI[] = {0,0};

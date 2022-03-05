@@ -57,7 +57,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     if (Constants.useDrive) {
-      buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(50,3,2,drive));
+      buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(3,1,.5,drive));
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
     }
