@@ -38,11 +38,12 @@ public class StormProp {
         properties = new Properties();
         FileInputStream inputStream = null;
         try {
+            System.out.println("Trying to load " + configFile);
             inputStream = new FileInputStream(configFile);
             properties.load(inputStream);
             System.out.println("LOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADED");
         } catch (IOException e) {
-            System.out.println("Using backup config file");
+            System.out.println(e.getMessage() + "... Using backup config file");
             try {
                 inputStream = new FileInputStream(new File("/home/lvuser/deploy", backUP));
                 properties.load(inputStream);

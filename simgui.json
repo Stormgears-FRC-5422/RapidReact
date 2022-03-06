@@ -21,7 +21,27 @@
           "open": true
         }
       },
+      "SPARK MAX [17]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [19]": {
+        "header": {
+          "open": true
+        }
+      },
       "SPARK MAX [4]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon SRX[3]": {
+        "header": {
+          "open": true
+        }
+      },
+      "navX-Sensor[0]": {
         "header": {
           "open": true
         }
@@ -38,15 +58,35 @@
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/Drive": "Subsystem",
       "/LiveWindow/NavX": "Subsystem",
+      "/LiveWindow/Shooter": "Subsystem",
       "/LiveWindow/SparkDrive": "Subsystem",
+      "/LiveWindow/TalonDrive": "Subsystem",
       "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
-      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro"
+      "/LiveWindow/Ungrouped/Talon SRX [0]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [1]": "Motor Controller",
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/SmartDashboard/align PID": "PIDController"
+    },
+    "windows": {
+      "/LiveWindow/SparkDrive": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/LiveWindow/Ungrouped/DifferentialDrive[1]": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
     "LiveWindow": {
+      "TalonDrive": {
+        "open": true
+      },
       "open": true
     },
     "SmartDashboard": {

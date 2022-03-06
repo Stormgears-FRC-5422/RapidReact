@@ -23,6 +23,10 @@ public abstract class StormDrive extends SubsystemBase {
 
   public abstract DifferentialDrive getDifferentialDrive();
 
+  public void simulationInit() {  }
+
+  public void simulationPeriodic() {  }
+
   public void rotate(double zRotation) {
     if (abs(zRotation) > 1) {
       System.out.println("Not valid " + zRotation);

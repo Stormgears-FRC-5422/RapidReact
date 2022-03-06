@@ -7,6 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+
+import com.revrobotics.REVPhysicsSim;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -49,6 +52,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    System.out.println("Autonomous Init");
   }
 
   /** This function is called periodically during autonomous. */
@@ -57,6 +61,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    System.out.println("Teleop Init");
   }
 
   /** This function is called periodically during operator control. */
@@ -73,4 +78,18 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  @Override
+  public void simulationInit() {
+//    To use, make the following modifications to your Robot class (adjust parameters as necessary):
+//    Call RevPhysicsSim.getInstance().addSparkMax(sparkMax, DCMotor.getNEO(1)) from simulationInit()
+//    Call RevPhysicsSim.GetInstance.run() from simulationPeriodic()
+      System.out.println("Simulation Init()");
+      robotContainer.getDrive().simulationInit();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+      REVPhysicsSim.getInstance().run();
+  }
 }

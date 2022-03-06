@@ -6,6 +6,8 @@ package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.REVPhysicsSim;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.drive.StormDrive;
@@ -37,14 +39,22 @@ public class SparkDrive extends StormDrive {
     private double delta;
     private int tempWarningCount;
 
-
     public SparkDrive() {
         setupMotors();
         setupTempControl();
         setupSlewFactors();
 
         differentialDrive = new DifferentialDrive(masterLeft, masterRight);
-        differentialDrive.setSafetyEnabled(true);
+// TODO!!! Make True
+        differentialDrive.setSafetyEnabled(false);
+    }
+
+    @Override
+    public void simulationInit() {
+        System.out.println("Drive simulation init()");
+        for (StormSpark s: getMotors()) {
+            REVPhysicsSim.getInstance().addSparkMax(s, DCMotor.getNEO(1));
+        }
     }
 
     protected void setupMotors() {
