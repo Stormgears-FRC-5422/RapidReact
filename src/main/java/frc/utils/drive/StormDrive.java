@@ -74,6 +74,7 @@ public abstract class StormDrive extends SubsystemBase {
   public void setMaxAccel(double acceleration) {};
   // Set the velocity profile
   public void setMaxVelocity(double velocity) {};
+  public void setTurnPositionReferenceWithVelocity(double measurement, double setPoint, double velocity) {};
   
   // provide method to access encoder distance
   public double getDistance() {

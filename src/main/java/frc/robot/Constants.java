@@ -77,10 +77,18 @@ public final class Constants {
   public static final double kDriveProfileRightD = StormProp.getNumber("driveProfileRightD",0.0);
   public static final double kDriveRightVFF = StormProp.getNumber("driveRightVFF", 0.0);
   
+  public static final double kDriveTurnProfileP = StormProp.getNumber("driveTurnProfileP",0.0);
+  public static final double kDriveTurnProfileI = StormProp.getNumber("driveTurnProfileI",0.0);
+  public static final double kDriveTurnProfileD = StormProp.getNumber("driveTurnProfileD",0.0);
+  public static final double kDriveTurnVFF = StormProp.getNumber("driveTurnVFF", 0.0);
+  public static final double kDriveTurnSFF = StormProp.getNumber("driveTurnSFF", 0.0);  // minmum input for movement
+  
   public static final double kDriveProfileMaxOutput = StormProp.getNumber("driveProfileMaxOutput", 0.0);
+  public static final double kDriveTurnProfileMaxOutput = StormProp.getNumber("driveTurnProfileMaxOutput", 0.0);
 
   public static final double kDriveGearBoxRatio = StormProp.getNumber("driveGearBoxRatio", 0.0);
   public static final double kDriveWheelCircumference = StormProp.getNumber("driveWheelCircumference", 0.0);
+
 
 
   private Constants() {

@@ -17,6 +17,8 @@ import static edu.wpi.first.wpilibj.DriverStation.reportWarning;
 import static frc.robot.Constants.*;
 import static java.lang.Math.max;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.MathUtil;
@@ -41,9 +43,10 @@ public class SparkDrive extends StormDrive {
     private double delta;
     private int tempWarningCount;
 
-    private SimpleMotorFeedforward m_ff_left,m_ff_right;
+    private SimpleMotorFeedforward m_ff_left,m_ff_right,m_ff_turn;
     private PIDController m_wpi_left_controller;
     private PIDController m_wpi_right_controller;
+    private PIDController m_wpi_turn_controller;
 
     private double conversionFactor = kDriveWheelCircumference/kDriveGearBoxRatio; // set to provide measurement in meters per motor revolution
     
@@ -143,9 +146,11 @@ public class SparkDrive extends StormDrive {
 
         m_wpi_left_controller = new PIDController(kP[0],kI[0],kD[0]);
         m_wpi_right_controller = new PIDController(kP[1],kI[1],kD[1]);
+        m_wpi_turn_controller = new PIDController(kP[1],kI[1],kD[1]);
 
         m_ff_left = new SimpleMotorFeedforward(0,kV[0]);
         m_ff_right = new SimpleMotorFeedforward(0,kV[1]);
+        m_ff_turn = new SimpleMotorFeedforward(kDriveTurnSFF,kDriveTurnVFF);
     }
 
     // Engage the PID controllers to move the robot to the incremental setpoint, must be called every periodic with a new setpoint
@@ -172,6 +177,25 @@ public class SparkDrive extends StormDrive {
         masterRight.setVoltage(right_out + ff_right_out);
     
         SmartDashboard.putNumber("Drive Position Target", setPoint);
+    }
+
+    // Engage the PID controllers to move the robot to the incremental setpoint (use velocity for feed forward)
+    // Must be called every periodic with a new setpoint.
+    // For turns, the measurement must be provided as the drive subsystem does not have access to the gryo
+    // subsystem.  The command must manage measurement and setpoint
+    public void setTurnPositionReferenceWithVelocity(double measurement,double setPoint,double velocity) {
+        // Get PID output 
+        double pid_out = MathUtil.clamp(m_wpi_turn_controller.calculate(measurement,setPoint),-kDriveTurnProfileMaxOutput,kDriveTurnProfileMaxOutput);
+
+        SmartDashboard.putNumber("Drive Turn Position PID output", pid_out);
+
+        // Get Feedforward
+        double ff_out = m_ff_turn.calculate(velocity);
+
+        // Apply to motors
+        differentialDrive.arcadeDrive(0, pid_out + ff_out);
+
+        SmartDashboard.putNumber("Drive Turn Position Target", setPoint);
     }
 
     public void resetPosition() {
