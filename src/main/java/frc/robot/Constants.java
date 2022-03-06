@@ -67,6 +67,22 @@ public final class Constants {
   public static final double kShooterLowRPS = StormProp.getNumber("shooterLowRPS", 0.0);
   public static final double kShooterHighRPS = StormProp.getNumber("shooterHighRPS", 0.0);
 
+  public static final double kDriveProfileLeftP = StormProp.getNumber("driveProfileLeftP",0.0);
+  public static final double kDriveProfileLeftI = StormProp.getNumber("driveProfileLeftI",0.0);
+  public static final double kDriveProfileLeftD = StormProp.getNumber("driveProfileLeftD",0.0);
+  public static final double kDriveLeftVFF = StormProp.getNumber("driveLeftVFF", 0.0);
+  
+  public static final double kDriveProfileRightP = StormProp.getNumber("driveProfileRightP",0.0);
+  public static final double kDriveProfileRightI = StormProp.getNumber("driveProfileRightI",0.0);
+  public static final double kDriveProfileRightD = StormProp.getNumber("driveProfileRightD",0.0);
+  public static final double kDriveRightVFF = StormProp.getNumber("driveRightVFF", 0.0);
+  
+  public static final double kDriveProfileMaxOutput = StormProp.getNumber("driveProfileMaxOutput", 0.0);
+
+  public static final double kDriveGearBoxRatio = StormProp.getNumber("driveGearBoxRatio", 0.0);
+  public static final double kDriveWheelCircumference = StormProp.getNumber("driveWheelCircumference", 0.0);
+
+
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");
   }

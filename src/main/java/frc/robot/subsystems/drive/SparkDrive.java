@@ -18,7 +18,6 @@ import static frc.robot.Constants.*;
 import static java.lang.Math.max;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.MathUtil;
 
@@ -46,13 +45,8 @@ public class SparkDrive extends StormDrive {
     private PIDController m_wpi_left_controller;
     private PIDController m_wpi_right_controller;
 
-    private double kMaxControllerOutput[] = {3,3}; 
-    private double gearBoxRatio = 10.71;
-    private double wheelCircumference = 24 * .0254;  // 8 inch wheels
-    private double kConversionFactor[] = {
-        wheelCircumference/gearBoxRatio,
-        wheelCircumference/gearBoxRatio};  // set to provide measurement in meters per motor revolution
-
+    private double conversionFactor = kDriveWheelCircumference/kDriveGearBoxRatio; // set to provide measurement in meters per motor revolution
+    
     public SparkDrive() {
         setupMotors();
         setupTempControl();
@@ -82,10 +76,10 @@ public class SparkDrive extends StormDrive {
         slaveRight.follow(masterRight);
 
         //  Configure encoders for meters/s
-        masterLeft.getEncoder().setPositionConversionFactor(kConversionFactor[0]);
-        masterRight.getEncoder().setPositionConversionFactor(kConversionFactor[1]);
-        masterLeft.getEncoder().setVelocityConversionFactor(kConversionFactor[0]/60d);
-        masterRight.getEncoder().setVelocityConversionFactor(kConversionFactor[1]/60d);
+        masterLeft.getEncoder().setPositionConversionFactor(conversionFactor);
+        masterRight.getEncoder().setPositionConversionFactor(conversionFactor);
+        masterLeft.getEncoder().setVelocityConversionFactor(conversionFactor/60d);
+        masterRight.getEncoder().setVelocityConversionFactor(conversionFactor/60d);
 
     }
 
@@ -142,11 +136,10 @@ public class SparkDrive extends StormDrive {
     protected void setupControllers() {
         // Using WPILib pid controller.  The command must have and manage the trapezoid object.  The drive 
         // subsystem doesn't know about it and expects the command to pass position and velocity setpoints
-        double kV[] = {2.3,2.3}; // R2D2 on stand, voltage output 
-        double kP[] = {45,45}; 
-        //double kI[] = {1e-6,1e-6};
-        double kI[] = {0,0};
-        double kD[] = {0,0};
+        double kV[] = {kDriveLeftVFF,kDriveRightVFF}; // R2D2 on stand, voltage output 
+        double kP[] = {kDriveProfileLeftP,kDriveProfileRightP}; 
+        double kI[] = {kDriveProfileLeftI,kDriveProfileRightI};
+        double kD[] = {kDriveProfileLeftD,kDriveProfileRightD};
 
         m_wpi_left_controller = new PIDController(kP[0],kI[0],kD[0]);
         m_wpi_right_controller = new PIDController(kP[1],kI[1],kD[1]);
@@ -155,16 +148,17 @@ public class SparkDrive extends StormDrive {
         m_ff_right = new SimpleMotorFeedforward(0,kV[1]);
     }
 
-    // Engage the PID controllers to move the robot to the incremental setpoint
+    // Engage the PID controllers to move the robot to the incremental setpoint, must be called every periodic with a new setpoint
     public void setPositionReference(double setPoint) {
         setPositionReferenceWithVelocity(setPoint,0);
     }
 
     // Engage the PID controllers to move the robot to the incremental setpoint (use velocity for feed forward)
+    // Must be called every periodic with a new setpoint
     public void setPositionReferenceWithVelocity(double setPoint,double velocity) {
         // Get PID output 
-        double left_out = MathUtil.clamp(m_wpi_left_controller.calculate(masterLeft.getEncoder().getPosition(), setPoint),-kMaxControllerOutput[0],kMaxControllerOutput[0]);
-        double right_out = MathUtil.clamp(m_wpi_right_controller.calculate(masterRight.getEncoder().getPosition(), setPoint),-kMaxControllerOutput[1],kMaxControllerOutput[1]);
+        double left_out = MathUtil.clamp(m_wpi_left_controller.calculate(masterLeft.getEncoder().getPosition(), setPoint),-kDriveProfileMaxOutput,kDriveProfileMaxOutput);
+        double right_out = MathUtil.clamp(m_wpi_right_controller.calculate(masterRight.getEncoder().getPosition(), setPoint),-kDriveProfileMaxOutput,kDriveProfileMaxOutput);
 
         SmartDashboard.putNumber("Drive Position Left PID output", left_out);
         SmartDashboard.putNumber("Drive Position Rifgt PID output", right_out);
