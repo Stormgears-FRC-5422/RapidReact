@@ -68,6 +68,8 @@ public final class Constants {
   public static final double kShooterA = StormProp.getNumber("shooterA", 0.0);
   public static final double kShooterLowRPS = StormProp.getNumber("shooterLowRPS", 0.0);
   public static final double kShooterHighRPS = StormProp.getNumber("shooterHighRPS", 0.0);
+  public static final double kShooterTolerance = StormProp.getNumber("shootTolerance", 0.0);
+  public static final double kShooterkITolerance = StormProp.getNumber("shooterIntegralTolerance", 0.0);
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");
