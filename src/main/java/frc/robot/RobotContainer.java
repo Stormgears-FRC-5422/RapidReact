@@ -1,14 +1,18 @@
 package frc.robot;
 
+import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
+import frc.robot.commands.climber.TestClimber;
 import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
 import frc.robot.subsystems.ballHandler.Intake;
 import frc.robot.subsystems.ballHandler.Shooter;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.Pivot;
 import frc.robot.subsystems.drive.SparkDrive;
 import frc.robot.subsystems.drive.TalonDrive;
 import frc.robot.subsystems.sensors.NavX;
@@ -36,10 +40,15 @@ public class RobotContainer {
   private Feeder feeder;
   private Intake intake;
   private TestIntake testIntake;
+  private LiftIntake liftIntake;
+
+  private Climber climber;
+  private Pivot pivot;
 
   private Load load;
   private Shoot shoot;
   private NavXAlign navXAlign;
+  private TestClimber testClimber;
 
   private final StormXboxController driveJoystick;
   private final StormXboxController secondaryJoystick;
@@ -56,14 +65,6 @@ public class RobotContainer {
     configureDefaultCommands();
   }
 
-  private void initCommands() {
-    if (!kDiagnostic) {
-      if (kUseIntake && kUseFeeder) load = new Load(intake, feeder);
-      if (kUseShooter && kUseFeeder) shoot = new Shoot(feeder, shooter);
-    } else testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
-    if (kUseNavX) navXAlign = new NavXAlign(drive, navX);
-  }
-
   private void initSubsystems() {
     if (kUseDrive) {
       switch (kMotorType) {
@@ -78,12 +79,31 @@ public class RobotContainer {
     }
     if (kUseNavX) navX = new NavX();
 
+    if (kUseClimber) climber = new Climber();
+
+    if (kUsePivot) pivot = new Pivot();
+
     if (kDiagnostic) diagnosticIntake = new DiagnosticIntake();
     else {
       if (kUseShooter) shooter = new Shooter();
       if (kUseFeeder) feeder = new Feeder();
       if (kUseIntake) intake = new Intake();
     }
+  }
+
+  private void initCommands() {
+    if (!kDiagnostic) {
+      if (kUseIntake && kUseFeeder) load = new Load(intake, feeder);
+      if (kUseShooter && kUseFeeder) shoot = new Shoot(feeder, shooter);
+    } else testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
+    if (kUseNavX) navXAlign = new NavXAlign(drive, navX);
+
+    if (kUseClimber && kUsePivot) testClimber = new TestClimber(climber,pivot,secondaryJoystick);
+
+//    if (kUseFeeder) {
+//      liftIntake = new LiftIntake(feeder, driveJoystick);
+//    }
+
   }
 
   private void configureButtonBindings() {
@@ -107,9 +127,20 @@ public class RobotContainer {
   private void configureDefaultCommands() {
     if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
     if (kDiagnostic) diagnosticIntake.setDefaultCommand(testIntake);
+
+    // See robot.teleop init for climber scheduling. It cannot be a default command
+
   }
 
   public StormDrive getDrive() {
     return drive;
+  }
+
+  public LiftIntake getLiftIntake() {
+    return liftIntake;
+  }
+
+  public TestClimber getTestClimber() {
+    return testClimber;
   }
 }

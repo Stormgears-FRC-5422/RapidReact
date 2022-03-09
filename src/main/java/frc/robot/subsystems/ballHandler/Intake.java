@@ -15,7 +15,7 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         motor.setInverted(true);
-        motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
 
     public double getSpeed() {

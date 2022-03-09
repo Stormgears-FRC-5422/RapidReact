@@ -1,20 +1,20 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.utils.drive.StormDrive;
+import frc.utils.motorcontrol.StormTalon;
 
 import static frc.robot.Constants.*;
 
 public class TalonDrive extends StormDrive {
     private final DifferentialDrive differentialDrive;
 
-    private final WPI_TalonSRX masterLeft = new WPI_TalonSRX(kMasterLeftId);
-    private final WPI_TalonSRX masterRight = new WPI_TalonSRX(kMasterRightId);
-    private final WPI_TalonSRX slaveLeft = new WPI_TalonSRX(kSlaveLeftId);
-    private final WPI_TalonSRX slaveRight = new WPI_TalonSRX(kSlaveRightId);
+    private final StormTalon masterLeft = new StormTalon(kMasterLeftId);
+    private final StormTalon masterRight = new StormTalon(kMasterRightId);
+    private final StormTalon slaveLeft = new StormTalon(kSlaveLeftId);
+    private final StormTalon slaveRight = new StormTalon(kSlaveRightId);
 
     public TalonDrive() {
       slaveLeft.follow(masterLeft);
@@ -30,7 +30,17 @@ public class TalonDrive extends StormDrive {
       masterRight.setInverted(kRightSideInverted);
       slaveRight.setInverted(kRightSideInverted);
 
-      differentialDrive = new DifferentialDrive(masterLeft, masterRight);
+        // The scale can't be > 1.0 - if that's what we're given, flip the sense by reducing
+        // the other side of the drive
+        if (kRightSideScale > 1.0) {
+            masterLeft.setScale(1.0/kRightSideScale);
+            slaveLeft.setScale(1.0/kRightSideScale);
+        } else {
+            masterRight.setScale(kRightSideScale);
+            slaveRight.set(kRightSideScale);
+        }
+
+        differentialDrive = new DifferentialDrive(masterLeft, masterRight);
           differentialDrive.setSafetyEnabled(true);
     }
 

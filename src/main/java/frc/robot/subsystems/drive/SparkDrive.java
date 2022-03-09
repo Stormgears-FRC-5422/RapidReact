@@ -37,7 +37,6 @@ public class SparkDrive extends StormDrive {
     private double delta;
     private int tempWarningCount;
 
-
     public SparkDrive() {
         setupMotors();
         setupTempControl();
@@ -63,6 +62,16 @@ public class SparkDrive extends StormDrive {
 
         slaveLeft.follow(masterLeft);
         slaveRight.follow(masterRight);
+
+        // The scale can't be > 1.0 - if that's what we're given, flip the sense by reducing
+        // the other side of the drive
+        if (kRightSideScale > 1.0) {
+            masterLeft.setScale(1.0/kRightSideScale);
+            slaveLeft.setScale(1.0/kRightSideScale);
+        } else {
+            masterRight.setScale(kRightSideScale);
+            slaveRight.set(kRightSideScale);
+        }
     }
 
     protected void setupTempControl() {
