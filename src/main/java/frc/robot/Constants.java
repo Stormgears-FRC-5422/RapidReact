@@ -65,9 +65,13 @@ public final class Constants {
   public static final double kShooterP = StormProp.getNumber("shooterP", 0.0);
   public static final double kShooterI = StormProp.getNumber("shooterI", 0.0);
   public static final double kShooterD = StormProp.getNumber("shooterD", 0.0);
-  public static final double kShooterF = StormProp.getNumber("shooterF", 0.0);
+  public static final double kShooterS = StormProp.getNumber("shooterS", 0.0);
+  public static final double kShooterV = StormProp.getNumber("shooterV", 0.0);
+  public static final double kShooterA = StormProp.getNumber("shooterA", 0.0);
   public static final double kShooterLowRPS = StormProp.getNumber("shooterLowRPS", 0.0);
   public static final double kShooterHighRPS = StormProp.getNumber("shooterHighRPS", 0.0);
+  public static final double kShooterTolerance = StormProp.getNumber("shootTolerance", 0.0);
+  public static final double kShooterkITolerance = StormProp.getNumber("shooterIntegralTolerance", 0.0);
 
   public static final int kClimberLeftId = StormProp.getInt("climberLeftId", -1);
   public static final int kClimberRightId = StormProp.getInt("climberRightId", -1);

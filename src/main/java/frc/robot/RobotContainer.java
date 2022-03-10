@@ -1,6 +1,5 @@
 package frc.robot;
 
-import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
@@ -119,7 +118,10 @@ public class RobotContainer {
       if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
     } else {
       if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
-      if (kUseShooter && kUseFeeder) buttonBoard.shootButton.whileHeld(shoot);
+      if (kUseShooter && kUseFeeder) {
+        buttonBoard.shootButton.whileHeld(shoot);
+        buttonBoard.toggleShootingHeightButton.whenPressed(new InstantCommand(shoot::toggleMode));
+      }
     }
     if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
   }

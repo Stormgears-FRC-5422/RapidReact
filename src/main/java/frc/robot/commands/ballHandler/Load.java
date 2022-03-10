@@ -16,8 +16,12 @@ public class Load extends CommandBase {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         feeder.setLimit(true);
+    }
+
+    @Override
+    public void execute() {
         intake.on();
         feeder.on();
     }
