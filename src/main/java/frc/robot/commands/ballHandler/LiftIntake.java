@@ -2,7 +2,6 @@ package frc.robot.commands.ballHandler;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ballHandler.Feeder;
-import frc.robot.subsystems.ballHandler.Intake;
 import frc.utils.joysticks.StormXboxController;
 
 public class LiftIntake extends CommandBase {

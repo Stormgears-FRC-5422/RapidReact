@@ -1,8 +1,10 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
+import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.climber.TestClimber;
 import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.navX.NavXAlign;
@@ -130,7 +132,7 @@ public class RobotContainer {
     if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
     if (kDiagnostic) diagnosticIntake.setDefaultCommand(testIntake);
 
-    // See robot.teleop init for climber scheduling. It cannot be a default command
+    // See robot.teleopInit() for climber scheduling. It cannot be a default command
 
   }
 
