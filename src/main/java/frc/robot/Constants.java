@@ -23,6 +23,7 @@ public final class Constants {
   public static final boolean kUseFeeder = StormProp.getBoolean("useFeeder", false);
   public static final boolean kUseShooter = StormProp.getBoolean("useShooter", false);
   public static final boolean kUseClimber = StormProp.getBoolean("useClimber", false);
+  public static final boolean kUsePivot = StormProp.getBoolean("usePivot", false);
   public static final boolean kUseStatusLights = StormProp.getBoolean("useStatusLights", false);
 
   // MOTOR CONSTANTS
@@ -38,6 +39,7 @@ public final class Constants {
 
   public static final boolean kLeftSideInverted = StormProp.getBoolean("leftSideInverted", false);
   public static final boolean kRightSideInverted = StormProp.getBoolean("rightSideInverted", false);
+  public static final double kRightSideSpeedScale = StormProp.getNumber("rightSideSpeedScale", 1.0);
 
   public static final int kSmartCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double kNullSize = StormProp.getNumber("driveNullSize", 0.055);
@@ -63,9 +65,26 @@ public final class Constants {
   public static final double kShooterP = StormProp.getNumber("shooterP", 0.0);
   public static final double kShooterI = StormProp.getNumber("shooterI", 0.0);
   public static final double kShooterD = StormProp.getNumber("shooterD", 0.0);
-  public static final double kShooterF = StormProp.getNumber("shooterF", 0.0);
+  public static final double kShooterS = StormProp.getNumber("shooterS", 0.0);
+  public static final double kShooterV = StormProp.getNumber("shooterV", 0.0);
+  public static final double kShooterA = StormProp.getNumber("shooterA", 0.0);
   public static final double kShooterLowRPS = StormProp.getNumber("shooterLowRPS", 0.0);
   public static final double kShooterHighRPS = StormProp.getNumber("shooterHighRPS", 0.0);
+  public static final double kShooterTolerance = StormProp.getNumber("shootTolerance", 0.0);
+  public static final double kShooterkITolerance = StormProp.getNumber("shooterIntegralTolerance", 0.0);
+
+  public static final int kClimberLeftId = StormProp.getInt("climberLeftId", -1);
+  public static final int kClimberRightId = StormProp.getInt("climberRightId", -1);
+  public static final int kPivotLeftId = StormProp.getInt("pivotLeftId", -1);
+  public static final int kPivotRightId = StormProp.getInt("pivotRightId", -1);
+
+  public static final boolean kClimberLeftInverted = StormProp.getBoolean("climberLeftInverted", false);
+  public static final boolean kClimberRightInverted = StormProp.getBoolean("climberRightInverted", false);
+  public static final boolean kPivotLeftInverted = StormProp.getBoolean("pivotLeftInverted", false);
+  public static final boolean kPivotRightInverted = StormProp.getBoolean("pivotRightInverted", false);
+
+  public static final double kClimberSpeed = StormProp.getNumber("climberSpeed", 0.0);
+  public static final double kPivotSpeed = StormProp.getNumber("pivotSpeed", 0.0);
 
   public static final double kDriveProfileLeftP = StormProp.getNumber("driveProfileLeftP",0.0);
   public static final double kDriveProfileLeftI = StormProp.getNumber("driveProfileLeftI",0.0);

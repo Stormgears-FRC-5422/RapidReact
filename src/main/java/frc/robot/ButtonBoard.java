@@ -22,10 +22,6 @@ public class ButtonBoard {
 
     public final JoystickButton autoDriveTestButton;
 
-    public final JoystickButton selectIntakeButton;
-    public final JoystickButton selectFeederButton;
-    public final JoystickButton selectShooterButton;
-
     public final JoystickButton loadButton;
     public final JoystickButton shootButton;
     public final JoystickButton toggleShootingHeightButton;
@@ -33,6 +29,14 @@ public class ButtonBoard {
     /**
      * Initialize SECONDARY JOYSTICK BUTTONS
      */
+    public final JoystickButton selectIntakeButton;
+    public final JoystickButton selectFeederButton;
+    public final JoystickButton selectShooterButton;
+
+//    public final JoystickButton climbLeftUpButton;
+//    public final JoystickButton climbLeftDownButton;
+//    public final JoystickButton climbRightUpButton;
+//    public final JoystickButton climbRightDownButton;
 
     private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
         precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
@@ -47,10 +51,15 @@ public class ButtonBoard {
 
         toggleShootingHeightButton = new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);
 
+        // Put Secondary Joystick settings here
         selectIntakeButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
         selectFeederButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
         selectShooterButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);
-    }
 
+//        climbLeftUpButton = new JoystickButton(secondaryJoystick, StormXboxController.leftBumper);
+//        climbLeftDownButton = new JoystickButton(secondaryJoystick, StormXboxController.leftTrigger);
+//        climbRightUpButton = new JoystickButton(secondaryJoystick, StormXboxController.rightBumper);
+//        climbRightDownButton = new JoystickButton(secondaryJoystick, StormXboxController.rightTrigger);
+    }
 
 }

@@ -84,6 +84,15 @@ public class SparkDrive extends StormDrive {
         masterLeft.getEncoder().setVelocityConversionFactor(conversionFactor/60d);
         masterRight.getEncoder().setVelocityConversionFactor(conversionFactor/60d);
 
+        // The scale can't be > 1.0 - if that's what we're given, flip the sense by reducing
+        // the other side of the drive
+        if (kRightSideSpeedScale > 1.0) {
+            masterLeft.setSpeedScale(1.0/kRightSideSpeedScale);
+            slaveLeft.setSpeedScale(1.0/kRightSideSpeedScale);
+        } else {
+            masterRight.setSpeedScale(kRightSideSpeedScale);
+            slaveRight.setSpeedScale(kRightSideSpeedScale);
+        }
     }
 
     protected void setupTempControl() {

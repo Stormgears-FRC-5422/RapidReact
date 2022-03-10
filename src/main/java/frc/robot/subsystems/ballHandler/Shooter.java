@@ -3,41 +3,62 @@ package frc.robot.subsystems.ballHandler;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.motorcontrol.StormSpark;
 
 import static frc.robot.Constants.*;
 
-
 public class Shooter extends SubsystemBase {
+
+    public enum Height{
+        LOW(kShooterLowRPS),
+        HIGH(kShooterHighRPS);
+
+        private final double rps;
+
+        Height(double rps) {
+            this.rps = rps;
+        }
+    }
+
     private final StormSpark motor = new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final SparkMaxPIDController pidController = motor.getPIDController();
+    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(kShooterS, kShooterV, kShooterA);
+    public Height mode = Height.LOW;
 
     public Shooter() {
         motor.setInverted(false);
-        motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         motor.getEncoder().setVelocityConversionFactor(1 / 60d); //from rpm to rps
-        setupPID();
+        Shuffleboard.getTab("Shoot Command").add(this);
     }
 
-    private void setupPID() {
-        pidController.setP(kShooterP);
-        pidController.setI(kShooterI);
-        pidController.setD(kShooterD);
-        pidController.setFF(kShooterF);
-        pidController.setOutputRange(-1, 1);
-    }
 
     public double getSpeed() {
         return motor.getEncoder().getVelocity();
     }
 
     public void setSpeed(double speed) {
-        if (speed != 0) pidController.setReference(speed, CANSparkMax.ControlType.kVelocity);
-        else motor.set(0);
+        pidController.setReference(speed, CANSparkMax.ControlType.kVelocity);
     }
 
     public void off() {
-        setSpeed(0);
+        motor.set(0);
+    }
+
+    public double setpoint() {
+        return mode.rps;
+    }
+
+    public void runToSpeed(double pidOutput){
+        motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), 0));
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("speed", motor.getEncoder()::getVelocity, null);
     }
 }

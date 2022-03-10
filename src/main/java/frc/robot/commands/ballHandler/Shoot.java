@@ -1,37 +1,31 @@
 package frc.robot.commands.ballHandler;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.ballHandler.Feeder;
 import frc.robot.subsystems.ballHandler.Shooter;
 
-import static frc.robot.Constants.kShooterHighRPS;
-import static frc.robot.Constants.kShooterLowRPS;
+import static frc.robot.Constants.*;
+import static frc.robot.subsystems.ballHandler.Shooter.Height;
 
-public class Shoot extends CommandBase {
-
-    public enum Height{
-        LOW(kShooterLowRPS),
-        HIGH(kShooterHighRPS);
-
-        public double rps;
-
-        Height(double rps) {
-            this.rps = rps;
-        }
-    }
-
+public class Shoot extends PIDCommand {
 
     private final Feeder feeder;
     private final Shooter shooter;
-    private Height mode = Height.LOW;
 
     public Shoot(Feeder feeder, Shooter shooter) {
+        super(
+                new PIDController(kShooterP, kShooterI, kShooterD),
+                shooter::getSpeed,
+                shooter::setpoint,
+                shooter::runToSpeed,
+                shooter, feeder
+        );
         this.feeder = feeder;
         this.shooter = shooter;
-        addRequirements(feeder, shooter);
-        Shuffleboard.getTab("Shooter").add(this);
+        Shuffleboard.getTab("Shoot Command").add(this);
     }
 
     @Override
@@ -41,9 +35,10 @@ public class Shoot extends CommandBase {
 
     @Override
     public void execute() {
-        feeder.setLimit(!isReady());
+        super.execute();
+        feeder.setLimit(!isReady(kShooterTolerance));
+        if (!isReady(kShooterkITolerance)) getController().reset();
         feeder.on();
-        shooter.setSpeed(mode.rps);
     }
 
     @Override
@@ -52,33 +47,19 @@ public class Shoot extends CommandBase {
         shooter.off();
     }
 
-
-    private boolean isReady() {
-        return shooter.getSpeed() >= 0.95 * mode.rps;
+    private boolean isReady(double percentTolerance) {
+        return shooter.getSpeed() >= (1 - (percentTolerance / 100) * shooter.setpoint()) && shooter.getSpeed() <= (1 + (percentTolerance / 100) * shooter.setpoint());
     }
 
     public void toggleMode() {
-        if (mode == Height.LOW) {
-            mode = Height.HIGH;
-        } else {
-            mode = Height.LOW;
-        }
-        System.out.println("Shooter mode: " + mode);
-    }
-
-    private void setHigh(double rps) {
-        Height.HIGH.rps = rps;
-    }
-
-    private boolean isHigh(){
-        return mode == Height.HIGH;
+        if (shooter.mode == Height.LOW) shooter.mode = Height.HIGH;
+        else shooter.mode = Height.LOW;
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-        builder.addDoubleProperty("Speed", shooter::getSpeed, null);
-        builder.addDoubleProperty("High Height", () -> Height.HIGH.rps, this::setHigh);
-        builder.addBooleanProperty("High", this::isHigh, null);
+        builder.addDoubleProperty("I Value", getController()::getI, getController()::setI);
+        builder.addDoubleProperty("P Value", getController()::getP, getController()::setP);
+        builder.addDoubleProperty("D Value", getController()::getD, getController()::setD);
     }
 }
