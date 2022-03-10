@@ -43,7 +43,7 @@ public class StormSpark extends CANSparkMax {
 
     // Should be between 0.0 and 1.0 - to account for oddities in the drive train
     // e.g. two different gear ratios
-    public void setScale(double scale) {
+    public void setSpeedScale(double scale) {
         this.scale = MathUtil.clamp(scale, 0, 1.0);
     }
 

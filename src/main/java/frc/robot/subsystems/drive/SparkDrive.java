@@ -65,12 +65,12 @@ public class SparkDrive extends StormDrive {
 
         // The scale can't be > 1.0 - if that's what we're given, flip the sense by reducing
         // the other side of the drive
-        if (kRightSideScale > 1.0) {
-            masterLeft.setScale(1.0/kRightSideScale);
-            slaveLeft.setScale(1.0/kRightSideScale);
+        if (kRightSideSpeedScale > 1.0) {
+            masterLeft.setSpeedScale(1.0/kRightSideSpeedScale);
+            slaveLeft.setSpeedScale(1.0/kRightSideSpeedScale);
         } else {
-            masterRight.setScale(kRightSideScale);
-            slaveRight.set(kRightSideScale);
+            masterRight.setSpeedScale(kRightSideSpeedScale);
+            slaveRight.setSpeedScale(kRightSideSpeedScale);
         }
     }
 

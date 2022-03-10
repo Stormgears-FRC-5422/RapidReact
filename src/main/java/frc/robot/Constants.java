@@ -39,7 +39,7 @@ public final class Constants {
 
   public static final boolean kLeftSideInverted = StormProp.getBoolean("leftSideInverted", false);
   public static final boolean kRightSideInverted = StormProp.getBoolean("rightSideInverted", false);
-  public static final double kRightSideScale = StormProp.getNumber("rightSideScale", 1.0);
+  public static final double kRightSideSpeedScale = StormProp.getNumber("rightSideSpeedScale", 1.0);
 
   public static final int kSmartCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double kNullSize = StormProp.getNumber("driveNullSize", 0.055);
