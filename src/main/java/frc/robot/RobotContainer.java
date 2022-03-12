@@ -6,9 +6,8 @@ import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
 import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.climber.TestClimber;
-import frc.robot.commands.drive.SlewDrive;
+import frc.robot.commands.drive.*;
 import frc.robot.commands.navX.NavXAlign;
-import frc.robot.commands.drive.DriveDistanceProfile;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
 import frc.robot.subsystems.ballHandler.Intake;
@@ -114,7 +113,7 @@ public class RobotContainer {
     if (kUseDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
-      buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(3,1,.5,drive));
+      if (kUseNavX)  buttonBoard.autoDriveTestButton.whenPressed(new DriveTurnProfile(360,60,120,drive,navX));
     }
     if (kDiagnostic) {
       if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);

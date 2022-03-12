@@ -14,6 +14,7 @@ public class DriveTurnProfile extends CommandBase {
     double m_start_angle = 0.0;
 
     public DriveTurnProfile(TrapezoidProfile profile,StormDrive drive, NavX nav) {
+        addRequirements(drive);
         tcommand = new TrapezoidProfileCommand(profile,this::execute_pid,drive);
         m_drive = drive;
         m_navx = nav;
@@ -31,6 +32,7 @@ public class DriveTurnProfile extends CommandBase {
 
     public void initialize() {
         super.initialize();
+        m_drive.getDifferentialDrive().setSafetyEnabled(false);
         tcommand.initialize();
         m_start_angle = m_navx.getAngle();
 
@@ -47,7 +49,8 @@ public class DriveTurnProfile extends CommandBase {
 
     public void end(boolean interrupted) {
         super.end(interrupted);
-        tcommand.initialize();
+        tcommand.end(interrupted);
+        m_drive.getDifferentialDrive().setSafetyEnabled(true);
         SmartDashboard.putString("DriveTurn", "finished");
     }
     public boolean isFinished() {

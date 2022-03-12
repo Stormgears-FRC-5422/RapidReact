@@ -48,7 +48,7 @@ public class SparkDrive extends StormDrive {
     private PIDController m_wpi_right_controller;
     private PIDController m_wpi_turn_controller;
 
-    private double conversionFactor = kDriveWheelCircumference/kDriveGearBoxRatio; // set to provide measurement in meters per motor revolution
+    private double conversionFactor[] = {kDriveWheelCircumference/kDriveGearBoxRatio,kRightSideSpeedScale*kDriveWheelCircumference/kDriveGearBoxRatio}; // set to provide measurement in meters per motor revolution
     
     public SparkDrive() {
         setupMotors();
@@ -79,10 +79,10 @@ public class SparkDrive extends StormDrive {
         slaveRight.follow(masterRight);
 
         //  Configure encoders for meters/s
-        masterLeft.getEncoder().setPositionConversionFactor(conversionFactor);
-        masterRight.getEncoder().setPositionConversionFactor(conversionFactor);
-        masterLeft.getEncoder().setVelocityConversionFactor(conversionFactor/60d);
-        masterRight.getEncoder().setVelocityConversionFactor(conversionFactor/60d);
+        masterLeft.getEncoder().setPositionConversionFactor(conversionFactor[0]);
+        masterRight.getEncoder().setPositionConversionFactor(conversionFactor[1]);
+        masterLeft.getEncoder().setVelocityConversionFactor(conversionFactor[0]/60d);
+        masterRight.getEncoder().setVelocityConversionFactor(conversionFactor[1]/60d);
 
         // The scale can't be > 1.0 - if that's what we're given, flip the sense by reducing
         // the other side of the drive
@@ -159,6 +159,7 @@ public class SparkDrive extends StormDrive {
 
         m_ff_left = new SimpleMotorFeedforward(0,kV[0]);
         m_ff_right = new SimpleMotorFeedforward(0,kV[1]);
+        SmartDashboard.putNumber("Drive FF Const", kDriveTurnVFF);
         m_ff_turn = new SimpleMotorFeedforward(kDriveTurnSFF,kDriveTurnVFF);
     }
 
@@ -197,14 +198,17 @@ public class SparkDrive extends StormDrive {
         double pid_out = MathUtil.clamp(m_wpi_turn_controller.calculate(measurement,setPoint),-kDriveTurnProfileMaxOutput,kDriveTurnProfileMaxOutput);
 
         SmartDashboard.putNumber("Drive Turn Position PID output", pid_out);
-
+        
         // Get Feedforward
         double ff_out = m_ff_turn.calculate(velocity);
 
         // Apply to motors
-        differentialDrive.arcadeDrive(0, pid_out + ff_out);
+        masterLeft.setVoltage(1 * (pid_out + ff_out));  
+        masterRight.setVoltage(-1 * (pid_out + ff_out));  // Right motor goes backwards for right turn (positive angular velocity)
+        SmartDashboard.putNumber("Drive Turn feedforward output", ff_out);
 
         SmartDashboard.putNumber("Drive Turn Position Target", setPoint);
+        SmartDashboard.putNumber("Drive Turn Velocity Target", velocity);
     }
 
     public void resetPosition() {

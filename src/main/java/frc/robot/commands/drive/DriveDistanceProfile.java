@@ -10,6 +10,7 @@ public class DriveDistanceProfile extends TrapezoidProfileCommand {
 
     public DriveDistanceProfile(TrapezoidProfile profile,StormDrive drive) {
         super(profile,state -> execute_pid(drive,state),drive);
+        addRequirements(drive);
         m_drive = drive;
     }
 
@@ -17,7 +18,8 @@ public class DriveDistanceProfile extends TrapezoidProfileCommand {
         super(new TrapezoidProfile(new TrapezoidProfile.Constraints(velocity,acceleration),new TrapezoidProfile.State(distance,0)),
               state -> execute_pid(drive,state),
               drive);
-        m_drive = drive;
+              addRequirements(drive);
+              m_drive = drive;
     }
 
     public void initialize() {
