@@ -38,6 +38,16 @@ public class TestClimber extends CommandBase {
             return;
         }
 
+        if (joystick.getXisPressed()) {
+            climber.disableLimits();
+            pivot.disableLimits();
+        }
+
+        if (joystick.getYisPressed()) {
+            climber.enableLimits();
+            pivot.enableLimits();
+        }
+
         LRPair climberPair = new LRPair(joystick.getLeftJoystickY() * kClimberSpeed,
                                         joystick.getLeftJoystickY() * kClimberSpeed);
         LRPair pivotPair = new LRPair(joystick.getRightJoystickY() * kPivotSpeed,
