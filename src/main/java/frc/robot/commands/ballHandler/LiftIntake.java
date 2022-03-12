@@ -24,7 +24,7 @@ public class LiftIntake extends CommandBase {
 
     @Override
     public void execute() {
-        feeder.setLift(joystick.getRightJoystickY());
+        feeder.setLift(joystick.getRightTrigger());
     }
 
     @Override

@@ -2,6 +2,7 @@ package frc.robot.subsystems.climber;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.LRPair;
 import frc.utils.motorcontrol.StormSpark;
@@ -28,6 +29,11 @@ public class Climber extends SubsystemBase {
     public void periodic() {
         leftClimber.set(lrSetSpeed.left);
         rightClimber.set(lrSetSpeed.right);
+
+        SmartDashboard.putNumber("climber left current", leftClimber.getOutputCurrent());
+        SmartDashboard.putNumber("climber right current", rightClimber.getOutputCurrent());
+        SmartDashboard.putNumber("climber left position", leftClimber.getEncoder().getPosition());
+        SmartDashboard.putNumber("climber right position", rightClimber.getEncoder().getPosition());
     }
 
     public void stop() {
@@ -42,8 +48,10 @@ public class Climber extends SubsystemBase {
         this.lrSetSpeed = lrSpeed;
     }
 
-    public double getCurrent() {
-        return Math.max(leftClimber.getOutputCurrent(), rightClimber.getOutputCurrent());
+    public void zero() {
+        leftClimber.getEncoder().setPosition(0.0);
+        rightClimber.getEncoder().setPosition(0.0);
+        System.out.println("Climber zero()");
     }
 
 }

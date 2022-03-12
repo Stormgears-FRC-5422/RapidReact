@@ -32,15 +32,27 @@ public class TestClimber extends CommandBase {
 
     @Override
     public void execute() {
+        if (joystick.getAisPressed()) {
+            climber.zero();
+            pivot.zero();
+            return;
+        }
+
         LRPair climberPair = new LRPair(joystick.getLeftJoystickY() * kClimberSpeed,
                                         joystick.getLeftJoystickY() * kClimberSpeed);
-        System.out.println("Current: " + climber.getCurrent() + "  Left: " + climberPair.left + "  Right: " + climberPair.right);
-
-        climber.setSpeed(climberPair);
-
         LRPair pivotPair = new LRPair(joystick.getRightJoystickY() * kPivotSpeed,
                 joystick.getRightJoystickY() * kPivotSpeed);
-        System.out.println("Current: " + pivot.getCurrent() + "  Left: " + pivotPair.left + "  Right: " + pivotPair.right);
+
+        // Move only the one on the side with the bumper held
+        if (joystick.getLeftBumperIsHeld()) {
+            climberPair.right = 0;
+            pivotPair.right = 0;
+        } else if (joystick.getRightBumperIsHeld()) {
+            climberPair.left = 0;
+            pivotPair.left = 0;
+        }
+
+        climber.setSpeed(climberPair);
         pivot.setSpeed(pivotPair);
     }
 
