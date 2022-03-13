@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.utils.LRPair;
+import frc.utils.LRSpeeds;
 import frc.utils.motorcontrol.StormSpark;
 
 import static frc.robot.Constants.*;
@@ -12,10 +12,10 @@ import static frc.robot.Constants.*;
 public class Pivot extends SubsystemBase {
     private final StormSpark leftPivot = new StormSpark(kPivotLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark rightPivot = new StormSpark(kPivotRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private LRPair lrSetSpeed;
+    private LRSpeeds speeds;
 
     public Pivot() {
-        lrSetSpeed = new LRPair();
+        speeds = new LRSpeeds();
 
         leftPivot.setInverted(kPivotLeftInverted);
         leftPivot.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -26,8 +26,8 @@ public class Pivot extends SubsystemBase {
 
     @Override
     public void periodic() {
-        leftPivot.set(lrSetSpeed.left);
-        rightPivot.set(lrSetSpeed.right);
+        leftPivot.set(speeds.left());
+        rightPivot.set(speeds.right());
 
         SmartDashboard.putNumber("pivot left current", leftPivot.getOutputCurrent());
         SmartDashboard.putNumber("pivot right current", rightPivot.getOutputCurrent());
@@ -37,15 +37,15 @@ public class Pivot extends SubsystemBase {
     }
 
     public void stop() {
-        setSpeed(new LRPair(0,0));
+        setSpeed(LRSpeeds.stop());
     }
 
-    public LRPair getSpeed() {
-        return new LRPair(leftPivot.get(),rightPivot.get());
+    public LRSpeeds getSpeed() {
+        return new LRSpeeds(leftPivot.get(), rightPivot.get());
     }
 
-    public void setSpeed(LRPair lrSpeed) {
-        this.lrSetSpeed = lrSpeed;
+    public void setSpeed(LRSpeeds lrSpeed) {
+        this.speeds = lrSpeed;
     }
 
     public void zero() {
