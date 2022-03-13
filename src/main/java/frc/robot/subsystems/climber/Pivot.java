@@ -22,6 +22,9 @@ public class Pivot extends SubsystemBase {
 
         rightPivot.setInverted(kPivotRightInverted);
         rightPivot.setIdleMode(CANSparkMax.IdleMode.kBrake);
+
+        // Optimistic - we need to zero if the robot has been off...
+        enableLimits();
     }
 
     @Override
@@ -51,8 +54,38 @@ public class Pivot extends SubsystemBase {
     public void zero() {
         leftPivot.getEncoder().setPosition(0.0);
         rightPivot.getEncoder().setPosition(0.0);
-        System.out.println("Pivot zero()");
+
+        setLimits(-20.0f, -200.0f,-20.0f, -200.0f);
+        enableLimits();
+
+        System.out.println("Pivot.zero()");
     }
+
+    public void disableLimits() {
+        leftPivot.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
+        leftPivot.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
+        rightPivot.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
+        rightPivot.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
+        System.out.println("Pivot.disableLimits()");
+    }
+
+    public void enableLimits() {
+        leftPivot.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+        leftPivot.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+        rightPivot.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+        rightPivot.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+        System.out.println("Pivot.enableLimit()");
+    }
+
+    public void setLimits(float forwardLeft, float reverseLeft, float forwardRight, float reverseRight) {
+        leftPivot.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardLeft);
+        leftPivot.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseLeft);
+        rightPivot.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardRight);
+        rightPivot.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseRight);
+        System.out.println("Pivot.setLimits()");
+    }
+
+
 
 }
 
