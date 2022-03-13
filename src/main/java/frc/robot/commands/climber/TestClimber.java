@@ -1,9 +1,6 @@
 package frc.robot.commands.climber;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ballHandler.Feeder;
-import frc.robot.subsystems.ballHandler.Shooter;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.Pivot;
 import frc.utils.LRSpeeds;
@@ -39,7 +36,6 @@ public class TestClimber extends CommandBase {
             return;
         }
 
-        LRSpeeds climberSpeeds = new LRSpeeds(joystick.getLeftJoystickY() * kClimberSpeed,
         if (joystick.getXisPressed()) {
             climber.disableLimits();
             pivot.disableLimits();
@@ -50,7 +46,7 @@ public class TestClimber extends CommandBase {
             pivot.enableLimits();
         }
 
-        LRPair climberPair = new LRPair(joystick.getLeftJoystickY() * kClimberSpeed,
+        LRSpeeds climberSpeeds = new LRSpeeds(joystick.getLeftJoystickY() * kClimberSpeed,
                                         joystick.getLeftJoystickY() * kClimberSpeed);
         LRSpeeds pivotSpeeds = new LRSpeeds(joystick.getRightJoystickY() * kPivotSpeed,
                 joystick.getRightJoystickY() * kPivotSpeed);
