@@ -155,7 +155,7 @@ public class SparkDrive extends StormDrive {
 
         m_wpi_left_controller = new PIDController(kP[0],kI[0],kD[0]);
         m_wpi_right_controller = new PIDController(kP[1],kI[1],kD[1]);
-        m_wpi_turn_controller = new PIDController(kP[1],kI[1],kD[1]);
+        m_wpi_turn_controller = new PIDController(kDriveTurnProfileP,kDriveTurnProfileI,kDriveTurnProfileD);
 
         m_ff_left = new SimpleMotorFeedforward(0,kV[0]);
         m_ff_right = new SimpleMotorFeedforward(0,kV[1]);
@@ -207,6 +207,7 @@ public class SparkDrive extends StormDrive {
         masterRight.setVoltage(-1 * (pid_out + ff_out));  // Right motor goes backwards for right turn (positive angular velocity)
         SmartDashboard.putNumber("Drive Turn feedforward output", ff_out);
 
+        SmartDashboard.putNumber("Drive Turn Measurement", measurement);
         SmartDashboard.putNumber("Drive Turn Position Target", setPoint);
         SmartDashboard.putNumber("Drive Turn Velocity Target", velocity);
     }

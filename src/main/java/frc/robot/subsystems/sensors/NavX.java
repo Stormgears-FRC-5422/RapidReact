@@ -10,12 +10,16 @@ public class NavX extends SubsystemBase {
   public NavX() {
     ahrs = new AHRS();
     ahrs.enableLogging(true);
-    }
-
-    public double getAngle() {
-    return Math.toRadians(getAngleDegrees());
   }
 
+  public double getAngle() {
+  return Math.toRadians(getAngleDegrees());
+  }
+
+  public double getTotalAngleDegrees() {
+    return ahrs.getAngle();
+  }
+  
   public double getAngleDegrees() {
     return ahrs.getYaw();
   }

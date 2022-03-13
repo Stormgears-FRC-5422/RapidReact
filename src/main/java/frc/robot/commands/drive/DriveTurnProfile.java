@@ -27,14 +27,14 @@ public class DriveTurnProfile extends CommandBase {
     }
 
     protected double getRelativeMeasurement() {
-        return(m_navx.getAngle() - m_start_angle);
+        return(m_navx.getTotalAngleDegrees() - m_start_angle);
     }
 
     public void initialize() {
         super.initialize();
         m_drive.getDifferentialDrive().setSafetyEnabled(false);
         tcommand.initialize();
-        m_start_angle = m_navx.getAngle();
+        m_start_angle = m_navx.getTotalAngleDegrees();
 
         SmartDashboard.putString("DriveTurn","Running");
     }
