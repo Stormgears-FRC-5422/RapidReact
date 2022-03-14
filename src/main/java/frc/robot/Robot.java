@@ -64,8 +64,7 @@ public class Robot extends TimedRobot {
     // For now.  We can't use setDefaultCommand because this command interacts with multiple subsystems.
     // we might want to use the Pivot for something else in the match, so we may need a different way to initiate this
     if (kUseClimber && kUsePivot) robotContainer.getTestClimber().schedule();
-
-    //robotContainer.getLiftIntake().schedule();
+    if (kDiagnostic && kUseFeeder) robotContainer.getLiftIntake().schedule();
   }
 
   /** This function is called periodically during operator control. */

@@ -12,6 +12,7 @@ public class StormSpark extends CANSparkMax {
     private static final double temperatureRampLimit = Constants.kTemperatureRampLimit;
     private final double delta;
     private double scale = 1.0;
+    private long count = 0;
 
     public StormSpark(int deviceID, MotorType type) {
         super(deviceID, type);
@@ -35,7 +36,7 @@ public class StormSpark extends CANSparkMax {
 
         if (temp > temperatureRampThreshold) {
             speed *= Math.max((temperatureRampLimit - temp) / delta, 0.0);
-            System.out.println("Speed safety control - factor " + speed);
+            if (count++ % 100 == 0) System.out.println("Id " + this.getDeviceId() + " safety control - factor " + speed);
         }
 
         super.set(scale * speed);

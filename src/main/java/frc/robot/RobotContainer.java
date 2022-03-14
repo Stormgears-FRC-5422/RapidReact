@@ -78,13 +78,15 @@ public class RobotContainer {
         default:
       }
     }
+
     if (kUseNavX) navX = new NavX();
-
     if (kUseClimber) climber = new Climber();
-
     if (kUsePivot) pivot = new Pivot();
 
-    if (kDiagnostic) diagnosticIntake = new DiagnosticIntake();
+    if (kDiagnostic) {
+      diagnosticIntake = new DiagnosticIntake();
+      if (kUseFeeder) feeder = new Feeder();
+    }
     else {
       if (kUseShooter) shooter = new Shooter();
       if (kUseFeeder) feeder = new Feeder();
@@ -96,14 +98,16 @@ public class RobotContainer {
     if (!kDiagnostic) {
       if (kUseIntake && kUseFeeder) load = new Load(intake, feeder);
       if (kUseShooter && kUseFeeder) shoot = new Shoot(feeder, shooter);
-    } else testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
+    } else {
+      //testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
+      if (kUseFeeder) {
+        liftIntake = new LiftIntake(feeder, secondaryJoystick);
+      }
+    }
+
     if (kUseNavX) navXAlign = new NavXAlign(drive, navX);
 
     if (kUseClimber && kUsePivot) testClimber = new TestClimber(climber,pivot,secondaryJoystick);
-
-//    if (kUseFeeder) {
-//      liftIntake = new LiftIntake(feeder, driveJoystick);
-//    }
 
   }
 
@@ -131,7 +135,7 @@ public class RobotContainer {
 
   private void configureDefaultCommands() {
     if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
-    if (kDiagnostic) diagnosticIntake.setDefaultCommand(testIntake);
+//    if (kDiagnostic) {diagnosticIntake.setDefaultCommand(testIntake);
 
     // See robot.teleopInit() for climber scheduling. It cannot be a default command
 

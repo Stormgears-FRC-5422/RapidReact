@@ -1,15 +1,13 @@
 package frc.robot.commands.climber;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ballHandler.Feeder;
-import frc.robot.subsystems.ballHandler.Shooter;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.Pivot;
-import frc.utils.LRPair;
+import frc.utils.LRSpeeds;
 import frc.utils.joysticks.StormXboxController;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kClimberSpeed;
+import static frc.robot.Constants.kPivotSpeed;
 
 public class TestClimber extends CommandBase {
     private Climber climber;
@@ -32,16 +30,38 @@ public class TestClimber extends CommandBase {
 
     @Override
     public void execute() {
-        LRPair climberPair = new LRPair(joystick.getLeftJoystickY() * kClimberSpeed,
+        if (joystick.getAisPressed()) {
+            climber.zero();
+            pivot.zero();
+            return;
+        }
+
+        if (joystick.getXisPressed()) {
+            climber.disableLimits();
+            pivot.disableLimits();
+        }
+
+        if (joystick.getYisPressed()) {
+            climber.enableLimits();
+            pivot.enableLimits();
+        }
+
+        LRSpeeds climberSpeeds = new LRSpeeds(joystick.getLeftJoystickY() * kClimberSpeed,
                                         joystick.getLeftJoystickY() * kClimberSpeed);
-        System.out.println("Current: " + climber.getCurrent() + "  Left: " + climberPair.left + "  Right: " + climberPair.right);
-
-        climber.setSpeed(climberPair);
-
-        LRPair pivotPair = new LRPair(joystick.getRightJoystickY() * kPivotSpeed,
+        LRSpeeds pivotSpeeds = new LRSpeeds(joystick.getRightJoystickY() * kPivotSpeed,
                 joystick.getRightJoystickY() * kPivotSpeed);
-        System.out.println("Current: " + pivot.getCurrent() + "  Left: " + pivotPair.left + "  Right: " + pivotPair.right);
-        pivot.setSpeed(pivotPair);
+
+        // Move only the one on the side with the bumper held
+        if (joystick.getLeftBumperIsHeld()) {
+            climberSpeeds.disableRight();
+            pivotSpeeds.disableRight();
+        } else if (joystick.getRightBumperIsHeld()) {
+            climberSpeeds.disableLeft();
+            pivotSpeeds.disableLeft();
+        }
+
+        climber.setSpeed(climberSpeeds);
+        pivot.setSpeed(pivotSpeeds);
     }
 
     @Override

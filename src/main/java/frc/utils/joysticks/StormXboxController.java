@@ -75,6 +75,12 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     public boolean getBackIsPressed() {
         return getRawButtonPressed(littleLeftButton);
     }
+    
+    public boolean getRightBumperIsPressed() {return getRawButtonPressed(rightBumper); }
+
+    public boolean getLeftBumperIsPressed() {
+        return getRawButtonPressed(leftBumper);
+    }
 
     public boolean getRotateIsPressed() {
         return getRawButtonPressed(littleRightButton);
@@ -83,6 +89,13 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     public boolean getAlignedIsPressed(){
         return getRawButtonPressed(stickLeftButton);
     }
+
+    public boolean getRightBumperIsHeld() {return getRawButton(rightBumper); }
+
+    public boolean getLeftBumperIsHeld() {
+        return getRawButton(leftBumper);
+    }
+
 
     @Override
     public double getLeftSpeed() {
