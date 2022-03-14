@@ -41,6 +41,8 @@ public final class Constants {
   public static final boolean kRightSideInverted = StormProp.getBoolean("rightSideInverted", false);
   public static final double kRightSideSpeedScale = StormProp.getNumber("rightSideSpeedScale", 1.0);
 
+  public static final boolean kDriveIdleModeCoast = StormProp.getBoolean("driveIdleModeCoast", true);
+
   public static final int kSmartCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double kNullSize = StormProp.getNumber("driveNullSize", 0.055);
   public static final double kXPrecision = StormProp.getNumber("xPrecision", 0.0);
@@ -58,6 +60,11 @@ public final class Constants {
   public static final int kShooterId = StormProp.getInt("shooterId", -1);
   public static final int kIntakeId = StormProp.getInt("intakeId", -1);
   public static final int kFeederId = StormProp.getInt("feederId", -1);
+
+  public static final double kClimberHomeCurrentLimit = StormProp.getNumber("climberHomeCurrentLimit", 0.0);
+  public static final double kClimberHomeSetSpeed = StormProp.getNumber("climberHomeSetSpeed", 0.0);
+  public static final double kPivotHomeCurrentLimit = StormProp.getNumber("pivotHomeCurrentLimit", 0.0);
+  public static final double kPivotHomeSetSpeed = StormProp.getNumber("pivotHomeSetSpeed", 0.0);
 
   public static final double kFeederSpeed = StormProp.getNumber("feederSpeed", 0.0);
   public static final double kIntakeSpeed = StormProp.getNumber("intakeSpeed", 0.0);

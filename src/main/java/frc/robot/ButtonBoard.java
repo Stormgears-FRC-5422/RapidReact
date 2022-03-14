@@ -17,9 +17,7 @@ public class ButtonBoard {
      */
     public final JoystickButton precisionButton;
     public final JoystickButton reverseButton;
-
     public final JoystickButton navXAlignButton;
-
     public final JoystickButton loadButton;
     public final JoystickButton shootButton;
     public final JoystickButton toggleShootingHeightButton;
@@ -27,30 +25,39 @@ public class ButtonBoard {
     /**
      * Initialize SECONDARY JOYSTICK BUTTONS
      */
-    public final JoystickButton selectIntakeButton;
-    public final JoystickButton selectFeederButton;
-    public final JoystickButton selectShooterButton;
-
+    public final JoystickButton manualClimberButton;
+    public final JoystickButton homeClimberButton;
+    public final JoystickButton homePivotButton;
+//    public final JoystickButton selectIntakeButton;
+//    public final JoystickButton selectFeederButton;
+//    public final JoystickButton selectShooterButton;
 //    public final JoystickButton climbLeftUpButton;
 //    public final JoystickButton climbLeftDownButton;
 //    public final JoystickButton climbRightUpButton;
 //    public final JoystickButton climbRightDownButton;
 
     private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
+        // ********************************
+        // Put Drive Joystick settings here
+        // ********************************
         precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
         reverseButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
-
         navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
-
         shootButton = new JoystickButton(driveJoystick, StormXboxController.rightBumper);
         loadButton = new JoystickButton(driveJoystick, StormXboxController.leftBumper);
-
         toggleShootingHeightButton = new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);
 
+        // ********************************
         // Put Secondary Joystick settings here
-        selectIntakeButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
-        selectFeederButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
-        selectShooterButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);
+        // ********************************
+
+        manualClimberButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
+        homePivotButton = new JoystickButton(secondaryJoystick, StormXboxController.stickRightButton);
+        homeClimberButton = new JoystickButton(secondaryJoystick, StormXboxController.stickLeftButton);
+
+//        selectIntakeButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
+//        selectFeederButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
+//        selectShooterButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);
 
 //        climbLeftUpButton = new JoystickButton(secondaryJoystick, StormXboxController.leftBumper);
 //        climbLeftDownButton = new JoystickButton(secondaryJoystick, StormXboxController.leftTrigger);

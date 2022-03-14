@@ -52,7 +52,8 @@ public class SparkDrive extends StormDrive {
         for (StormSpark s: getMotors()) {
             s.restoreFactoryDefaults();
             s.setSmartCurrentLimit(kSmartCurrentLimit);
-            s.setIdleMode(CANSparkMax.IdleMode.kBrake);
+            System.out.println("kDriveIdleModeCoast: " + kDriveIdleModeCoast);
+            s.setIdleMode(kDriveIdleModeCoast ? CANSparkMax.IdleMode.kCoast : CANSparkMax.IdleMode.kBrake);
         }
 
         masterLeft.setInverted(kLeftSideInverted);

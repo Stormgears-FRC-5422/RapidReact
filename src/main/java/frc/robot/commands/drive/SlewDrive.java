@@ -53,7 +53,9 @@ public class SlewDrive extends CommandBase {
             turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
         }
 
-        differentialDrive.arcadeDrive(limiter.calculate(targetSpeed), turnLimiter.calculate(targetZRotation));
+        //differentialDrive.arcadeDrive(limiter.calculate(targetSpeed), turnLimiter.calculate(targetZRotation));
+        differentialDrive.curvatureDrive(limiter.calculate(targetSpeed), turnLimiter.calculate(targetZRotation),true);
+
     }
 
     @Override

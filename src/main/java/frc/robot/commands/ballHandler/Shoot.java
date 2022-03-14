@@ -48,7 +48,7 @@ public class Shoot extends PIDCommand {
     }
 
     private boolean isReady(double percentTolerance) {
-        return shooter.getSpeed() >= (1 - (percentTolerance / 100) * shooter.setpoint()) && shooter.getSpeed() <= (1 + (percentTolerance / 100) * shooter.setpoint());
+        return shooter.getSpeed() >= ((1 - (percentTolerance / 100)) * shooter.setpoint()) && shooter.getSpeed() <= ((1 + (percentTolerance / 100)) * shooter.setpoint());
     }
 
     public void toggleMode() {
@@ -61,5 +61,6 @@ public class Shoot extends PIDCommand {
         builder.addDoubleProperty("I Value", getController()::getI, getController()::setI);
         builder.addDoubleProperty("P Value", getController()::getP, getController()::setP);
         builder.addDoubleProperty("D Value", getController()::getD, getController()::setD);
+        builder.addBooleanProperty("limit", () -> isReady(kShooterTolerance), null);
     }
 }
