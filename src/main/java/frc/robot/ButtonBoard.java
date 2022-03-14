@@ -31,6 +31,9 @@ public class ButtonBoard {
     public final JoystickButton selectFeederButton;
     public final JoystickButton selectShooterButton;
 
+    public final JoystickButton trapezoidClimber;
+    public final JoystickButton toggleClimber;
+
 //    public final JoystickButton climbLeftUpButton;
 //    public final JoystickButton climbLeftDownButton;
 //    public final JoystickButton climbRightUpButton;
@@ -51,6 +54,9 @@ public class ButtonBoard {
         selectIntakeButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
         selectFeederButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
         selectShooterButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);
+
+        trapezoidClimber = new JoystickButton(secondaryJoystick, StormXboxController.stickLeftButton);
+        toggleClimber = new JoystickButton(secondaryJoystick, StormXboxController.stickRightButton);
 
 //        climbLeftUpButton = new JoystickButton(secondaryJoystick, StormXboxController.leftBumper);
 //        climbLeftDownButton = new JoystickButton(secondaryJoystick, StormXboxController.leftTrigger);

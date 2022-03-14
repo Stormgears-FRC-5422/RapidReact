@@ -2,6 +2,8 @@ package frc.robot.subsystems.climber;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.LRSpeeds;
@@ -19,10 +21,13 @@ public class Pivot extends SubsystemBase {
 
         leftPivot.setInverted(kPivotLeftInverted);
         leftPivot.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        leftPivot.getEncoder().setVelocityConversionFactor(1/60d);
 
         rightPivot.setInverted(kPivotRightInverted);
         rightPivot.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        rightPivot.getEncoder().setVelocityConversionFactor(1/60d);
 
+        Shuffleboard.getTab("Pivot").add(this);
         // Optimistic - we need to zero if the robot has been off...
         enableLimits();
     }
@@ -85,7 +90,10 @@ public class Pivot extends SubsystemBase {
         System.out.println("Pivot.setLimits()");
     }
 
-
-
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("left pivot speed", leftPivot.getEncoder()::getVelocity, null);
+        builder.addDoubleProperty("right pivot speed", rightPivot.getEncoder()::getVelocity, null);
+    }
 }
 

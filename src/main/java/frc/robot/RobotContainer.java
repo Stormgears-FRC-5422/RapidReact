@@ -1,10 +1,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
-import frc.robot.commands.ballHandler.LiftIntake;
+import frc.robot.commands.climber.PositionClimber;
 import frc.robot.commands.climber.TestClimber;
 import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.navX.NavXAlign;
@@ -50,6 +51,7 @@ public class RobotContainer {
   private Shoot shoot;
   private NavXAlign navXAlign;
   private TestClimber testClimber;
+  private PositionClimber positionClimber;
 
   private final StormXboxController driveJoystick;
   private final StormXboxController secondaryJoystick;
@@ -107,7 +109,11 @@ public class RobotContainer {
 
     if (kUseNavX) navXAlign = new NavXAlign(drive, navX);
 
-    if (kUseClimber && kUsePivot) testClimber = new TestClimber(climber,pivot,secondaryJoystick);
+    if (kUseClimber && kUsePivot) {
+      testClimber = new TestClimber(climber,pivot,secondaryJoystick);
+      positionClimber = new PositionClimber(climber, secondaryJoystick);
+    }
+
 
   }
 
@@ -130,6 +136,11 @@ public class RobotContainer {
       }
     }
     if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
+
+    if (kUseClimber){
+      buttonBoard.trapezoidClimber.whenPressed(positionClimber);
+      buttonBoard.toggleClimber.whenPressed(new InstantCommand(positionClimber::toggleGoal));
+    }
   }
 
   private void configureDefaultCommands() {
