@@ -108,6 +108,7 @@ public final class Constants {
   public static final double kDriveGearBoxRatio = StormProp.getNumber("driveGearBoxRatio", 0.0);
   public static final double kDriveWheelCircumference = StormProp.getNumber("driveWheelCircumference", 0.0);
 
+  public static final double kNavXGyroScaleFactor = StormProp.getNumber("navXGyroScaleFactor", 1.0);
 
 
   private Constants() {
