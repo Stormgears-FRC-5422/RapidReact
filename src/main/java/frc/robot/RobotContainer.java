@@ -113,7 +113,7 @@ public class RobotContainer {
     if (kUseDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
-      if (kUseNavX)  buttonBoard.autoDriveTestButton.whenPressed(new DriveTurnProfile(360,30,10,drive,navX));
+      if (kUseNavX)  buttonBoard.autoDriveTestButton.whenPressed(new DriveTurnProfile(-360,120,90,drive,navX));
     }
     if (kDiagnostic) {
       if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
