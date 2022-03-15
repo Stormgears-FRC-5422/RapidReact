@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import frc.robot.subsystems.climber.ClimberParentSystem;
 
 public abstract class MoveCommand extends CommandBase {
-    protected final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(-150, -75);
+    protected final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(150, 75);
     protected TrapezoidProfileCommand leftController;
     protected TrapezoidProfileCommand rightController;
     protected Goal goal = Goal.HIGH;

@@ -19,7 +19,7 @@ public class Pivot extends ClimberParentSystem {
     protected final PIDController rightPIDController = new PIDController(0.05, 0, 0);
     private final StormSpark leftPivot = new StormSpark(kPivotLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark rightPivot = new StormSpark(kPivotRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final double kS = 0.24;
+    private final double kS = 0.05;
 
     private LRSpeeds speeds;
 
