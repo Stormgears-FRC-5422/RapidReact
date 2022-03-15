@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.utils.LRPair;
+import frc.utils.LRSpeeds;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
 
@@ -13,7 +13,7 @@ import static frc.robot.Constants.*;
 public class Pivot extends SubsystemBase {
     private final StormSpark leftPivot = new StormSpark(kPivotLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark rightPivot = new StormSpark(kPivotRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private LRPair lrSetSpeed;
+    private LRSpeeds speeds;
     private boolean goingHome = false;
     private boolean leftHome = false;
     private boolean rightHome = false;
@@ -23,7 +23,7 @@ public class Pivot extends SubsystemBase {
     private final ExponentialAverage rightCurrent;
 
     public Pivot() {
-        lrSetSpeed = new LRPair();
+        speeds = new LRSpeeds();
 
         leftPivot.setInverted(kPivotLeftInverted);
         leftPivot.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -57,8 +57,8 @@ public class Pivot extends SubsystemBase {
         }
 
         // This assumes nothing is moving these components after the home sequence
-        leftPivot.set(leftHome ? 0 : lrSetSpeed.left);
-        rightPivot.set(rightHome ? 0 : lrSetSpeed.right);
+        leftPivot.set(leftHome ? 0 : speeds.left());
+        rightPivot.set(rightHome ? 0 : speeds.right());
 
         SmartDashboard.putNumber("pivot left current", lC);
         SmartDashboard.putNumber("pivot right current", rC);
@@ -67,18 +67,18 @@ public class Pivot extends SubsystemBase {
     }
 
     public void stop() {
-        setSpeed(new LRPair(0, 0));
+        setSpeed(LRSpeeds.stop());
     }
 
-    public LRPair getSpeed() {
-        return new LRPair(leftPivot.get(), rightPivot.get());
+    public LRSpeeds getSpeed() {
+        return new LRSpeeds(leftPivot.get(), rightPivot.get());
     }
 
-    public void setSpeed(LRPair lrSpeed) {
+    public void setSpeed(LRSpeeds lrSpeed) {
         if (hasBeenHomed) {
-            this.lrSetSpeed = lrSpeed;
-            if (lrSetSpeed.left != 0) leftHome = false;
-            if (lrSetSpeed.right != 0) rightHome = false;
+            this.speeds = lrSpeed;
+            if (speeds.left() != 0) leftHome = false;
+            if (speeds.right() != 0) rightHome = false;
         } else {
             System.out.println("Don't move the pivot without homing first");
         }
@@ -104,7 +104,7 @@ public class Pivot extends SubsystemBase {
         goingHome = true;
 
         // Don't call setSpeed directly. That will mess up the home sequence.
-        lrSetSpeed = new LRPair(kPivotHomeSetSpeed, kPivotHomeSetSpeed);
+        speeds = new LRSpeeds(kPivotHomeSetSpeed, kPivotHomeSetSpeed);
     }
 
     public boolean isHome() {

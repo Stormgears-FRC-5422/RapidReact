@@ -17,7 +17,11 @@ public class ButtonBoard {
      */
     public final JoystickButton precisionButton;
     public final JoystickButton reverseButton;
+
     public final JoystickButton navXAlignButton;
+
+    public final JoystickButton autoDriveTestButton;
+
     public final JoystickButton loadButton;
     public final JoystickButton shootButton;
     public final JoystickButton toggleShootingHeightButton;
@@ -43,6 +47,8 @@ public class ButtonBoard {
         precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
         reverseButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
         navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
+        autoDriveTestButton = new JoystickButton(driveJoystick, StormXboxController.littleLeftButton);
+
         shootButton = new JoystickButton(driveJoystick, StormXboxController.rightBumper);
         loadButton = new JoystickButton(driveJoystick, StormXboxController.leftBumper);
         toggleShootingHeightButton = new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);

@@ -5,7 +5,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.utils.LRPair;
+import frc.utils.LRSpeeds;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
 
@@ -14,7 +14,7 @@ import static frc.robot.Constants.*;
 public class Climber extends SubsystemBase {
     private final StormSpark leftClimber = new StormSpark(kClimberLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark rightClimber = new StormSpark(kClimberRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private LRPair lrSetSpeed;
+    private LRSpeeds speeds;
 
     private boolean goingHome = false;
     private boolean leftHome = false;
@@ -26,7 +26,7 @@ public class Climber extends SubsystemBase {
 
     public Climber() {
         System.out.println("Climber()");
-        lrSetSpeed = new LRPair();
+        speeds = new LRSpeeds();
 
         leftClimber.setInverted(kClimberLeftInverted);
         leftClimber.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -60,8 +60,8 @@ public class Climber extends SubsystemBase {
         }
 
         // This assumes nothing is moving these components after the home sequence
-        leftClimber.set(leftHome ? 0 : lrSetSpeed.left);
-        rightClimber.set(rightHome ? 0 : lrSetSpeed.right);
+        leftClimber.set(leftHome ? 0 : speeds.left());
+        rightClimber.set(rightHome ? 0 : speeds.right());
 
         SmartDashboard.putNumber("climber left current", lC);
         SmartDashboard.putNumber("climber right current", rC);
@@ -70,18 +70,18 @@ public class Climber extends SubsystemBase {
     }
 
     public void stop() {
-        setSpeed(new LRPair(0,0));
+        setSpeed(LRSpeeds.stop());
     }
 
-    public LRPair getSpeed() {
-        return new LRPair(leftClimber.get(),rightClimber.get());
+    public LRSpeeds getSpeed() {
+        return new LRSpeeds(leftClimber.get(), rightClimber.get());
     }
 
-    public void setSpeed(LRPair lrSpeed) {
+    public void setSpeed(LRSpeeds lrSpeed) {
         if (hasBeenHomed) {
-            this.lrSetSpeed = lrSpeed;
-            if (lrSetSpeed.left != 0) leftHome = false;
-            if (lrSetSpeed.right != 0) rightHome = false;
+            this.speeds = lrSpeed;
+            if (speeds.left() != 0) leftHome = false;
+            if (speeds.right() != 0) rightHome = false;
         } else {
             System.out.println("Don't move the climbers without homing first");
         }
@@ -107,7 +107,7 @@ public class Climber extends SubsystemBase {
         goingHome = true;
 
         // Don't call setSpeed directly. That will mess up the home sequence.
-        lrSetSpeed = new LRPair(kClimberHomeSetSpeed, kClimberHomeSetSpeed);
+        speeds = new LRSpeeds(kClimberHomeSetSpeed, kClimberHomeSetSpeed);
     }
 
     public boolean isHome() {

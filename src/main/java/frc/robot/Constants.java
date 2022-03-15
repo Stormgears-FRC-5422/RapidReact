@@ -93,6 +93,31 @@ public final class Constants {
   public static final double kClimberSpeed = StormProp.getNumber("climberSpeed", 0.0);
   public static final double kPivotSpeed = StormProp.getNumber("pivotSpeed", 0.0);
 
+  public static final double kDriveProfileLeftP = StormProp.getNumber("driveProfileLeftP",0.0);
+  public static final double kDriveProfileLeftI = StormProp.getNumber("driveProfileLeftI",0.0);
+  public static final double kDriveProfileLeftD = StormProp.getNumber("driveProfileLeftD",0.0);
+  public static final double kDriveLeftVFF = StormProp.getNumber("driveLeftVFF", 0.0);
+  
+  public static final double kDriveProfileRightP = StormProp.getNumber("driveProfileRightP",0.0);
+  public static final double kDriveProfileRightI = StormProp.getNumber("driveProfileRightI",0.0);
+  public static final double kDriveProfileRightD = StormProp.getNumber("driveProfileRightD",0.0);
+  public static final double kDriveRightVFF = StormProp.getNumber("driveRightVFF", 0.0);
+  
+  public static final double kDriveTurnProfileP = StormProp.getNumber("driveTurnProfileP",0.0);
+  public static final double kDriveTurnProfileI = StormProp.getNumber("driveTurnProfileI",0.0);
+  public static final double kDriveTurnProfileD = StormProp.getNumber("driveTurnProfileD",0.0);
+  public static final double kDriveTurnVFF = StormProp.getNumber("driveTurnVFF", 0.0);
+  public static final double kDriveTurnSFF = StormProp.getNumber("driveTurnSFF", 0.0);  // minmum input for movement
+  
+  public static final double kDriveProfileMaxOutput = StormProp.getNumber("driveProfileMaxOutput", 0.0);
+  public static final double kDriveTurnProfileMaxOutput = StormProp.getNumber("driveTurnProfileMaxOutput", 0.0);
+
+  public static final double kDriveGearBoxRatio = StormProp.getNumber("driveGearBoxRatio", 0.0);
+  public static final double kDriveWheelCircumference = StormProp.getNumber("driveWheelCircumference", 0.0);
+
+  public static final double kNavXGyroScaleFactor = StormProp.getNumber("navXGyroScaleFactor", 1.0);
+
+
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");
   }
