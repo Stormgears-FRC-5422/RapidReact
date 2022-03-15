@@ -15,11 +15,12 @@ import frc.utils.motorcontrol.StormSpark;
 import static frc.robot.Constants.*;
 
 public class Pivot extends ClimberParentSystem {
-    protected final PIDController leftPIDController = new PIDController(0, 0, 0);
-    protected final PIDController rightPIDController = new PIDController(0, 0, 0);
+    protected final PIDController leftPIDController = new PIDController(0.05, 0, 0);
+    protected final PIDController rightPIDController = new PIDController(0.05, 0, 0);
     private final StormSpark leftPivot = new StormSpark(kPivotLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark rightPivot = new StormSpark(kPivotRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final double kS = 0.0;
+    private final double kS = 0.24;
+
     private LRSpeeds speeds;
 
     private final ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0.0686, 0);
@@ -36,6 +37,13 @@ public class Pivot extends ClimberParentSystem {
         rightPivot.getEncoder().setVelocityConversionFactor(1/60d);
 
         Shuffleboard.getTab("Pivot").add(this);
+        Shuffleboard.getTab("Pivot").add("leftPID", leftPIDController);
+        Shuffleboard.getTab("Pivot").add("rightPID", rightPIDController);
+
+        Shuffleboard.getTab("Pivot").addNumber("PIDOutput", () -> pidOutput);
+        Shuffleboard.getTab("Pivot").addNumber("FeedForwardOutputs", () -> feedForwardOutputs);
+        Shuffleboard.getTab("Pivot").addNumber("Combined", () -> pidOutput + feedForwardOutputs);
+        Shuffleboard.getTab("Pivot").addBoolean("setSpeed", () -> setSpeed);
         // Optimistic - we need to zero if the robot has been off...
         enableLimits();
     }
@@ -102,8 +110,9 @@ public class Pivot extends ClimberParentSystem {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("left pivot speed", leftPivot.getEncoder()::getVelocity, null);
-        builder.addDoubleProperty("right pivot speed", rightPivot.getEncoder()::getVelocity, null);
+        builder.addDoubleProperty("left pivot position", this::leftPosition, null);
+        builder.addDoubleProperty("right pivot position", this::rightPosition, null);
+
     }
 
     @Override
@@ -122,7 +131,7 @@ public class Pivot extends ClimberParentSystem {
         this.pidOutput =
                 MathUtil.clamp(leftPIDController.calculate(leftPosition(), state.position), -12, 12);
         this.feedForwardOutputs = feedforward.calculate(state.velocity, 0) + kS * Math.signum(state.position - leftPosition());
-        rightPivot.setVoltage(-(pidOutput + feedForwardOutputs));
+        leftPivot.setVoltage(-(pidOutput + feedForwardOutputs));
     }
 
     @Override

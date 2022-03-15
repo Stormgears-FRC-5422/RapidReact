@@ -18,16 +18,7 @@ public abstract class MoveCommand extends CommandBase {
     protected MoveCommand() {
     }
 
-    public void toggleGoal() {
-        if (goal == Goal.LOW) goal = Goal.HIGH;
-        else goal = Goal.LOW;
-
-        leftController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new TrapezoidProfile.State(subsystem().leftPosition(), 0)), this::leftPID);
-        rightController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new TrapezoidProfile.State(subsystem().rightPosition(), 0)), this::rightPID);
-
-        leftController.initialize();
-        rightController.initialize();
-    }
+    public abstract void toggleGoal();
 
     @Override
     public void initialize() {
@@ -59,11 +50,7 @@ public abstract class MoveCommand extends CommandBase {
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("Goal", () -> goal.state.position, null);
-        builder.addDoubleProperty("Position Goal", () -> position, null);
-        builder.addDoubleProperty("Velocity Goal", () -> velocity, null);
-    }
+    public abstract void initSendable(SendableBuilder builder);
 
     public abstract ClimberParentSystem subsystem();
 
