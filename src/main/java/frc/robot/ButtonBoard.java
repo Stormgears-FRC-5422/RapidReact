@@ -34,6 +34,9 @@ public class ButtonBoard {
     public final JoystickButton trapezoidClimber;
     public final JoystickButton toggleClimber;
 
+    public final JoystickButton trapezoidPivot;
+    public final JoystickButton togglePivot;
+
 //    public final JoystickButton climbLeftUpButton;
 //    public final JoystickButton climbLeftDownButton;
 //    public final JoystickButton climbRightUpButton;
@@ -57,6 +60,9 @@ public class ButtonBoard {
 
         trapezoidClimber = new JoystickButton(secondaryJoystick, StormXboxController.littleLeftButton);
         toggleClimber = new JoystickButton(secondaryJoystick, StormXboxController.littleRightButton);
+
+        trapezoidPivot = new JoystickButton(secondaryJoystick, StormXboxController.stickLeftButton);
+        togglePivot = new JoystickButton(secondaryJoystick, StormXboxController.stickRightButton);
 
     }
 

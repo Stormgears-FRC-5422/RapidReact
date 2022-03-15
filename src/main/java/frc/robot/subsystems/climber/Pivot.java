@@ -2,19 +2,27 @@ package frc.robot.subsystems.climber;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.LRSpeeds;
 import frc.utils.motorcontrol.StormSpark;
 
 import static frc.robot.Constants.*;
 
-public class Pivot extends SubsystemBase {
+public class Pivot extends ClimberParentSystem {
+    protected final PIDController leftPIDController = new PIDController(0, 0, 0);
+    protected final PIDController rightPIDController = new PIDController(0, 0, 0);
     private final StormSpark leftPivot = new StormSpark(kPivotLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark rightPivot = new StormSpark(kPivotRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final double kS = 0.0;
     private LRSpeeds speeds;
+
+    private final ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0.0686, 0);
 
     public Pivot() {
         speeds = new LRSpeeds();
@@ -34,8 +42,10 @@ public class Pivot extends SubsystemBase {
 
     @Override
     public void periodic() {
-        leftPivot.set(speeds.left());
-        rightPivot.set(speeds.right());
+    if (setSpeed) {
+      leftPivot.set(speeds.left());
+      rightPivot.set(speeds.right());
+        }
 
         SmartDashboard.putNumber("pivot left current", leftPivot.getOutputCurrent());
         SmartDashboard.putNumber("pivot right current", rightPivot.getOutputCurrent());
@@ -94,6 +104,34 @@ public class Pivot extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("left pivot speed", leftPivot.getEncoder()::getVelocity, null);
         builder.addDoubleProperty("right pivot speed", rightPivot.getEncoder()::getVelocity, null);
+    }
+
+    @Override
+    public double leftPosition() {
+        return -leftPivot.getEncoder().getPosition();
+    }
+
+    @Override
+    public double rightPosition() {
+        return -rightPivot.getEncoder().getPosition();
+    }
+
+    @Override
+    public void leftPID(TrapezoidProfile.State state) {
+        setSpeed = false;
+        this.pidOutput =
+                MathUtil.clamp(leftPIDController.calculate(leftPosition(), state.position), -12, 12);
+        this.feedForwardOutputs = feedforward.calculate(state.velocity, 0) + kS * Math.signum(state.position - leftPosition());
+        rightPivot.setVoltage(-(pidOutput + feedForwardOutputs));
+    }
+
+    @Override
+    public void rightPID(TrapezoidProfile.State state) {
+        setSpeed = false;
+        double pid =
+                MathUtil.clamp(rightPIDController.calculate(rightPosition(), state.position), -12, 12);
+        double feed = feedforward.calculate(state.velocity, 0) + kS * Math.signum(state.position - leftPosition());
+        rightPivot.setVoltage(-(pid + feed));
     }
 }
 

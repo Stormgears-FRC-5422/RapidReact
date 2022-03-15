@@ -9,30 +9,22 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.LRSpeeds;
 import frc.utils.motorcontrol.StormSpark;
 
 import static frc.robot.Constants.*;
 
-public class Climber extends SubsystemBase {
+public class Climber extends ClimberParentSystem {
+  protected final PIDController leftPIDController = new PIDController(0, 0, 0);
+  protected final PIDController rightPIDController = new PIDController(0, 0, 0);
   private final StormSpark leftClimber = new StormSpark(kClimberLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
   private final StormSpark rightClimber = new StormSpark(kClimberRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-  private final PIDController leftPIDController = new PIDController(0, 0, 0);
-  private final PIDController rightPIDController = new PIDController(0, 0, 0);
-  private final double kS = 0.24;
   private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0, 0, 0.0686, 0);
-
-  private LRSpeeds speeds;
-
-  private boolean setSpeed = true;
-
-  private double pidOutput = 0;
-  private double feedForwardOutputs = 0;
+  private final double kS = 0.24;
 
   public Climber() {
-    speeds = new LRSpeeds();
+    super();
 
     leftClimber.setInverted(kClimberLeftInverted);
     leftClimber.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -71,16 +63,19 @@ public class Climber extends SubsystemBase {
     setSpeed(LRSpeeds.stop());
   }
 
+  @Override
   public LRSpeeds getSpeed() {
     return new LRSpeeds(leftClimber.get(), rightClimber.get());
   }
 
+  @Override
   public void setSpeed(LRSpeeds lrSpeed) {
     setSpeed = true;
     this.speeds = lrSpeed;
     SmartDashboard.putNumber("% out", speeds.left());
   }
 
+  @Override
   public void zero() {
     leftClimber.getEncoder().setPosition(0.0);
     rightClimber.getEncoder().setPosition(0.0);
@@ -91,6 +86,7 @@ public class Climber extends SubsystemBase {
     System.out.println("Climber.zero()");
   }
 
+  @Override
   public void disableLimits() {
     leftClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
     leftClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
@@ -99,6 +95,7 @@ public class Climber extends SubsystemBase {
     System.out.println("Climber.disableLimits()");
   }
 
+  @Override
   public void enableLimits() {
     leftClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
     leftClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
@@ -107,6 +104,7 @@ public class Climber extends SubsystemBase {
     System.out.println("Climber.enableLimits()");
   }
 
+  @Override
   public void setLimits(
       float forwardLeft, float reverseLeft, float forwardRight, float reverseRight) {
     leftClimber.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardLeft);
@@ -122,14 +120,17 @@ public class Climber extends SubsystemBase {
     builder.addDoubleProperty("right position", this::rightPosition, null);
   }
 
+  @Override
   public double leftPosition() {
     return -leftClimber.getEncoder().getPosition();
   }
 
+  @Override
   public double rightPosition() {
     return -rightClimber.getEncoder().getPosition();
   }
 
+  @Override
   public void leftPID(State state) {
     setSpeed = false;
     this.pidOutput =
@@ -138,6 +139,7 @@ public class Climber extends SubsystemBase {
     leftClimber.setVoltage(-(pidOutput + feedForwardOutputs));
   }
 
+  @Override
   public void rightPID(State state) {
     setSpeed = false;
     double pid =

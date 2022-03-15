@@ -1,32 +1,28 @@
 package frc.robot.commands.climber;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
+import frc.robot.subsystems.climber.ClimberParentSystem;
 import frc.robot.subsystems.climber.Pivot;
-import frc.utils.joysticks.StormXboxController;
 
-public class PositionPivot extends CommandBase {
-    private Pivot pivot;
-    private StormXboxController joystick;
+public class PositionPivot extends MoveCommand {
 
-    public PositionPivot(Pivot pivot, StormXboxController joystick) {
-        System.out.println("TestClimber()");
+    private final Pivot pivot;
+
+    public PositionPivot(Pivot pivot) {
         this.pivot = pivot;
-        this.joystick = joystick;
+
+        this.leftController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new TrapezoidProfile.State(pivot.leftPosition(), 0)), this::leftPID);
+        this.rightController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new TrapezoidProfile.State(pivot.rightPosition(), 0)), this::rightPID);
 
         this.addRequirements(pivot);
+
+        Shuffleboard.getTab("Climber").add(this);
     }
 
     @Override
-    public void initialize(){
-
+    public ClimberParentSystem subsystem() {
+        return pivot;
     }
-
-    public void execute() {
-
-    }
-
-    public boolean isFinished() {
-        return true;
-    }
-
 }
