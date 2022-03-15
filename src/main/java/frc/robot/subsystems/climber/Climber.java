@@ -21,11 +21,15 @@ public class Climber extends SubsystemBase {
 
   private final PIDController leftPIDController = new PIDController(0, 0, 0);
   private final PIDController rightPIDController = new PIDController(0, 0, 0);
+  private final double kS = 0.24;
   private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0, 0, 0.0686, 0);
 
   private LRSpeeds speeds;
 
   private boolean setSpeed = true;
+
+  private double pidOutput = 0;
+  private double feedForwardOutputs = 0;
 
   public Climber() {
     speeds = new LRSpeeds();
@@ -44,6 +48,11 @@ public class Climber extends SubsystemBase {
     Shuffleboard.getTab("Climber").add(this);
     Shuffleboard.getTab("Climber").add("leftPID", leftPIDController);
     Shuffleboard.getTab("Climber").add("rightPID", rightPIDController);
+
+    Shuffleboard.getTab("Climber").addNumber("PIDOutput", () -> pidOutput);
+    Shuffleboard.getTab("Climber").addNumber("FeedForwardOutputs", () -> feedForwardOutputs);
+    Shuffleboard.getTab("Climber").addNumber("Combined", () -> pidOutput + feedForwardOutputs);
+    Shuffleboard.getTab("Climber").addBoolean("setSpeed", () -> setSpeed);
   }
 
   @Override
@@ -69,6 +78,7 @@ public class Climber extends SubsystemBase {
   public void setSpeed(LRSpeeds lrSpeed) {
     setSpeed = true;
     this.speeds = lrSpeed;
+    SmartDashboard.putNumber("% out", speeds.left());
   }
 
   public void zero() {
@@ -122,18 +132,18 @@ public class Climber extends SubsystemBase {
 
   public void leftPID(State state) {
     setSpeed = false;
-    double pidOutput =
+    this.pidOutput =
         MathUtil.clamp(leftPIDController.calculate(leftPosition(), state.position), -12, 12);
-    double feedForward = feedforward.calculate(state.velocity, 0);
-    leftClimber.setVoltage(pidOutput + feedForward);
+    this.feedForwardOutputs = feedforward.calculate(state.velocity, 0) + kS * Math.signum(state.position - leftPosition());
+    leftClimber.setVoltage(-(pidOutput + feedForwardOutputs));
   }
 
   public void rightPID(State state) {
     setSpeed = false;
-    double pidOutput =
+    double pid =
         MathUtil.clamp(rightPIDController.calculate(rightPosition(), state.position), -12, 12);
-    double feedForward = feedforward.calculate(state.velocity, 0);
-    rightClimber.setVoltage(pidOutput + feedForward);
+    double feed = feedforward.calculate(state.velocity, 0) + kS * Math.signum(state.position - leftPosition());
+    rightClimber.setVoltage(-(pid + feed));
   }
 
 

@@ -2,6 +2,7 @@ package frc.robot.commands.climber;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import frc.robot.subsystems.climber.Climber;
@@ -11,8 +12,11 @@ import static edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
 public class PositionClimber extends CommandBase {
 
+    double position = 0;
+    double velocity = 0;
+
     enum Goal {
-        LOW(20), HIGH(200);
+        LOW(25), HIGH(195);
 
         private final State state;
 
@@ -37,6 +41,8 @@ public class PositionClimber extends CommandBase {
         this.rightClimberController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new State(climber.rightPosition(), 0)), this::rightPID);
 
         this.addRequirements(climber);
+
+        Shuffleboard.getTab("Climber").add(this);
     }
 
     public void toggleGoal(){
@@ -45,6 +51,9 @@ public class PositionClimber extends CommandBase {
 
         leftClimberController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new State(climber.leftPosition(), 0)), this::leftPID);
         rightClimberController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new State(climber.rightPosition(), 0)), this::rightPID);
+
+        leftClimberController.initialize();
+        rightClimberController.initialize();
     }
 
     @Override
@@ -65,16 +74,21 @@ public class PositionClimber extends CommandBase {
         rightClimberController.end(interrupted);
     }
 
-    private void leftPID(State state){
+    private void leftPID(State state) {
+        position = state.position;
+        velocity = state.velocity;
+
         climber.leftPID(state);
     }
 
-    private void rightPID(State state){
+    private void rightPID(State state) {
         climber.rightPID(state);
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Goal", () -> goal.state.position, null);
+        builder.addDoubleProperty("Position Goal", () -> position, null);
+        builder.addDoubleProperty("Velocity Goal", () -> velocity, null);
     }
 }
