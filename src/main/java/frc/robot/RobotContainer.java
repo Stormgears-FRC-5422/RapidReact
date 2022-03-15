@@ -111,7 +111,7 @@ public class RobotContainer {
 
     if (kUseClimber && kUsePivot) {
       testClimber = new TestClimber(climber,pivot,secondaryJoystick);
-      positionClimber = new PositionClimber(climber, secondaryJoystick);
+      positionClimber = new PositionClimber(climber);
     }
 
 
