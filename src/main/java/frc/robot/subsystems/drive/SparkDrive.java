@@ -6,6 +6,7 @@ package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.drive.StormDrive;
@@ -223,5 +224,12 @@ public class SparkDrive extends StormDrive {
 
     public double getVelocity() {
         return((masterLeft.getEncoder().getVelocity() + masterRight.getEncoder().getVelocity()) / 2);
+    }
+
+    public double[] getEncoders(){
+        return new double[]{
+                masterLeft.getEncoder().getVelocity(),
+                masterRight.getEncoder().getVelocity()
+        };
     }
 }
