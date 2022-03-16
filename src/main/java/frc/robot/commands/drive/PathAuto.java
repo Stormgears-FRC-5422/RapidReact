@@ -17,9 +17,8 @@ public class PathAuto extends CommandBase {
     SparkDrive drive;
     RamseteCommand command;
     Trajectory trajectory;
-    RamseteController controller = new RamseteController();
     PathFollow pf = new PathFollow();
-    String path = "paths/YourPath.wpilib.json";
+    String path = "/home/lvuser/deploy/paths.json";
 
     public PathAuto(SparkDrive drive){
         this.drive=drive;
