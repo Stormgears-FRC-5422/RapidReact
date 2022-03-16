@@ -92,6 +92,13 @@ public final class Constants {
   public static final double kClimberSpeed = StormProp.getNumber("climberSpeed", 0.0);
   public static final double kPivotSpeed = StormProp.getNumber("pivotSpeed", 0.0);
 
+  public static final double kClimberMaxVelocity = StormProp.getNumber("climberMaxVelocity", 0.0);
+  public static final double kClimberMaxAcceleration =
+      StormProp.getNumber("climberMaxAcceleration", 0.0);
+  public static final double kPivotMaxVelocity = StormProp.getNumber("pivotMaxVelocity", 0.0);
+  public static final double kPivotMaxAcceleration =
+      StormProp.getNumber("pivotMaxAcceleration", 0.0);
+
   public static final double kLeftClimberP = StormProp.getNumber("leftClimberP", 0.0);
   public static final double kLeftClimberI = StormProp.getNumber("leftClimberI", 0.0);
   public static final double kLeftClimberD = StormProp.getNumber("leftClimberD", 0.0);
