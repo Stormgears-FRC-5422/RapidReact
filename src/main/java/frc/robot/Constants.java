@@ -93,6 +93,22 @@ public final class Constants {
   public static final double kClimberSpeed = StormProp.getNumber("climberSpeed", 0.0);
   public static final double kPivotSpeed = StormProp.getNumber("pivotSpeed", 0.0);
 
+  public static final double kLeftClimberP = StormProp.getNumber("leftClimberP", 0.0);
+  public static final double kLeftClimberI = StormProp.getNumber("leftClimberI", 0.0);
+  public static final double kLeftClimberD = StormProp.getNumber("leftClimberD", 0.0);
+
+  public static final double kRightClimberP = StormProp.getNumber("rightClimberP", 0.0);
+  public static final double kRightClimberI = StormProp.getNumber("rightClimberI", 0.0);
+  public static final double kRightClimberD = StormProp.getNumber("rightClimberD", 0.0);
+
+  public static final double kLeftPivotP = StormProp.getNumber("leftPivotP", 0.0);
+  public static final double kLeftPivotI = StormProp.getNumber("leftPivotI", 0.0);
+  public static final double kLeftPivotD = StormProp.getNumber("leftPivotD", 0.0);
+
+  public static final double kRightPivotP = StormProp.getNumber("rightPivotP", 0.0);
+  public static final double kRightPivotI = StormProp.getNumber("rightPivotI", 0.0);
+  public static final double kRightPivotD = StormProp.getNumber("rightPivotD", 0.0);
+
   public static final double kDriveProfileLeftP = StormProp.getNumber("driveProfileLeftP",0.0);
   public static final double kDriveProfileLeftI = StormProp.getNumber("driveProfileLeftI",0.0);
   public static final double kDriveProfileLeftD = StormProp.getNumber("driveProfileLeftD",0.0);
