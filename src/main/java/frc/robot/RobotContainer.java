@@ -15,7 +15,6 @@ import frc.robot.subsystems.ballHandler.Intake;
 import frc.robot.subsystems.ballHandler.Shooter;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.Pivot;
-import frc.robot.subsystems.drive.PathFollow;
 import frc.robot.subsystems.drive.SparkDrive;
 import frc.robot.subsystems.drive.TalonDrive;
 import frc.robot.subsystems.sensors.NavX;
@@ -45,7 +44,6 @@ public class RobotContainer {
   private TestIntake testIntake;
   private LiftIntake liftIntake;
 
-  private PathFollow pathFollow;
   private PathAuto pathAuto;
 
   private Climber climber;
