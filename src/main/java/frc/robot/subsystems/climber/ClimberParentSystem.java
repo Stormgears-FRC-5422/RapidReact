@@ -1,42 +1,210 @@
 package frc.robot.subsystems.climber;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.LRSpeeds;
+import frc.utils.filters.ExponentialAverage;
+import frc.utils.motorcontrol.StormSpark;
 
 public abstract class ClimberParentSystem extends SubsystemBase {
 
-    protected LRSpeeds speeds;
-    protected boolean setSpeed = true;
-    protected double pidOutput = 0;
+  protected final String shuffleBoardTabName = this.getName();
+
+  protected final StormSpark leftMotor;
+  protected final StormSpark rightMotor;
+
+  protected final ExponentialAverage leftCurrent;
+  protected final ExponentialAverage rightCurrent;
+
+  protected final PIDController leftPIDController;
+  protected final PIDController rightPIDController;
+
+  protected final double homeCurrentLimit;
+  protected final double homeSpeed;
+
+  protected LRSpeeds speeds = new LRSpeeds();
+
+  protected boolean setSpeed = true;
+  protected boolean goingHome = false;
+  protected boolean leftHome = false;
+  protected boolean rightHome = false;
+  protected boolean hasBeenHomed = false;
+
+  // For monitoring on Shuffleboard, does nothing
+  protected double pidOutput = 0;
     protected double feedForwardOutputs = 0;
 
-  protected ClimberParentSystem() {
-        speeds = new LRSpeeds();
+  protected ClimberParentSystem(
+      int leftMotorID,
+      int rightMotorID,
+      boolean leftInverted,
+      boolean rightInverted,
+      PIDController leftPIDController,
+      PIDController rightPIDController,
+      double homeCurrentLimit,
+      double homeSpeed) {
+    leftMotor = new StormSpark(leftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    rightMotor = new StormSpark(rightMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
+
+    this.leftCurrent = new ExponentialAverage(leftMotor::getOutputCurrent, 2);
+    this.rightCurrent = new ExponentialAverage(rightMotor::getOutputCurrent, 2);
+
+    this.leftPIDController = leftPIDController;
+    this.rightPIDController = rightPIDController;
+
+    this.homeCurrentLimit = homeCurrentLimit;
+    this.homeSpeed = homeSpeed;
+
+    leftMotor.setInverted(leftInverted);
+    leftMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    leftMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
+    leftMotor.setOpenLoopRampRate(0.25);
+
+    rightMotor.setInverted(rightInverted);
+    rightMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    rightMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
+    rightMotor.setOpenLoopRampRate(0.25);
+
+    // Optimistic - we need to zero if the robot has been off...
+    enableLimits();
+    shuffleBoard();
+  }
+
+  private void shuffleBoard() {
+    Shuffleboard.getTab(shuffleBoardTabName).add(this);
+    Shuffleboard.getTab(shuffleBoardTabName).add("leftPID", this.leftPIDController);
+    Shuffleboard.getTab(shuffleBoardTabName).add("rightPID", this.rightPIDController);
+    Shuffleboard.getTab(shuffleBoardTabName).addNumber("PIDOutput", () -> pidOutput);
+    Shuffleboard.getTab(shuffleBoardTabName).addNumber("FFOutput", () -> feedForwardOutputs);
+    Shuffleboard.getTab(shuffleBoardTabName)
+        .addNumber("CombinedOutput", () -> pidOutput + feedForwardOutputs);
+    Shuffleboard.getTab(shuffleBoardTabName).addBoolean("setSpeed", () -> setSpeed);
+    Shuffleboard.getTab(shuffleBoardTabName).addNumber("lC", leftCurrent::update);
+    Shuffleboard.getTab(shuffleBoardTabName).addNumber("rC", rightCurrent::update);
     }
 
-    public abstract LRSpeeds getSpeed();
+  public void stop() {
+    setSpeed(LRSpeeds.stop());
+  }
 
-    public abstract void setSpeed(LRSpeeds lrSpeed);
+  public LRSpeeds getSpeed() {
+    return new LRSpeeds(leftMotor.get(), rightMotor.get());
+  }
 
-    public abstract void zero();
+  public void setSpeed(LRSpeeds lrSpeed) {
+    setSpeed = true;
+    if (hasBeenHomed) {
+      this.speeds = lrSpeed;
+    }
+    if (speeds.left() != 0) leftHome = false;
+    if (speeds.right() != 0) rightHome = false;
+  }
 
-    public abstract void disableLimits();
+  // Reset flags related to home sequence
+  public void zero() {
+    leftMotor.getEncoder().setPosition(0.0);
+    rightMotor.getEncoder().setPosition(0.0);
 
-    public abstract void enableLimits();
+    setLimits(-20.0f, -200.0f, -20.0f, -200.0f);
+    enableLimits();
 
-    public abstract void setLimits(
-            float forwardLeft, float reverseLeft, float forwardRight, float reverseRight);
+    leftHome = false;
+    rightHome = false;
+    goingHome = false;
+  }
 
-    @Override
-    public abstract void initSendable(SendableBuilder builder);
+  @Override
+  public void periodic() {
+    if (goingHome) {
+      if (leftCurrent.update() >= homeCurrentLimit) {
+        leftHome = true;
+      }
+      if (rightCurrent.update() >= homeCurrentLimit) {
+        rightHome = true;
+      }
+    }
 
-    public abstract double leftPosition();
+    if (setSpeed) {
+      // This assumes nothing is moving these components after the home sequence
+      leftMotor.set(leftHome ? 0 : speeds.left());
+      rightMotor.set(rightHome ? 0 : speeds.right());
+    }
+  }
 
-    public abstract double rightPosition();
+  public void goHome() {
+    setSpeed = true;
+    goingHome = true;
 
-    public abstract void leftPID(TrapezoidProfile.State state);
+    // Don't call setSpeed directly. That will mess up the home sequence.
+    speeds = new LRSpeeds(homeSpeed, homeSpeed);
+  }
 
-    public abstract void rightPID(TrapezoidProfile.State state);
+  public boolean isHome() {
+    if (leftHome && rightHome) {
+      hasBeenHomed = true;
+    }
+
+    return leftHome && rightHome;
+  }
+
+  public void disableLimits() {
+    leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
+    leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
+    rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
+    rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
+    System.out.println("Climber.disableLimits()");
+  }
+
+  public void enableLimits() {
+    leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+    leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+    rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+  }
+
+  public void setLimits(
+      float forwardLeft, float reverseLeft, float forwardRight, float reverseRight) {
+    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardLeft);
+    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseLeft);
+    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardRight);
+    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseRight);
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("left position", this::leftPosition, null);
+    builder.addDoubleProperty("right position", this::rightPosition, null);
+  }
+
+  public double leftPosition() {
+    return -leftMotor.getEncoder().getPosition();
+  }
+
+  public double rightPosition() {
+    return -rightMotor.getEncoder().getPosition();
+  }
+
+  public void leftPID(TrapezoidProfile.State state) {
+    setSpeed = false;
+    this.pidOutput =
+        MathUtil.clamp(leftPIDController.calculate(leftPosition(), state.position), -12, 12);
+    this.feedForwardOutputs = feedForward(state.velocity);
+    leftMotor.setVoltage(-(pidOutput + feedForwardOutputs));
+  }
+
+  public void rightPID(TrapezoidProfile.State state) {
+    setSpeed = false;
+    double pid =
+        MathUtil.clamp(rightPIDController.calculate(rightPosition(), state.position), -12, 12);
+    double feed = feedForward(state.velocity);
+    rightMotor.setVoltage(-(pid + feed));
+  }
+
+  public abstract double feedForward(double velocity);
 }
