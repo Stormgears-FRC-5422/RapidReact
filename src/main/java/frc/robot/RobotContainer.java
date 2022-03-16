@@ -7,8 +7,11 @@ import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
 import frc.robot.commands.climber.PositionClimber;
 import frc.robot.commands.climber.PositionPivot;
+import frc.robot.commands.ballHandler.LiftIntake;
+import frc.robot.commands.climber.HomeClimber;
+import frc.robot.commands.climber.HomePivot;
 import frc.robot.commands.climber.TestClimber;
-import frc.robot.commands.drive.SlewDrive;
+import frc.robot.commands.drive.*;
 import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
@@ -51,9 +54,11 @@ public class RobotContainer {
   private Load load;
   private Shoot shoot;
   private NavXAlign navXAlign;
-  private TestClimber testClimber;
   private PositionClimber positionClimber;
   private PositionPivot positionPivot;
+  private HomeClimber homeClimber;
+  private HomePivot homePivot;
+  private TestClimber testClimber;
 
   private final StormXboxController driveJoystick;
   private final StormXboxController secondaryJoystick;
@@ -88,7 +93,7 @@ public class RobotContainer {
     if (kUsePivot) pivot = new Pivot();
 
     if (kDiagnostic) {
-      diagnosticIntake = new DiagnosticIntake();
+      //diagnosticIntake = new DiagnosticIntake();
       if (kUseFeeder) feeder = new Feeder();
     }
     else {
@@ -115,9 +120,9 @@ public class RobotContainer {
       testClimber = new TestClimber(climber,pivot,secondaryJoystick);
       positionClimber = new PositionClimber(climber);
       positionPivot = new PositionPivot(pivot);
+      homePivot = new HomePivot(pivot);
+      homeClimber = new HomeClimber(climber);
     }
-
-
   }
 
   private void configureButtonBindings() {
@@ -126,11 +131,15 @@ public class RobotContainer {
     if (kUseDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
+      if (kUseNavX)  buttonBoard.autoDriveTestButton.whenPressed(new DriveTurnProfile(-360,120,90,drive,navX));
     }
+
+    if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
+
     if (kDiagnostic) {
-      if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
-      if (kUseFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
-      if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
+//      if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
+//      if (kUseFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
+//      if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
     } else {
       if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
       if (kUseShooter && kUseFeeder) {
@@ -145,7 +154,13 @@ public class RobotContainer {
       buttonBoard.toggleClimber.whenPressed(new InstantCommand(positionClimber::toggleGoal));
       buttonBoard.togglePivot.whenPressed(new InstantCommand(positionPivot::toggleGoal));
       buttonBoard.trapezoidPivot.whenPressed(positionPivot);
+      buttonBoard.manualClimberButton.whenPressed(testClimber);
+      buttonBoard.homeClimberButton.whenPressed(homeClimber);
+      buttonBoard.homePivotButton.whenPressed(homePivot);
     }
+
+    if (kUseClimber && kUsePivot)
+
   }
 
   private void configureDefaultCommands() {

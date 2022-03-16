@@ -28,6 +28,8 @@ public class Filter {
         return update(valueSupplier.getAsDouble());
     }
 
+    public double getValue() { return m_value;}
+
     public double update(double newValue) {
         m_value = newValue;
         return m_value;

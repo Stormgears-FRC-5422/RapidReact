@@ -10,6 +10,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.LRSpeeds;
+import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
 
 import static frc.robot.Constants.*;
@@ -22,19 +23,32 @@ public class Pivot extends ClimberParentSystem {
     private final double kS = 0.05;
 
     private LRSpeeds speeds;
+    private boolean goingHome = false;
+    private boolean leftHome = false;
+    private boolean rightHome = false;
+    private boolean hasBeenHomed = false;
+
+    private final ExponentialAverage leftCurrent;
+    private final ExponentialAverage rightCurrent;
 
     private final ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0.0686, 0);
 
     public Pivot() {
+        super();
         speeds = new LRSpeeds();
 
         leftPivot.setInverted(kPivotLeftInverted);
         leftPivot.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        leftPivot.setOpenLoopRampRate(0.25);
         leftPivot.getEncoder().setVelocityConversionFactor(1/60d);
 
         rightPivot.setInverted(kPivotRightInverted);
         rightPivot.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        rightPivot.setOpenLoopRampRate(0.25);
         rightPivot.getEncoder().setVelocityConversionFactor(1/60d);
+
+        leftCurrent = new ExponentialAverage(leftPivot::getOutputCurrent, 2);
+        rightCurrent = new ExponentialAverage(rightPivot::getOutputCurrent, 2);
 
         Shuffleboard.getTab("Pivot").add(this);
         Shuffleboard.getTab("Pivot").add("leftPID", leftPIDController);
@@ -50,16 +64,30 @@ public class Pivot extends ClimberParentSystem {
 
     @Override
     public void periodic() {
-    if (setSpeed) {
-      leftPivot.set(speeds.left());
-      rightPivot.set(speeds.right());
+        double lC = leftCurrent.update();
+        double rC = rightCurrent.update();
+
+        if (goingHome) {
+            if (lC >= kPivotHomeCurrentLimit) {
+                System.out.println("Left Pivot Home");
+                leftHome = true;
+            }
+            if (rC >= kPivotHomeCurrentLimit) {
+                System.out.println("Right Pivot Home");
+                rightHome = true;
+            }
+        }
+        if (setSpeed) {
+            // This assumes nothing is moving these components after the home sequence
+            leftPivot.set(leftHome ? 0 : speeds.left());
+            rightPivot.set(rightHome ? 0 : speeds.right());
         }
 
-        SmartDashboard.putNumber("pivot left current", leftPivot.getOutputCurrent());
-        SmartDashboard.putNumber("pivot right current", rightPivot.getOutputCurrent());
+
+        SmartDashboard.putNumber("pivot left current", lC);
+        SmartDashboard.putNumber("pivot right current", rC);
         SmartDashboard.putNumber("pivot left position", leftPivot.getEncoder().getPosition());
         SmartDashboard.putNumber("pivot right position", rightPivot.getEncoder().getPosition());
-
     }
 
     public void stop() {
@@ -70,18 +98,50 @@ public class Pivot extends ClimberParentSystem {
         return new LRSpeeds(leftPivot.get(), rightPivot.get());
     }
 
-    public void setSpeed(LRSpeeds lrSpeed) {
-        this.speeds = lrSpeed;
+  public void setSpeed(LRSpeeds lrSpeed) {
+    setSpeed = true;
+    if (hasBeenHomed) {
+      this.speeds = lrSpeed;
     }
+    if (speeds.left() != 0) leftHome = false;
+    if (speeds.right() != 0) rightHome = false;
+    else {
+      System.out.println("Don't move the pivot without homing first");
+    }
+}
+
 
     public void zero() {
+        setSpeed = true;
+
         leftPivot.getEncoder().setPosition(0.0);
         rightPivot.getEncoder().setPosition(0.0);
 
-        setLimits(-20.0f, -200.0f,-20.0f, -200.0f);
+        setLimits(-20.0f, -200.0f, -20.0f, -200.0f);
         enableLimits();
 
+        // Reset flags related to home sequence
+        leftHome = false;
+        rightHome = false;
+        goingHome = false;
+
         System.out.println("Pivot.zero()");
+    }
+
+    public void goHome() {
+        setSpeed = true;
+        goingHome = true;
+
+        // Don't call setSpeed directly. That will mess up the home sequence.
+        speeds = new LRSpeeds(kPivotHomeSetSpeed, kPivotHomeSetSpeed);
+    }
+
+    public boolean isHome() {
+        if (leftHome && rightHome) {
+            hasBeenHomed = true;
+        }
+
+        return leftHome && rightHome;
     }
 
     public void disableLimits() {

@@ -21,7 +21,7 @@ public class Feeder extends SubsystemBase {
 
     public Feeder() {
         motor.setInverted(false);
-        motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         motor.getEncoder().setPosition(0.0);
 
         Shuffleboard.getTab("Shooter").addNumber("FeederSpeed", this::getSpeed);
@@ -93,7 +93,9 @@ public class Feeder extends SubsystemBase {
         double scale = sin((PI / 2) * ((currentPos - targetPos)/extent));
 
         double maxVoltage = 12;
-        liftVoltage = clamp(scale * v * maxVoltage, -maxVoltage, 0);
+        liftVoltage = clamp(-scale * v * maxVoltage, -maxVoltage, 0);
+
+        System.out.println("setLift " + liftVoltage);
     }
 
 }

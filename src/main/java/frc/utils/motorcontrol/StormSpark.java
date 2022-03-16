@@ -40,6 +40,7 @@ public class StormSpark extends CANSparkMax {
         }
 
         super.set(scale * speed);
+
     }
 
     // Should be between 0.0 and 1.0 - to account for oddities in the drive train

@@ -20,7 +20,7 @@ public class TestClimber extends CommandBase {
         this.pivot = pivot;
         this.joystick = joystick;
 
-        this.addRequirements(climber,pivot);
+        addRequirements(climber,pivot);
     }
 
     @Override

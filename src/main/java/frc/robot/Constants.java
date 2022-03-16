@@ -41,6 +41,8 @@ public final class Constants {
   public static final boolean kRightSideInverted = StormProp.getBoolean("rightSideInverted", false);
   public static final double kRightSideSpeedScale = StormProp.getNumber("rightSideSpeedScale", 1.0);
 
+  public static final boolean kDriveIdleModeCoast = StormProp.getBoolean("driveIdleModeCoast", true);
+
   public static final int kSmartCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double kNullSize = StormProp.getNumber("driveNullSize", 0.055);
   public static final double kXPrecision = StormProp.getNumber("xPrecision", 0.0);
@@ -58,6 +60,11 @@ public final class Constants {
   public static final int kShooterId = StormProp.getInt("shooterId", -1);
   public static final int kIntakeId = StormProp.getInt("intakeId", -1);
   public static final int kFeederId = StormProp.getInt("feederId", -1);
+
+  public static final double kClimberHomeCurrentLimit = StormProp.getNumber("climberHomeCurrentLimit", 0.0);
+  public static final double kClimberHomeSetSpeed = StormProp.getNumber("climberHomeSetSpeed", 0.0);
+  public static final double kPivotHomeCurrentLimit = StormProp.getNumber("pivotHomeCurrentLimit", 0.0);
+  public static final double kPivotHomeSetSpeed = StormProp.getNumber("pivotHomeSetSpeed", 0.0);
 
   public static final double kFeederSpeed = StormProp.getNumber("feederSpeed", 0.0);
   public static final double kIntakeSpeed = StormProp.getNumber("intakeSpeed", 0.0);
@@ -85,6 +92,31 @@ public final class Constants {
 
   public static final double kClimberSpeed = StormProp.getNumber("climberSpeed", 0.0);
   public static final double kPivotSpeed = StormProp.getNumber("pivotSpeed", 0.0);
+
+  public static final double kDriveProfileLeftP = StormProp.getNumber("driveProfileLeftP",0.0);
+  public static final double kDriveProfileLeftI = StormProp.getNumber("driveProfileLeftI",0.0);
+  public static final double kDriveProfileLeftD = StormProp.getNumber("driveProfileLeftD",0.0);
+  public static final double kDriveLeftVFF = StormProp.getNumber("driveLeftVFF", 0.0);
+  
+  public static final double kDriveProfileRightP = StormProp.getNumber("driveProfileRightP",0.0);
+  public static final double kDriveProfileRightI = StormProp.getNumber("driveProfileRightI",0.0);
+  public static final double kDriveProfileRightD = StormProp.getNumber("driveProfileRightD",0.0);
+  public static final double kDriveRightVFF = StormProp.getNumber("driveRightVFF", 0.0);
+  
+  public static final double kDriveTurnProfileP = StormProp.getNumber("driveTurnProfileP",0.0);
+  public static final double kDriveTurnProfileI = StormProp.getNumber("driveTurnProfileI",0.0);
+  public static final double kDriveTurnProfileD = StormProp.getNumber("driveTurnProfileD",0.0);
+  public static final double kDriveTurnVFF = StormProp.getNumber("driveTurnVFF", 0.0);
+  public static final double kDriveTurnSFF = StormProp.getNumber("driveTurnSFF", 0.0);  // minmum input for movement
+  
+  public static final double kDriveProfileMaxOutput = StormProp.getNumber("driveProfileMaxOutput", 0.0);
+  public static final double kDriveTurnProfileMaxOutput = StormProp.getNumber("driveTurnProfileMaxOutput", 0.0);
+
+  public static final double kDriveGearBoxRatio = StormProp.getNumber("driveGearBoxRatio", 0.0);
+  public static final double kDriveWheelCircumference = StormProp.getNumber("driveWheelCircumference", 0.0);
+
+  public static final double kNavXGyroScaleFactor = StormProp.getNumber("navXGyroScaleFactor", 1.0);
+
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");

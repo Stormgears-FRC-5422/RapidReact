@@ -36,6 +36,7 @@ public class TestDrive extends CommandBase {
 
     //System.out.println("Left: " + left + "  Right: " + right);
     differentialDrive.arcadeDrive(left * 0.6, -right * 0.6, true);
+
   }
 
   // Called once the command ends or is interrupted.

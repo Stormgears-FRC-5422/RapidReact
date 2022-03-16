@@ -10,6 +10,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.LRSpeeds;
+import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
 
 import static frc.robot.Constants.*;
@@ -23,16 +24,29 @@ public class Climber extends ClimberParentSystem {
   private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0, 0, 0.0686, 0);
   private final double kS = 0.24;
 
+    private boolean goingHome = false;
+    private boolean leftHome = false;
+    private boolean rightHome = false;
+    private boolean hasBeenHomed = false;
+
+    private final ExponentialAverage leftCurrent;
+    private final ExponentialAverage rightCurrent;
+
   public Climber() {
     super();
 
     leftClimber.setInverted(kClimberLeftInverted);
     leftClimber.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftClimber.getEncoder().setVelocityConversionFactor(1 / 60d);
+    leftClimber.setOpenLoopRampRate(0.25);
 
     rightClimber.setInverted(kClimberRightInverted);
     rightClimber.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightClimber.getEncoder().setVelocityConversionFactor(1 / 60d);
+    rightClimber.setOpenLoopRampRate(0.25);
+
+        leftCurrent = new ExponentialAverage(leftClimber::getOutputCurrent, 2);
+        rightCurrent = new ExponentialAverage(rightClimber::getOutputCurrent, 2);
 
     // Optimistic - we need to zero if the robot has been off...
     enableLimits();
@@ -53,8 +67,26 @@ public class Climber extends ClimberParentSystem {
       leftClimber.set(speeds.left());
       rightClimber.set(speeds.right());
     }
-    SmartDashboard.putNumber("climber left current", leftClimber.getOutputCurrent());
-    SmartDashboard.putNumber("climber right current", rightClimber.getOutputCurrent());
+        double lC = leftCurrent.update();
+        double rC = rightCurrent.update();
+
+        if (goingHome) {
+            if (lC >= kClimberHomeCurrentLimit) {
+                System.out.println("Left climber Home");
+                leftHome = true;
+            }
+            if (rC >= kClimberHomeCurrentLimit) {
+                System.out.println("Right climber Home");
+                rightHome = true;
+            }
+        }
+
+        // This assumes nothing is moving these components after the home sequence
+        leftClimber.set(leftHome ? 0 : speeds.left());
+        rightClimber.set(rightHome ? 0 : speeds.right());
+
+        SmartDashboard.putNumber("climber left current", lC);
+        SmartDashboard.putNumber("climber right current", rC);
     SmartDashboard.putNumber("climber left position", leftClimber.getEncoder().getPosition());
     SmartDashboard.putNumber("climber right position", rightClimber.getEncoder().getPosition());
   }
@@ -71,10 +103,15 @@ public class Climber extends ClimberParentSystem {
   @Override
   public void setSpeed(LRSpeeds lrSpeed) {
     setSpeed = true;
-    this.speeds = lrSpeed;
-    SmartDashboard.putNumber("% out", speeds.left());
-  }
-
+    if (hasBeenHomed) {
+      this.speeds = lrSpeed;
+    }
+    if (speeds.left() != 0) leftHome = false;
+    if (speeds.right() != 0) rightHome = false;
+    else {
+      System.out.println("Don't move the climbers without homing first");
+    }
+}
   @Override
   public void zero() {
     leftClimber.getEncoder().setPosition(0.0);
@@ -83,8 +120,26 @@ public class Climber extends ClimberParentSystem {
     setLimits(-20.0f, -200.0f, -20.0f, -200.0f);
     enableLimits();
 
-    System.out.println("Climber.zero()");
-  }
+    leftHome = false;
+    rightHome = false;
+    goingHome = false;
+   }
+        // Reset flags related to home sequence
+
+    public void goHome() {
+        goingHome = true;
+
+        // Don't call setSpeed directly. That will mess up the home sequence.
+        speeds = new LRSpeeds(kClimberHomeSetSpeed, kClimberHomeSetSpeed);
+    }
+
+    public boolean isHome() {
+        if (leftHome && rightHome) {
+            hasBeenHomed = true;
+        }
+
+        return leftHome && rightHome;
+    }
 
   @Override
   public void disableLimits() {
@@ -101,7 +156,6 @@ public class Climber extends ClimberParentSystem {
     leftClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     rightClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
     rightClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
-    System.out.println("Climber.enableLimits()");
   }
 
   @Override
@@ -111,7 +165,6 @@ public class Climber extends ClimberParentSystem {
     leftClimber.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseLeft);
     rightClimber.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardRight);
     rightClimber.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseRight);
-    System.out.println("Climber.setLimits()");
   }
 
   @Override
