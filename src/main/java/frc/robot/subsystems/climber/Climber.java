@@ -23,8 +23,7 @@ public class Climber extends ClimberParentSystem {
   private final StormSpark rightClimber =
       new StormSpark(kClimberRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0, 0, 0.0686, 0);
-  private final double kS = 0.24;
+  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.24, 0, 0.0686, 0);
   private final ExponentialAverage leftCurrent;
   private final ExponentialAverage rightCurrent;
   private boolean goingHome = false;
@@ -188,9 +187,7 @@ public class Climber extends ClimberParentSystem {
     setSpeed = false;
     this.pidOutput =
         MathUtil.clamp(leftPIDController.calculate(leftPosition(), state.position), -12, 12);
-    this.feedForwardOutputs =
-        feedforward.calculate(state.velocity, 0)
-            + kS * Math.signum(state.position - leftPosition());
+    this.feedForwardOutputs = feedforward.calculate(state.velocity, 0);
     leftClimber.setVoltage(-(pidOutput + feedForwardOutputs));
   }
 
@@ -199,9 +196,7 @@ public class Climber extends ClimberParentSystem {
     setSpeed = false;
     double pid =
         MathUtil.clamp(rightPIDController.calculate(rightPosition(), state.position), -12, 12);
-    double feed =
-        feedforward.calculate(state.velocity, 0)
-            + kS * Math.signum(state.position - leftPosition());
+    double feed = feedforward.calculate(state.velocity, 0);
     rightClimber.setVoltage(-(pid + feed));
   }
 }

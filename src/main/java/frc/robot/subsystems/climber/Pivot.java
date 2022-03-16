@@ -20,7 +20,6 @@ public class Pivot extends ClimberParentSystem {
     protected final PIDController rightPIDController = new PIDController(0.05, 0, 0);
     private final StormSpark leftPivot = new StormSpark(kPivotLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark rightPivot = new StormSpark(kPivotRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final double kS = 0.05;
 
     private LRSpeeds speeds;
     private boolean goingHome = false;
@@ -31,7 +30,7 @@ public class Pivot extends ClimberParentSystem {
     private final ExponentialAverage leftCurrent;
     private final ExponentialAverage rightCurrent;
 
-    private final ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0.0686, 0);
+  private final ArmFeedforward feedforward = new ArmFeedforward(0.05, 0, 0.0686, 0);
 
     public Pivot() {
         super();
@@ -190,7 +189,7 @@ public class Pivot extends ClimberParentSystem {
         setSpeed = false;
         this.pidOutput =
                 MathUtil.clamp(leftPIDController.calculate(leftPosition(), state.position), -12, 12);
-        this.feedForwardOutputs = feedforward.calculate(state.velocity, 0) + kS * Math.signum(state.position - leftPosition());
+    this.feedForwardOutputs = feedforward.calculate(state.velocity, 0);
         leftPivot.setVoltage(-(pidOutput + feedForwardOutputs));
     }
 
@@ -199,7 +198,7 @@ public class Pivot extends ClimberParentSystem {
         setSpeed = false;
         double pid =
                 MathUtil.clamp(rightPIDController.calculate(rightPosition(), state.position), -12, 12);
-        double feed = feedforward.calculate(state.velocity, 0) + kS * Math.signum(state.position - leftPosition());
+    double feed = feedforward.calculate(state.velocity, 0);
         rightPivot.setVoltage(-(pid + feed));
     }
 }
