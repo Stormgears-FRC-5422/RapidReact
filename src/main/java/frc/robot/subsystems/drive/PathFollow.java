@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -22,6 +23,10 @@ public class PathFollow extends SubsystemBase {
     PIDController pidRight = new PIDController(0,0,0);
     Pose2d pose2d;
 
+    public PathFollow(){
+
+    }
+
     public DifferentialDriveKinematics getDifferentialDriveKinematics() {
         return kinematics;
     }
@@ -36,6 +41,9 @@ public class PathFollow extends SubsystemBase {
     }
     public PIDController getPidRight(){
         return pidRight;
+    }
+    public Pose2d getPose2d(){
+        return pose2d;
     }
 
     @Override

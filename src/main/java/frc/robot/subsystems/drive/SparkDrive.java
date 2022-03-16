@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.utils.configfile.StormProp;
 import frc.utils.drive.StormDrive;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.filters.Filter;
@@ -224,6 +225,18 @@ public class SparkDrive extends StormDrive {
 
     public double getVelocity() {
         return((masterLeft.getEncoder().getVelocity() + masterRight.getEncoder().getVelocity()) / 2);
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(
+                masterLeft.getEncoder().getVelocity() / 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60,
+                masterRight.getEncoder().getVelocity() / 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60
+        );
+    }
+
+    public void setOutput(double l, double r){
+        masterLeft.set(l/12);
+        masterRight.set(r/12);
     }
 
     public double[] getEncoders(){
