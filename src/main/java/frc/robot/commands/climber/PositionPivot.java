@@ -10,7 +10,6 @@ import frc.robot.subsystems.climber.Pivot;
 public class PositionPivot extends MoveCommand {
 
     private final Pivot pivot;
-    protected Goal goal = Goal.HIGH;
 
     public PositionPivot(Pivot pivot) {
         this.pivot = pivot;
@@ -28,17 +27,6 @@ public class PositionPivot extends MoveCommand {
         return pivot;
     }
 
-    @Override
-    public void toggleGoal() {
-        if (goal == Goal.LOW) goal = Goal.HIGH;
-        else goal = Goal.LOW;
-
-        leftController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new TrapezoidProfile.State(subsystem().leftPosition(), 0)), this::leftPID);
-        rightController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new TrapezoidProfile.State(subsystem().rightPosition(), 0)), this::rightPID);
-
-        leftController.initialize();
-        rightController.initialize();
-    }
 
     @Override
     public void initSendable(SendableBuilder builder) {

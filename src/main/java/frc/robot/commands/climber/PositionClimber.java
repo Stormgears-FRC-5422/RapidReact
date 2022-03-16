@@ -30,18 +30,6 @@ public class PositionClimber extends MoveCommand {
     }
 
     @Override
-    public void toggleGoal() {
-        if (goal == Goal.LOW) goal = Goal.HIGH;
-        else goal = Goal.LOW;
-
-        leftController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new State(subsystem().leftPosition(), 0)), this::leftPID);
-        rightController = new TrapezoidProfileCommand(new TrapezoidProfile(constraints, goal.state, new State(subsystem().rightPosition(), 0)), this::rightPID);
-
-        leftController.initialize();
-        rightController.initialize();
-    }
-
-    @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Goal", () -> goal.state.position, null);
         builder.addDoubleProperty("Position Goal", () -> position, null);

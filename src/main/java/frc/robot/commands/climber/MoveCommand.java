@@ -10,7 +10,7 @@ public abstract class MoveCommand extends CommandBase {
     protected final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(150, 75);
     protected TrapezoidProfileCommand leftController;
     protected TrapezoidProfileCommand rightController;
-    protected Goal goal = Goal.HIGH;
+  protected Goal goal = Goal.LOW;
     double position = 0;
     double velocity = 0;
 
@@ -18,7 +18,26 @@ public abstract class MoveCommand extends CommandBase {
     protected MoveCommand() {
     }
 
-    public abstract void toggleGoal();
+  public void toggleGoal() {
+    if (goal == Goal.LOW) goal = Goal.HIGH;
+    else goal = Goal.LOW;
+
+    leftController =
+        new TrapezoidProfileCommand(
+            new TrapezoidProfile(
+                constraints, goal.state, new TrapezoidProfile.State(subsystem().leftPosition(), 0)),
+            this::leftPID);
+    rightController =
+        new TrapezoidProfileCommand(
+            new TrapezoidProfile(
+                constraints,
+                goal.state,
+                new TrapezoidProfile.State(subsystem().rightPosition(), 0)),
+            this::rightPID);
+
+    leftController.initialize();
+    rightController.initialize();
+  }
 
     @Override
     public void initialize() {

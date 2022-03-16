@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
@@ -54,6 +55,7 @@ public class RobotContainer {
   private PositionPivot positionPivot;
   private HomeClimber homeClimber;
   private HomePivot homePivot;
+  private ParallelCommandGroup homingSequence;
   private TestClimber testClimber;
 
   private final StormXboxController driveJoystick;
@@ -118,6 +120,7 @@ public class RobotContainer {
       positionPivot = new PositionPivot(pivot);
       homePivot = new HomePivot(pivot);
       homeClimber = new HomeClimber(climber);
+      homingSequence = new ParallelCommandGroup(homeClimber, homePivot);
     }
   }
 
@@ -151,14 +154,17 @@ public class RobotContainer {
       buttonBoard.togglePivot.whenPressed(new InstantCommand(positionPivot::toggleGoal));
       buttonBoard.trapezoidPivot.whenPressed(positionPivot);
       buttonBoard.manualClimberButton.whenPressed(testClimber);
-      buttonBoard.homeClimberButton.whenPressed(homeClimber);
-      buttonBoard.homePivotButton.whenPressed(homePivot);
+      //      buttonBoard.homeClimberButton.whenPressed(homeClimber);
+      //      buttonBoard.homePivotButton.whenPressed(homePivot);
     }
-
   }
 
   private void configureDefaultCommands() {
     if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
+    if (kUseClimber && kUsePivot) {
+      climber.setDefaultCommand(positionClimber);
+      pivot.setDefaultCommand(positionPivot);
+    }
 //    if (kDiagnostic) {diagnosticIntake.setDefaultCommand(testIntake);
 
     // See robot.teleopInit() for climber scheduling. It cannot be a default command
@@ -175,5 +181,9 @@ public class RobotContainer {
 
   public TestClimber getTestClimber() {
     return testClimber;
+  }
+
+  public ParallelCommandGroup getHomingSequence() {
+    return homingSequence;
   }
 }
