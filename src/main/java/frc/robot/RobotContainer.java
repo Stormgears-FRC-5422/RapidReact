@@ -125,7 +125,7 @@ public class RobotContainer {
     if (kUseDrive) {
       buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
       buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
-      if (kUseNavX)  buttonBoard.autoDriveTestButton.whenPressed(new DriveTurnProfile(-360,120,90,drive,navX));
+      if (kUseNavX)  buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(2,1,1,drive));
     }
 
     if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
