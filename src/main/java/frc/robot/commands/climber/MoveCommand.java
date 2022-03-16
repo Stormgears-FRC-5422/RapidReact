@@ -15,53 +15,40 @@ public abstract class MoveCommand extends CommandBase {
   protected final ClimberParentSystem subsystem;
   protected final Constraints constraints;
 
-  protected TrapezoidProfileCommand leftTrapezoidProfileCommand;
-  protected TrapezoidProfileCommand rightTrapezoidProfileCommand;
+  protected final TrapezoidProfileCommand leftTrapezoidProfileCommand;
+  protected final TrapezoidProfileCommand rightTrapezoidProfileCommand;
 
-  protected Goal goal = Goal.LOW;
+  protected final State goal;
 
   // For monitoring on Shuffleboard, does nothing
   double position = 0;
-    double velocity = 0;
+  double velocity = 0;
 
-  protected MoveCommand(ClimberParentSystem subsystem, Constraints constraints) {
+  protected MoveCommand(ClimberParentSystem subsystem, Constraints constraints, State goal) {
     // TODO remove goal and replace with constructor parameter
     this.subsystem = subsystem;
     this.constraints = constraints;
+    this.goal = goal;
 
     this.leftTrapezoidProfileCommand =
         new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, goal.state, new State(subsystem.leftPosition(), 0)),
+            new TrapezoidProfile(constraints, goal, new State(subsystem.leftPosition(), 0)),
             this::leftPID);
     this.rightTrapezoidProfileCommand =
         new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, goal.state, new State(subsystem.rightPosition(), 0)),
+            new TrapezoidProfile(constraints, goal, new State(subsystem.rightPosition(), 0)),
             this::rightPID);
 
     addRequirements(subsystem);
 
+    try {
     Shuffleboard.getTab(subsystem.getName()).add(this);
+    } catch (Exception ignored) {
     }
-
-  public void toggleGoal() {
-    if (goal == Goal.LOW) goal = Goal.HIGH;
-    else goal = Goal.LOW;
-
-    leftTrapezoidProfileCommand =
-        new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, goal.state, new State(subsystem.leftPosition(), 0)),
-            this::leftPID);
-    rightTrapezoidProfileCommand =
-        new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, goal.state, new State(subsystem.rightPosition(), 0)),
-            this::rightPID);
-
-    leftTrapezoidProfileCommand.initialize();
-    rightTrapezoidProfileCommand.initialize();
   }
 
-    @Override
-    public void initialize() {
+  @Override
+  public void initialize() {
     leftTrapezoidProfileCommand.initialize();
     rightTrapezoidProfileCommand.initialize();
     }
@@ -78,31 +65,26 @@ public abstract class MoveCommand extends CommandBase {
     rightTrapezoidProfileCommand.end(interrupted);
     }
 
+  @Override
+  public boolean isFinished() {
+    return leftTrapezoidProfileCommand.isFinished() && rightTrapezoidProfileCommand.isFinished();
+  }
+
   protected void leftPID(State state) {
-        position = state.position;
-        velocity = state.velocity;
+    position = state.position;
+    velocity = state.velocity;
 
     subsystem.leftPID(state);
     }
 
   protected void rightPID(State state) {
     subsystem.rightPID(state);
-    }
+  }
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Goal", () -> goal.state.position, null);
+    builder.addDoubleProperty("Goal", () -> goal.position, null);
     builder.addDoubleProperty("Position Goal", () -> position, null);
     builder.addDoubleProperty("Velocity Goal", () -> velocity, null);
   }
-
-    enum Goal {
-        LOW(25), HIGH(195);
-
-    private final State state;
-
-        Goal(double state) {
-      this.state = new State(state, 0);
-        }
-    }
 }

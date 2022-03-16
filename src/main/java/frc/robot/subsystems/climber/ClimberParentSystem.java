@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,7 +38,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
 
   // For monitoring on Shuffleboard, does nothing
   protected double pidOutput = 0;
-    protected double feedForwardOutputs = 0;
+  protected double feedForwardOutputs = 0;
 
   protected ClimberParentSystem(
       int leftMotorID,
@@ -52,8 +52,8 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     leftMotor = new StormSpark(leftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
     rightMotor = new StormSpark(rightMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    this.leftCurrent = new ExponentialAverage(leftMotor::getOutputCurrent, 2);
-    this.rightCurrent = new ExponentialAverage(rightMotor::getOutputCurrent, 2);
+    this.leftCurrent = new ExponentialAverage(leftMotor::getOutputCurrent, 4);
+    this.rightCurrent = new ExponentialAverage(rightMotor::getOutputCurrent, 4);
 
     this.leftPIDController = leftPIDController;
     this.rightPIDController = rightPIDController;
@@ -87,6 +87,10 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     Shuffleboard.getTab(shuffleBoardTabName).addBoolean("setSpeed", () -> setSpeed);
     Shuffleboard.getTab(shuffleBoardTabName).addNumber("lC", leftCurrent::update);
     Shuffleboard.getTab(shuffleBoardTabName).addNumber("rC", rightCurrent::update);
+    Shuffleboard.getTab(shuffleBoardTabName)
+        .addString(
+            "command running",
+            () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "none");
     }
 
   public void stop() {
@@ -149,7 +153,6 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     if (leftHome && rightHome) {
       hasBeenHomed = true;
     }
-
     return leftHome && rightHome;
   }
 
@@ -190,7 +193,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     return -rightMotor.getEncoder().getPosition();
   }
 
-  public void leftPID(TrapezoidProfile.State state) {
+  public void leftPID(State state) {
     setSpeed = false;
     this.pidOutput =
         MathUtil.clamp(leftPIDController.calculate(leftPosition(), state.position), -12, 12);
@@ -198,7 +201,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     leftMotor.setVoltage(-(pidOutput + feedForwardOutputs));
   }
 
-  public void rightPID(TrapezoidProfile.State state) {
+  public void rightPID(State state) {
     setSpeed = false;
     double pid =
         MathUtil.clamp(rightPIDController.calculate(rightPosition(), state.position), -12, 12);
