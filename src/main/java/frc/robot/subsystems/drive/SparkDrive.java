@@ -36,6 +36,11 @@ public class SparkDrive extends StormDrive {
     private Filter slaveRightTemp;
     private Filter masterLeftTemp;
     private Filter slaveLeftTemp;
+  private final double[] conversionFactor = {
+    0.0254 * kDriveWheelCircumference / kDriveGearBoxRatio,
+    0.0254 * kRightSideSpeedScale * kDriveWheelCircumference / kDriveGearBoxRatio
+  }; // set to provide measurement in meters per motor revolution
+  private Filter masterRightVoltage;
 
     private double delta;
     private int tempWarningCount;
@@ -44,11 +49,7 @@ public class SparkDrive extends StormDrive {
     private PIDController m_wpi_left_controller;
     private PIDController m_wpi_right_controller;
     private PIDController m_wpi_turn_controller;
-
-  private final double[] conversionFactor = {
-    kDriveWheelCircumference / kDriveGearBoxRatio,
-    kRightSideSpeedScale * kDriveWheelCircumference / kDriveGearBoxRatio
-  }; // set to provide measurement in meters per motor revolution
+  private Filter masterLeftVoltage;
 
     public SparkDrive() {
         setupMotors();
@@ -131,6 +132,8 @@ public class SparkDrive extends StormDrive {
         SmartDashboard.putNumber("Drive LeftM Temp", masterLeftTemp.update());
         SmartDashboard.putNumber("Drive LeftS Temp", slaveLeftTemp.update());
 
+    SmartDashboard.putNumber("Drive RightM Voltae", masterRightCurrent.update());
+
         double temp = max(max(masterRight.getMotorTemperature(), masterLeft.getMotorTemperature()),
                 max(slaveRight.getMotorTemperature(), slaveLeft.getMotorTemperature()));
 
@@ -160,8 +163,8 @@ public class SparkDrive extends StormDrive {
         m_wpi_right_controller = new PIDController(kP[1],kI[1],kD[1]);
         m_wpi_turn_controller = new PIDController(kDriveTurnProfileP,kDriveTurnProfileI,kDriveTurnProfileD);
 
-        m_ff_left = new SimpleMotorFeedforward(0,kV[0]);
-        m_ff_right = new SimpleMotorFeedforward(0,kV[1]);
+    m_ff_left = new SimpleMotorFeedforward(0.3, kV[0]);
+    m_ff_right = new SimpleMotorFeedforward(0.3, kV[1]);
         SmartDashboard.putNumber("Drive FF Const", kDriveTurnVFF);
         m_ff_turn = new SimpleMotorFeedforward(kDriveTurnSFF,kDriveTurnVFF);
     }
@@ -185,10 +188,14 @@ public class SparkDrive extends StormDrive {
         double ff_left_out = m_ff_left.calculate(velocity);
         double ff_right_out = m_ff_right.calculate(velocity);
 
+    SmartDashboard.putNumber("Drive Position Left FF output", ff_left_out);
+    SmartDashboard.putNumber("Drive Position Rifgt FF output", ff_right_out);
+
         // Apply to motors
         masterLeft.setVoltage(left_out + ff_left_out);
         masterRight.setVoltage(right_out + ff_right_out);
-    
+
+    SmartDashboard.putNumber("Drive Current Distance", getDistance());
         SmartDashboard.putNumber("Drive Position Target", setPoint);
     }
 
