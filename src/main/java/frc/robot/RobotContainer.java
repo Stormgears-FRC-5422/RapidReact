@@ -5,13 +5,9 @@ import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
-import frc.robot.commands.climber.PositionClimber;
-import frc.robot.commands.climber.PositionPivot;
-import frc.robot.commands.ballHandler.LiftIntake;
-import frc.robot.commands.climber.HomeClimber;
-import frc.robot.commands.climber.HomePivot;
-import frc.robot.commands.climber.TestClimber;
-import frc.robot.commands.drive.*;
+import frc.robot.commands.climber.*;
+import frc.robot.commands.drive.DriveTurnProfile;
+import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
@@ -158,8 +154,6 @@ public class RobotContainer {
       buttonBoard.homeClimberButton.whenPressed(homeClimber);
       buttonBoard.homePivotButton.whenPressed(homePivot);
     }
-
-    if (kUseClimber && kUsePivot)
 
   }
 

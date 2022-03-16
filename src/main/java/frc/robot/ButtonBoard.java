@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.utils.joysticks.StormXboxController;
 
@@ -37,6 +38,8 @@ public class ButtonBoard {
     public final JoystickButton togglePivot;
     public final JoystickButton homeClimberButton;
     public final JoystickButton homePivotButton;
+
+    public final Button manualClimberButton;
 //    public final JoystickButton selectIntakeButton;
 //    public final JoystickButton selectFeederButton;
 //    public final JoystickButton selectShooterButton;
@@ -74,6 +77,7 @@ public class ButtonBoard {
         trapezoidPivot = new JoystickButton(secondaryJoystick, StormXboxController.leftBumper);
         togglePivot = new JoystickButton(secondaryJoystick, StormXboxController.rightBumper);
 
+        manualClimberButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
     }
 
 }

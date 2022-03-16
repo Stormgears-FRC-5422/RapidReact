@@ -18,19 +18,19 @@ import static frc.robot.Constants.*;
 public class Climber extends ClimberParentSystem {
   protected final PIDController leftPIDController = new PIDController(0, 0, 0);
   protected final PIDController rightPIDController = new PIDController(0, 0, 0);
-  private final StormSpark leftClimber = new StormSpark(kClimberLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
-  private final StormSpark rightClimber = new StormSpark(kClimberRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final StormSpark leftClimber =
+      new StormSpark(kClimberLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final StormSpark rightClimber =
+      new StormSpark(kClimberRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
   private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0, 0, 0.0686, 0);
   private final double kS = 0.24;
-
-    private boolean goingHome = false;
-    private boolean leftHome = false;
-    private boolean rightHome = false;
-    private boolean hasBeenHomed = false;
-
-    private final ExponentialAverage leftCurrent;
-    private final ExponentialAverage rightCurrent;
+  private final ExponentialAverage leftCurrent;
+  private final ExponentialAverage rightCurrent;
+  private boolean goingHome = false;
+  private boolean leftHome = false;
+  private boolean rightHome = false;
+  private boolean hasBeenHomed = false;
 
   public Climber() {
     super();
@@ -45,8 +45,8 @@ public class Climber extends ClimberParentSystem {
     rightClimber.getEncoder().setVelocityConversionFactor(1 / 60d);
     rightClimber.setOpenLoopRampRate(0.25);
 
-        leftCurrent = new ExponentialAverage(leftClimber::getOutputCurrent, 2);
-        rightCurrent = new ExponentialAverage(rightClimber::getOutputCurrent, 2);
+    leftCurrent = new ExponentialAverage(leftClimber::getOutputCurrent, 2);
+    rightCurrent = new ExponentialAverage(rightClimber::getOutputCurrent, 2);
 
     // Optimistic - we need to zero if the robot has been off...
     enableLimits();
@@ -63,30 +63,28 @@ public class Climber extends ClimberParentSystem {
 
   @Override
   public void periodic() {
-    if (setSpeed) {
-      leftClimber.set(speeds.left());
-      rightClimber.set(speeds.right());
+    double lC = leftCurrent.update();
+    double rC = rightCurrent.update();
+
+    if (goingHome) {
+      if (lC >= kClimberHomeCurrentLimit) {
+        System.out.println("Left climber Home");
+        leftHome = true;
+      }
+      if (rC >= kClimberHomeCurrentLimit) {
+        System.out.println("Right climber Home");
+        rightHome = true;
+      }
     }
-        double lC = leftCurrent.update();
-        double rC = rightCurrent.update();
 
-        if (goingHome) {
-            if (lC >= kClimberHomeCurrentLimit) {
-                System.out.println("Left climber Home");
-                leftHome = true;
-            }
-            if (rC >= kClimberHomeCurrentLimit) {
-                System.out.println("Right climber Home");
-                rightHome = true;
-            }
-        }
+    if (setSpeed) {
+      // This assumes nothing is moving these components after the home sequence
+      leftClimber.set(leftHome ? 0 : speeds.left());
+      rightClimber.set(rightHome ? 0 : speeds.right());
+    }
 
-        // This assumes nothing is moving these components after the home sequence
-        leftClimber.set(leftHome ? 0 : speeds.left());
-        rightClimber.set(rightHome ? 0 : speeds.right());
-
-        SmartDashboard.putNumber("climber left current", lC);
-        SmartDashboard.putNumber("climber right current", rC);
+    SmartDashboard.putNumber("climber left current", lC);
+    SmartDashboard.putNumber("climber right current", rC);
     SmartDashboard.putNumber("climber left position", leftClimber.getEncoder().getPosition());
     SmartDashboard.putNumber("climber right position", rightClimber.getEncoder().getPosition());
   }
@@ -111,7 +109,8 @@ public class Climber extends ClimberParentSystem {
     else {
       System.out.println("Don't move the climbers without homing first");
     }
-}
+  }
+
   @Override
   public void zero() {
     leftClimber.getEncoder().setPosition(0.0);
@@ -123,23 +122,24 @@ public class Climber extends ClimberParentSystem {
     leftHome = false;
     rightHome = false;
     goingHome = false;
-   }
-        // Reset flags related to home sequence
+  }
+  // Reset flags related to home sequence
 
-    public void goHome() {
-        goingHome = true;
+  public void goHome() {
+    setSpeed = true;
+    goingHome = true;
 
-        // Don't call setSpeed directly. That will mess up the home sequence.
-        speeds = new LRSpeeds(kClimberHomeSetSpeed, kClimberHomeSetSpeed);
+    // Don't call setSpeed directly. That will mess up the home sequence.
+    speeds = new LRSpeeds(kClimberHomeSetSpeed, kClimberHomeSetSpeed);
+  }
+
+  public boolean isHome() {
+    if (leftHome && rightHome) {
+      hasBeenHomed = true;
     }
 
-    public boolean isHome() {
-        if (leftHome && rightHome) {
-            hasBeenHomed = true;
-        }
-
-        return leftHome && rightHome;
-    }
+    return leftHome && rightHome;
+  }
 
   @Override
   public void disableLimits() {
@@ -188,7 +188,9 @@ public class Climber extends ClimberParentSystem {
     setSpeed = false;
     this.pidOutput =
         MathUtil.clamp(leftPIDController.calculate(leftPosition(), state.position), -12, 12);
-    this.feedForwardOutputs = feedforward.calculate(state.velocity, 0) + kS * Math.signum(state.position - leftPosition());
+    this.feedForwardOutputs =
+        feedforward.calculate(state.velocity, 0)
+            + kS * Math.signum(state.position - leftPosition());
     leftClimber.setVoltage(-(pidOutput + feedForwardOutputs));
   }
 
@@ -197,9 +199,9 @@ public class Climber extends ClimberParentSystem {
     setSpeed = false;
     double pid =
         MathUtil.clamp(rightPIDController.calculate(rightPosition(), state.position), -12, 12);
-    double feed = feedforward.calculate(state.velocity, 0) + kS * Math.signum(state.position - leftPosition());
+    double feed =
+        feedforward.calculate(state.velocity, 0)
+            + kS * Math.signum(state.position - leftPosition());
     rightClimber.setVoltage(-(pid + feed));
   }
-
-
 }
