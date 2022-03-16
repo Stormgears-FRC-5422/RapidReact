@@ -2,84 +2,107 @@ package frc.robot.commands.climber;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import frc.robot.subsystems.climber.ClimberParentSystem;
 
+import static edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import static edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+
 public abstract class MoveCommand extends CommandBase {
-    protected final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(150, 75);
-    protected TrapezoidProfileCommand leftController;
-    protected TrapezoidProfileCommand rightController;
+
+  protected final ClimberParentSystem subsystem;
+  protected final Constraints constraints;
+
+  protected TrapezoidProfileCommand leftTrapezoidProfileCommand;
+  protected TrapezoidProfileCommand rightTrapezoidProfileCommand;
+
   protected Goal goal = Goal.LOW;
-    double position = 0;
+
+  // For monitoring on Shuffleboard, does nothing
+  double position = 0;
     double velocity = 0;
 
+  protected MoveCommand(ClimberParentSystem subsystem, Constraints constraints) {
+    // TODO remove goal and replace with constructor parameter
+    this.subsystem = subsystem;
+    this.constraints = constraints;
 
-    protected MoveCommand() {
+    this.leftTrapezoidProfileCommand =
+        new TrapezoidProfileCommand(
+            new TrapezoidProfile(constraints, goal.state, new State(subsystem.leftPosition(), 0)),
+            this::leftPID);
+    this.rightTrapezoidProfileCommand =
+        new TrapezoidProfileCommand(
+            new TrapezoidProfile(constraints, goal.state, new State(subsystem.rightPosition(), 0)),
+            this::rightPID);
+
+    addRequirements(subsystem);
+
+    Shuffleboard.getTab(subsystem.getName()).add(this);
     }
 
   public void toggleGoal() {
     if (goal == Goal.LOW) goal = Goal.HIGH;
     else goal = Goal.LOW;
 
-    leftController =
+    leftTrapezoidProfileCommand =
         new TrapezoidProfileCommand(
-            new TrapezoidProfile(
-                constraints, goal.state, new TrapezoidProfile.State(subsystem().leftPosition(), 0)),
+            new TrapezoidProfile(constraints, goal.state, new State(subsystem.leftPosition(), 0)),
             this::leftPID);
-    rightController =
+    rightTrapezoidProfileCommand =
         new TrapezoidProfileCommand(
-            new TrapezoidProfile(
-                constraints,
-                goal.state,
-                new TrapezoidProfile.State(subsystem().rightPosition(), 0)),
+            new TrapezoidProfile(constraints, goal.state, new State(subsystem.rightPosition(), 0)),
             this::rightPID);
 
-    leftController.initialize();
-    rightController.initialize();
+    leftTrapezoidProfileCommand.initialize();
+    rightTrapezoidProfileCommand.initialize();
   }
 
     @Override
     public void initialize() {
-        leftController.initialize();
-        rightController.initialize();
+    leftTrapezoidProfileCommand.initialize();
+    rightTrapezoidProfileCommand.initialize();
     }
 
     @Override
     public void execute() {
-        leftController.execute();
-        rightController.execute();
+    leftTrapezoidProfileCommand.execute();
+    rightTrapezoidProfileCommand.execute();
     }
 
     @Override
     public void end(boolean interrupted) {
-        leftController.end(interrupted);
-        rightController.end(interrupted);
+    leftTrapezoidProfileCommand.end(interrupted);
+    rightTrapezoidProfileCommand.end(interrupted);
     }
 
-    protected void leftPID(TrapezoidProfile.State state) {
+  protected void leftPID(State state) {
         position = state.position;
         velocity = state.velocity;
 
-        subsystem().leftPID(state);
+    subsystem.leftPID(state);
     }
 
-    protected void rightPID(TrapezoidProfile.State state) {
-        subsystem().rightPID(state);
+  protected void rightPID(State state) {
+    subsystem.rightPID(state);
     }
 
-    @Override
-    public abstract void initSendable(SendableBuilder builder);
-
-    public abstract ClimberParentSystem subsystem();
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("Goal", () -> goal.state.position, null);
+    builder.addDoubleProperty("Position Goal", () -> position, null);
+    builder.addDoubleProperty("Velocity Goal", () -> velocity, null);
+  }
 
     enum Goal {
         LOW(25), HIGH(195);
 
-        public final TrapezoidProfile.State state;
+    private final State state;
 
         Goal(double state) {
-            this.state = new TrapezoidProfile.State(state, 0);
+      this.state = new State(state, 0);
         }
     }
 }
