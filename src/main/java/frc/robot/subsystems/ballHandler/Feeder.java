@@ -8,10 +8,12 @@ import frc.utils.motorcontrol.LimitSwitch;
 import frc.utils.motorcontrol.StormSpark;
 
 import static edu.wpi.first.math.MathUtil.clamp;
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kFeederId;
+import static frc.robot.Constants.kFeederSpeed;
 import static java.lang.Math.*;
 
 public class Feeder extends SubsystemBase {
+  private static final String shuffleboardTabName = "Shooter";
 
     private final StormSpark motor = new StormSpark(kFeederId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final LimitSwitch limitSwitch = new LimitSwitch(0, true);
@@ -24,11 +26,10 @@ public class Feeder extends SubsystemBase {
         motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         motor.getEncoder().setPosition(0.0);
 
-        Shuffleboard.getTab("Shooter").addNumber("FeederSpeed", this::getSpeed);
-        Shuffleboard.getTab("Shooter").addBoolean("LimitTripped", this::getLimit);
-        Shuffleboard.getTab("Shooter").addNumber("FeederTics", this::getMotorPosition);
-        Shuffleboard.getTab("Shooter").addNumber("LiftVoltage", this::getLiftVoltage);
-
+    Shuffleboard.getTab(shuffleboardTabName).addNumber("FeederSpeed", this::getSpeed);
+    Shuffleboard.getTab(shuffleboardTabName).addBoolean("LimitTripped", this::getLimit);
+    Shuffleboard.getTab(shuffleboardTabName).addNumber("FeederTics", this::getMotorPosition);
+    Shuffleboard.getTab(shuffleboardTabName).addNumber("LiftVoltage", this::getLiftVoltage);
     }
 
     @Override

@@ -10,9 +10,9 @@ import static frc.robot.Constants.kClimberSpeed;
 import static frc.robot.Constants.kPivotSpeed;
 
 public class TestClimber extends CommandBase {
-    private Climber climber;
-    private Pivot pivot;
-    private StormXboxController joystick;
+  private final Climber climber;
+  private final Pivot pivot;
+  private final StormXboxController joystick;
 
     public TestClimber(Climber climber, Pivot pivot, StormXboxController joystick) {
         System.out.println("TestClimber()");

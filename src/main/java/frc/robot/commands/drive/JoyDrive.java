@@ -7,7 +7,7 @@ import frc.utils.joysticks.DriveJoystick;
 
 public class JoyDrive extends CommandBase {
     private final SafeDrive drive;
-    private DriveJoystick joystick;
+  private final DriveJoystick joystick;
 
     private double previousTarget;
     private double targetSpeed;

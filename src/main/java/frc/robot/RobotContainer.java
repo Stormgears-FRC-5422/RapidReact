@@ -74,7 +74,7 @@ public class RobotContainer {
   }
 
   private void initSubsystems() {
-    if (kUseDrive) {
+    if (kUseDrive)
       switch (kMotorType) {
         case "Spark":
           drive = new SparkDrive();
@@ -84,7 +84,6 @@ public class RobotContainer {
           break;
         default:
       }
-    }
 
     if (kUseNavX) navX = new NavX();
     if (kUseClimber) climber = new Climber();
@@ -135,17 +134,20 @@ public class RobotContainer {
 
     if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
 
-    if (kDiagnostic) {
-//      if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
-//      if (kUseFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
-//      if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
-    } else {
+    if (!kDiagnostic) {
       if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
       if (kUseShooter && kUseFeeder) {
         buttonBoard.shootButton.whileHeld(shoot);
         buttonBoard.toggleShootingHeightButton.whenPressed(new InstantCommand(shoot::toggleMode));
       }
-    }
+    } // else {
+    //      if (kUseIntake)
+    // buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
+    //      if (kUseFeeder)
+    // buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
+    //      if (kUseShooter)
+    // buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
+    //    }
     if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
 
     if (kUseClimber && kUsePivot){

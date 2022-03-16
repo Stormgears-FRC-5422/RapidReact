@@ -16,6 +16,8 @@ import frc.utils.motorcontrol.StormSpark;
 import static frc.robot.Constants.*;
 
 public class Climber extends ClimberParentSystem {
+  private static final String shuffleBoardTabName = "Climber";
+
   protected final PIDController leftPIDController = new PIDController(0, 0, 0);
   protected final PIDController rightPIDController = new PIDController(0, 0, 0);
   private final StormSpark leftClimber =
@@ -50,14 +52,16 @@ public class Climber extends ClimberParentSystem {
     // Optimistic - we need to zero if the robot has been off...
     enableLimits();
 
-    Shuffleboard.getTab("Climber").add(this);
-    Shuffleboard.getTab("Climber").add("leftPID", leftPIDController);
-    Shuffleboard.getTab("Climber").add("rightPID", rightPIDController);
+    Shuffleboard.getTab(shuffleBoardTabName).add(this);
+    Shuffleboard.getTab(shuffleBoardTabName).add("leftPID", leftPIDController);
+    Shuffleboard.getTab(shuffleBoardTabName).add("rightPID", rightPIDController);
 
-    Shuffleboard.getTab("Climber").addNumber("PIDOutput", () -> pidOutput);
-    Shuffleboard.getTab("Climber").addNumber("FeedForwardOutputs", () -> feedForwardOutputs);
-    Shuffleboard.getTab("Climber").addNumber("Combined", () -> pidOutput + feedForwardOutputs);
-    Shuffleboard.getTab("Climber").addBoolean("setSpeed", () -> setSpeed);
+    Shuffleboard.getTab(shuffleBoardTabName).addNumber("PIDOutput", () -> pidOutput);
+    Shuffleboard.getTab(shuffleBoardTabName)
+        .addNumber("FeedForwardOutputs", () -> feedForwardOutputs);
+    Shuffleboard.getTab(shuffleBoardTabName)
+        .addNumber("Combined", () -> pidOutput + feedForwardOutputs);
+    Shuffleboard.getTab(shuffleBoardTabName).addBoolean("setSpeed", () -> setSpeed);
   }
 
   @Override

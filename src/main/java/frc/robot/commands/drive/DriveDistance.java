@@ -1,8 +1,8 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.utils.drive.StormDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveDistance extends CommandBase {
     StormDrive m_drive;
@@ -35,12 +35,7 @@ public class DriveDistance extends CommandBase {
     }
 
     public boolean isFinished() {
-        if ( m_drive.getDistance() > (0.98 * m_distance) && m_drive.getVelocity() < 0.0001) {
-            return(true);
-        }
-        else {
-            return(false);
-        }
+    return m_drive.getDistance() > (0.98 * m_distance) && m_drive.getVelocity() < 0.0001;
     }
 
 }

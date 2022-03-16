@@ -12,7 +12,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     protected double pidOutput = 0;
     protected double feedForwardOutputs = 0;
 
-    public ClimberParentSystem() {
+  protected ClimberParentSystem() {
         speeds = new LRSpeeds();
     }
 

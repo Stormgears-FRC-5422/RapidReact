@@ -16,12 +16,13 @@ import frc.utils.motorcontrol.StormSpark;
 import static frc.robot.Constants.*;
 
 public class Pivot extends ClimberParentSystem {
+  private static final String shuffleboardTabName = "Pivot";
+
     protected final PIDController leftPIDController = new PIDController(0.05, 0, 0);
     protected final PIDController rightPIDController = new PIDController(0.05, 0, 0);
     private final StormSpark leftPivot = new StormSpark(kPivotLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark rightPivot = new StormSpark(kPivotRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    private LRSpeeds speeds;
     private boolean goingHome = false;
     private boolean leftHome = false;
     private boolean rightHome = false;
@@ -49,14 +50,16 @@ public class Pivot extends ClimberParentSystem {
         leftCurrent = new ExponentialAverage(leftPivot::getOutputCurrent, 2);
         rightCurrent = new ExponentialAverage(rightPivot::getOutputCurrent, 2);
 
-        Shuffleboard.getTab("Pivot").add(this);
-        Shuffleboard.getTab("Pivot").add("leftPID", leftPIDController);
-        Shuffleboard.getTab("Pivot").add("rightPID", rightPIDController);
+    Shuffleboard.getTab(shuffleboardTabName).add(this);
+    Shuffleboard.getTab(shuffleboardTabName).add("leftPID", leftPIDController);
+    Shuffleboard.getTab(shuffleboardTabName).add("rightPID", rightPIDController);
 
-        Shuffleboard.getTab("Pivot").addNumber("PIDOutput", () -> pidOutput);
-        Shuffleboard.getTab("Pivot").addNumber("FeedForwardOutputs", () -> feedForwardOutputs);
-        Shuffleboard.getTab("Pivot").addNumber("Combined", () -> pidOutput + feedForwardOutputs);
-        Shuffleboard.getTab("Pivot").addBoolean("setSpeed", () -> setSpeed);
+    Shuffleboard.getTab(shuffleboardTabName).addNumber("PIDOutput", () -> pidOutput);
+    Shuffleboard.getTab(shuffleboardTabName)
+        .addNumber("FeedForwardOutputs", () -> feedForwardOutputs);
+    Shuffleboard.getTab(shuffleboardTabName)
+        .addNumber("Combined", () -> pidOutput + feedForwardOutputs);
+    Shuffleboard.getTab(shuffleboardTabName).addBoolean("setSpeed", () -> setSpeed);
         // Optimistic - we need to zero if the robot has been off...
         enableLimits();
     }

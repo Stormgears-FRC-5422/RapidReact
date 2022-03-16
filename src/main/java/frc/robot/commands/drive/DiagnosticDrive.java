@@ -2,18 +2,19 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drive.SafeDrive;
+
 import java.util.function.DoubleSupplier;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
 public class DiagnosticDrive extends CommandBase {
     private final SafeDrive drive;
     private static final double kNullZone = 0.2;
 
-    private DoubleSupplier leftMasterSupplier;
-    private DoubleSupplier leftSlaveSupplier;
-    private DoubleSupplier rightMasterSupplier;
-    private DoubleSupplier rightSlaveSupplier;
+  private final DoubleSupplier leftMasterSupplier;
+  private final DoubleSupplier leftSlaveSupplier;
+  private final DoubleSupplier rightMasterSupplier;
+  private final DoubleSupplier rightSlaveSupplier;
 
     public DiagnosticDrive(SafeDrive drive, DoubleSupplier leftMasterSupplier, DoubleSupplier leftSlaveSupplier,
                                         DoubleSupplier rightMasterSupplier, DoubleSupplier rightSlaveSupplier){

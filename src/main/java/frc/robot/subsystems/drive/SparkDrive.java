@@ -6,6 +6,9 @@ package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.drive.StormDrive;
@@ -16,12 +19,6 @@ import frc.utils.motorcontrol.StormSpark;
 import static edu.wpi.first.wpilibj.DriverStation.reportWarning;
 import static frc.robot.Constants.*;
 import static java.lang.Math.max;
-
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.MathUtil;
 
 public class SparkDrive extends StormDrive {
     private final StormSpark masterLeft = new StormSpark(kMasterLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -48,8 +45,11 @@ public class SparkDrive extends StormDrive {
     private PIDController m_wpi_right_controller;
     private PIDController m_wpi_turn_controller;
 
-    private double conversionFactor[] = {kDriveWheelCircumference/kDriveGearBoxRatio,kRightSideSpeedScale*kDriveWheelCircumference/kDriveGearBoxRatio}; // set to provide measurement in meters per motor revolution
-    
+  private final double[] conversionFactor = {
+    kDriveWheelCircumference / kDriveGearBoxRatio,
+    kRightSideSpeedScale * kDriveWheelCircumference / kDriveGearBoxRatio
+  }; // set to provide measurement in meters per motor revolution
+
     public SparkDrive() {
         setupMotors();
         setupTempControl();
@@ -147,12 +147,14 @@ public class SparkDrive extends StormDrive {
     }
 
     protected void setupControllers() {
-        // Using WPILib pid controller.  The command must have and manage the trapezoid object.  The drive 
-        // subsystem doesn't know about it and expects the command to pass position and velocity setpoints
-        double kV[] = {kDriveLeftVFF,kDriveRightVFF}; // R2D2 on stand, voltage output 
-        double kP[] = {kDriveProfileLeftP,kDriveProfileRightP}; 
-        double kI[] = {kDriveProfileLeftI,kDriveProfileRightI};
-        double kD[] = {kDriveProfileLeftD,kDriveProfileRightD};
+    // Using WPILib pid controller.  The command must have and manage the trapezoid object.  The
+    // drive
+    // subsystem doesn't know about it and expects the command to pass position and velocity
+    // setpoints
+    double[] kV = {kDriveLeftVFF, kDriveRightVFF}; // R2D2 on stand, voltage output
+    double[] kP = {kDriveProfileLeftP, kDriveProfileRightP};
+    double[] kI = {kDriveProfileLeftI, kDriveProfileRightI};
+    double[] kD = {kDriveProfileLeftD, kDriveProfileRightD};
 
         m_wpi_left_controller = new PIDController(kP[0],kI[0],kD[0]);
         m_wpi_right_controller = new PIDController(kP[1],kI[1],kD[1]);

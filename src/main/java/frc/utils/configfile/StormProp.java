@@ -5,7 +5,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.Set;
 
 public class StormProp {
     // Maybe rename this file to something better
@@ -30,7 +33,7 @@ public class StormProp {
     private static Properties rcProperties;
     private static boolean initialized = false;
     private static boolean overrideInit = false;
-    private static boolean rcInit = false;
+  private static final boolean rcInit = false;
 
     public static void init() {
         System.out.println("Running in directory " + System.getProperty("user.dir"));
@@ -67,7 +70,7 @@ public class StormProp {
     public static void overrideInit() {
         overrideName = properties.getProperty("override");
 
-        if ( overrideName.toLowerCase().equals("auto")) {
+    if (overrideName.equalsIgnoreCase("auto")) {
             System.out.println("Using AUTOMATIC configuration");
             rcProperties = new Properties();
             FileInputStream rcStream = null;

@@ -65,17 +65,23 @@ public abstract class StormDrive extends SubsystemBase {
   }
 
   // Set the PID reference
-  public void setPositionReference(double setPoint) {};
+  public void setPositionReference(double setPoint) {}
+
   // Set the PID reference
-  public void setPositionReferenceWithVelocity(double setPoint, double velocity) {};
+  public void setPositionReferenceWithVelocity(double setPoint, double velocity) {}
+
   // Reset the encoder position
-  public void resetPosition() {};
+  public void resetPosition() {}
+
   // Set the acceleration profile
-  public void setMaxAccel(double acceleration) {};
+  public void setMaxAccel(double acceleration) {}
+
   // Set the velocity profile
-  public void setMaxVelocity(double velocity) {};
-  public void setTurnPositionReferenceWithVelocity(double measurement, double setPoint, double velocity) {};
-  
+  public void setMaxVelocity(double velocity) {}
+
+  public void setTurnPositionReferenceWithVelocity(
+      double measurement, double setPoint, double velocity) {}
+
   // provide method to access encoder distance
   public double getDistance() {
     return(0);
