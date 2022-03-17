@@ -3,7 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.utils.joysticks.StormXboxController;
+
+import static frc.utils.joysticks.StormXboxController.*;
 
 public class ButtonBoard {
     private static ButtonBoard instance;
@@ -32,10 +33,9 @@ public class ButtonBoard {
      */
 
     public final JoystickButton trapezoidClimber;
-    public final JoystickButton toggleClimber;
-
     public final JoystickButton trapezoidPivot;
-    public final JoystickButton togglePivot;
+
+  public final JoystickButton homeClimbing;
     public final JoystickButton homeClimberButton;
     public final JoystickButton homePivotButton;
 
@@ -49,35 +49,37 @@ public class ButtonBoard {
 //    public final JoystickButton climbRightDownButton;
 
     private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
-        // ********************************
-        // Put Drive Joystick settings here
-        // ********************************
-        precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
-        reverseButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
-        navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
-        autoDriveTestButton = new JoystickButton(driveJoystick, StormXboxController.littleLeftButton);
+    // ********************************
+    // Put Drive Joystick settings here
+    // ********************************
+    precisionButton = new JoystickButton(driveJoystick, stickRightButton);
+    reverseButton = new JoystickButton(driveJoystick, AButton);
+    navXAlignButton = new JoystickButton(driveJoystick, stickRightButton);
+    autoDriveTestButton = new JoystickButton(driveJoystick, littleLeftButton);
 
-        shootButton = new JoystickButton(driveJoystick, StormXboxController.rightBumper);
-        loadButton = new JoystickButton(driveJoystick, StormXboxController.leftBumper);
-        toggleShootingHeightButton = new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);
+    shootButton = new JoystickButton(driveJoystick, rightBumper);
+    loadButton = new JoystickButton(driveJoystick, leftBumper);
+    toggleShootingHeightButton = new JoystickButton(driveJoystick, stickLeftButton);
 
-        // ********************************
-        // Put Secondary Joystick settings here
-        // ********************************
-        homePivotButton = new JoystickButton(secondaryJoystick, StormXboxController.stickRightButton);
-        homeClimberButton = new JoystickButton(secondaryJoystick, StormXboxController.stickLeftButton);
+    // ********************************
+    // Put Secondary Joystick settings here
+    // ********************************
+    homePivotButton = new JoystickButton(secondaryJoystick, stickRightButton);
+    homeClimberButton = new JoystickButton(secondaryJoystick, stickLeftButton);
 
-//        selectIntakeButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
-//        selectFeederButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
-//        selectShooterButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);
+    //        selectIntakeButton = new JoystickButton(secondaryJoystick,
+    // StormXboxController.BButton);
+    //        selectFeederButton = new JoystickButton(secondaryJoystick,
+    // StormXboxController.XButton);
+    //        selectShooterButton = new JoystickButton(secondaryJoystick,
+    // StormXboxController.YButton);
 
-        trapezoidClimber = new JoystickButton(secondaryJoystick, StormXboxController.littleLeftButton);
-        toggleClimber = new JoystickButton(secondaryJoystick, StormXboxController.littleRightButton);
+    trapezoidClimber = new JoystickButton(secondaryJoystick, littleLeftButton);
+    trapezoidPivot = new JoystickButton(secondaryJoystick, littleRightButton);
 
-        trapezoidPivot = new JoystickButton(secondaryJoystick, StormXboxController.leftBumper);
-        togglePivot = new JoystickButton(secondaryJoystick, StormXboxController.rightBumper);
+    homeClimbing = new JoystickButton(secondaryJoystick, stickLeftButton);
 
-        manualClimberButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
+    manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
     }
 
 }

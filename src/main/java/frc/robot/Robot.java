@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     //    if (kDiagnostic && kUseFeeder) robotContainer.getLiftIntake().schedule();
-    CommandScheduler.getInstance().schedule(robotContainer.getHomingSequence());
+    //    CommandScheduler.getInstance().schedule(robotContainer.getHomingSequence());
   }
 
   /** This function is called periodically during operator control. */

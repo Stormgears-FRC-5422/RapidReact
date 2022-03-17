@@ -7,8 +7,8 @@ import static frc.robot.Constants.*;
 
 public class Pivot extends ClimberParentSystem {
   private final ArmFeedforward feedforward = new ArmFeedforward(0.05, 0, 0.0686, 0);
-
-    public Pivot() {
+  // TODO Chin UP 50
+  public Pivot() {
     super(
         kPivotLeftId,
         kPivotRightId,

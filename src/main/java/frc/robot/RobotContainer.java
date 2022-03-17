@@ -53,12 +53,10 @@ public class RobotContainer {
   private Shoot shoot;
   private NavXAlign navXAlign;
 
-  private HomeClimber homeClimber;
-  private HomePivot homePivot;
   private ParallelCommandGroup homingSequence;
   private TestClimber testClimber;
   private ClimbingGoal climberGoal = ClimbingGoal.LOW;
-  private ClimbingGoal pivotGoal = ClimbingGoal.LOW;
+  private PivotGoal pivotGoal = PivotGoal.LOW;
 
   private final StormXboxController driveJoystick;
   private final StormXboxController secondaryJoystick;
@@ -118,9 +116,7 @@ public class RobotContainer {
 
     if (kUseClimber && kUsePivot) {
       testClimber = new TestClimber(climber,pivot,secondaryJoystick);
-      homePivot = new HomePivot(pivot);
-      homeClimber = new HomeClimber(climber);
-      homingSequence = new ParallelCommandGroup(homeClimber, homePivot);
+      homingSequence = new ParallelCommandGroup(new Home(pivot), new Home(climber));
     }
   }
 
@@ -156,27 +152,29 @@ public class RobotContainer {
       buttonBoard.trapezoidClimber.whenPressed(
           () -> {
             climberGoal = climberGoal.toggle();
-            new PositionClimber(climber, climberGoal.state).schedule();
+            new PositionClimber(climber, climberGoal.state)
+                .andThen(new Hold(climber, climberGoal.state.position))
+                .schedule();
           });
       buttonBoard.trapezoidPivot.whenPressed(
           () -> {
             pivotGoal = pivotGoal.toggle();
-            new PositionPivot(pivot, pivotGoal.state).schedule();
+            new PositionPivot(pivot, pivotGoal.state)
+                .andThen(new Hold(pivot, pivotGoal.state.position))
+                .schedule();
           });
       buttonBoard.manualClimberButton.whenPressed(testClimber);
-      //      buttonBoard.trapezoidClimber.whenPressed(positionClimber);
-      //      buttonBoard.trapezoidPivot.whenPressed(positionPivot);
-      //      buttonBoard.homeClimberButton.whenPressed(homeClimber);
-      //      buttonBoard.homePivotButton.whenPressed(homePivot);
+      buttonBoard.homeClimbing.whenPressed(getHomingSequence());
     }
   }
 
   private void configureDefaultCommands() {
     if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
     if (kUseClimber && kUsePivot) {
-      //      climber.setDefaultCommand(holdClimber);
-      //      pivot.setDefaultCommand(holdPivot);
+      //      climber.setDefaultCommand(new Hold(climber));
+      //      pivot.setDefaultCommand(new Hold(pivot));
     }
+
 //    if (kDiagnostic) {diagnosticIntake.setDefaultCommand(testIntake);
 
     // See robot.teleopInit() for climber scheduling. It cannot be a default command
@@ -200,15 +198,29 @@ public class RobotContainer {
   }
 
   enum ClimbingGoal {
-    LOW(25),
-    HIGH(195);
-    public final TrapezoidProfile.State state;
+    LOW(10),
+    HIGH(275);
+    public TrapezoidProfile.State state;
 
     ClimbingGoal(double state) {
       this.state = new TrapezoidProfile.State(state, 0);
     }
 
     ClimbingGoal toggle() {
+      return this == LOW ? HIGH : LOW;
+    }
+  }
+
+  enum PivotGoal {
+    LOW(15),
+    HIGH(52);
+    public TrapezoidProfile.State state;
+
+    PivotGoal(double state) {
+      this.state = new TrapezoidProfile.State(state, 0);
+    }
+
+    PivotGoal toggle() {
       return this == LOW ? HIGH : LOW;
     }
   }

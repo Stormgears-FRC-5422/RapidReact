@@ -11,8 +11,8 @@ import static frc.robot.Constants.*;
 import static frc.robot.subsystems.ballHandler.Shooter.Height;
 
 public class Shoot extends PIDCommand {
-
-    private final Feeder feeder;
+  // TODO implement exponential drive
+  private final Feeder feeder;
     private final Shooter shooter;
 
     public Shoot(Feeder feeder, Shooter shooter) {

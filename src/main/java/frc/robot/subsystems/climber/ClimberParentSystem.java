@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.LRSpeeds;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
-
+// TODO add soft limits to constants, make the pivot a little more then right now also
 public abstract class ClimberParentSystem extends SubsystemBase {
 
   protected final String shuffleBoardTabName = this.getName();
@@ -57,6 +57,9 @@ public abstract class ClimberParentSystem extends SubsystemBase {
 
     this.leftPIDController = leftPIDController;
     this.rightPIDController = rightPIDController;
+
+    //    leftPIDController.setTolerance(4);
+    //    rightPIDController.setTolerance(4);
 
     this.homeCurrentLimit = homeCurrentLimit;
     this.homeSpeed = homeSpeed;
@@ -115,7 +118,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     leftMotor.getEncoder().setPosition(0.0);
     rightMotor.getEncoder().setPosition(0.0);
 
-    setLimits(-20.0f, -200.0f, -20.0f, -200.0f);
+    setLimits(-10.0f, -280.0f, -10.0f, -280.0f);
     enableLimits();
 
     leftHome = false;
