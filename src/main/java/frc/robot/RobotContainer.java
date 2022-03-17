@@ -145,7 +145,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand(){
-    pathAuto = new PathAuto((SparkDrive) drive);
+    pathAuto = new PathAuto((SparkDrive) drive, navX);
     return pathAuto;
   }
 

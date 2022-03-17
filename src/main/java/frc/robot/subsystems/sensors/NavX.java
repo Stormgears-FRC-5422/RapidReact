@@ -25,6 +25,8 @@ public class NavX extends SubsystemBase {
     return(ahrs.getYaw() * Constants.kNavXGyroScaleFactor);
   }
 
+  public void reset(){ahrs.reset();}
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("angle radians", getAngle());

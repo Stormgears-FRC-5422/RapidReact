@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.sensors.NavX;
@@ -30,7 +31,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.MathUtil;
 
 public class SparkDrive extends StormDrive {
-    NavX navX;
     private final StormSpark masterLeft = new StormSpark(kMasterLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark masterRight = new StormSpark(kMasterRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final StormSpark slaveLeft = new StormSpark(kSlaveLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -55,10 +55,8 @@ public class SparkDrive extends StormDrive {
     private PIDController m_wpi_right_controller;
     private PIDController m_wpi_turn_controller;
 
-    private DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(navX.getAngleDegrees()));
-    Pose2d pose2d;
 
-    private double conversionFactor[] = {kDriveWheelCircumference/kDriveGearBoxRatio,kRightSideSpeedScale*kDriveWheelCircumference/kDriveGearBoxRatio}; // set to provide measurement in meters per motor revolution
+    private double conversionFactor[] = {0.0254*kDriveWheelCircumference/kDriveGearBoxRatio,0.0254*kRightSideSpeedScale*kDriveWheelCircumference/kDriveGearBoxRatio}; // set to provide measurement in meters per motor revolution
     
     public SparkDrive() {
         setupMotors();
@@ -154,11 +152,6 @@ public class SparkDrive extends StormDrive {
 
         differentialDrive.setMaxOutput(multiplier);
 
-        pose2d = odometry.update(
-                Rotation2d.fromDegrees(navX.getAngleDegrees()),
-                masterRight.getEncoder().getVelocity() / 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60,
-                masterLeft.getEncoder().getVelocity() / 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60
-        );
     }
 
     protected void setupControllers() {
@@ -243,9 +236,17 @@ public class SparkDrive extends StormDrive {
 
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return new DifferentialDriveWheelSpeeds(
-                masterLeft.getEncoder().getVelocity() / 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60,
-                masterRight.getEncoder().getVelocity() / 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60
-        );
+                Units.inchesToMeters(masterLeft.getEncoder().getVelocity()) / 60d, /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60,
+                Units.inchesToMeters(masterRight.getEncoder().getVelocity()) / 60d); /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60
+
+    }
+
+    public double getLeftEncoder(){
+        return masterLeft.getEncoder().getVelocity();
+    }
+
+    public double getRightEncoder(){
+        return masterRight.getEncoder().getVelocity();
     }
 
     public void setOutput(double l, double r){
@@ -253,8 +254,5 @@ public class SparkDrive extends StormDrive {
         masterRight.set(r/12);
     }
 
-    public Pose2d getPose2d(){
-        return pose2d;
-    }
 
 }
