@@ -6,8 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
 
-import static frc.robot.Constants.kXPrecision;
-import static frc.robot.Constants.kZPrecision;
+import static frc.robot.Constants.*;
 
 public class SlewDrive extends CommandBase {
     private final StormDrive drive;
@@ -53,8 +52,21 @@ public class SlewDrive extends CommandBase {
             turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
         }
 
-        //differentialDrive.arcadeDrive(limiter.calculate(targetSpeed), turnLimiter.calculate(targetZRotation));
-        differentialDrive.curvatureDrive(limiter.calculate(targetSpeed), turnLimiter.calculate(targetZRotation),true);
+        targetSpeed=limiter.calculate(targetSpeed);
+        targetZRotation=turnLimiter.calculate(targetZRotation);
+
+        if (kSquareDriveInputs) {
+            targetSpeed = Math.copySign(targetSpeed * targetSpeed, targetSpeed);
+            targetZRotation = Math.copySign(targetZRotation * targetZRotation, targetZRotation);
+        }
+
+        //System.out.println("targetSpeed: " + targetSpeed + ", targetZRotation: " + targetZRotation);
+        if (kDriveStyle.equalsIgnoreCase("curvature"))
+            differentialDrive.curvatureDrive(targetSpeed, targetZRotation,true);
+        else
+            differentialDrive.arcadeDrive(targetSpeed, targetZRotation, false); // inputs already squared above
+
+
 
     }
 

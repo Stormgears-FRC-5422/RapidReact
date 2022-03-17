@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import static frc.utils.joysticks.StormXboxController.*;
 
+import static frc.robot.Constants.*;
+
 public class ButtonBoard {
     private static ButtonBoard instance;
 
@@ -23,6 +25,7 @@ public class ButtonBoard {
     public final JoystickButton navXAlignButton;
 
     public final JoystickButton autoDriveTestButton;
+    public final JoystickButton autoDriveTestReverseButton;
 
     public final JoystickButton loadButton;
     public final JoystickButton shootButton;
@@ -56,6 +59,7 @@ public class ButtonBoard {
     reverseButton = new JoystickButton(driveJoystick, AButton);
     navXAlignButton = new JoystickButton(driveJoystick, stickRightButton);
     autoDriveTestButton = new JoystickButton(driveJoystick, littleLeftButton);
+    autoDriveTestReverseButton = new JoystickButton(driveJoystick, littleRightButton);
 
     shootButton = new JoystickButton(driveJoystick, rightBumper);
     loadButton = new JoystickButton(driveJoystick, leftBumper);
@@ -67,12 +71,9 @@ public class ButtonBoard {
     homePivotButton = new JoystickButton(secondaryJoystick, stickRightButton);
     homeClimberButton = new JoystickButton(secondaryJoystick, stickLeftButton);
 
-    //        selectIntakeButton = new JoystickButton(secondaryJoystick,
-    // StormXboxController.BButton);
-    //        selectFeederButton = new JoystickButton(secondaryJoystick,
-    // StormXboxController.XButton);
-    //        selectShooterButton = new JoystickButton(secondaryJoystick,
-    // StormXboxController.YButton);
+//        selectIntakeButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
+//        selectFeederButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
+//        selectShooterButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);
 
     trapezoidClimber = new JoystickButton(secondaryJoystick, littleLeftButton);
     trapezoidPivot = new JoystickButton(secondaryJoystick, littleRightButton);

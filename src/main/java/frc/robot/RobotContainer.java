@@ -62,11 +62,17 @@ public class RobotContainer {
   private final StormXboxController secondaryJoystick;
   private final ButtonBoard buttonBoard;
 
+  private boolean useDriveJoystick;
+  private boolean useSecondaryJoystick;
 
   public RobotContainer() {
     driveJoystick = new StormXboxController(0);
     secondaryJoystick = new StormXboxController(1);
     buttonBoard = ButtonBoard.getInstance(driveJoystick, secondaryJoystick);
+
+    useDriveJoystick = (kUseController && kUseJoystick0 && driveJoystick.isConnected());
+    useSecondaryJoystick = (kUseController && kUseJoystick1 && secondaryJoystick.isConnected());
+    System.out.println("useDriveJoystick is " + useDriveJoystick + ", useSecondaryJoystick is " + useSecondaryJoystick);
 
     initSubsystems();
     initCommands();
@@ -75,7 +81,7 @@ public class RobotContainer {
   }
 
   private void initSubsystems() {
-    if (kUseDrive)
+    if (kUseDrive) {
       switch (kMotorType) {
         case "Spark":
           drive = new SparkDrive();
@@ -85,6 +91,7 @@ public class RobotContainer {
           break;
         default:
       }
+    }
 
     if (kUseNavX) navX = new NavX();
     if (kUseClimber) climber = new Climber();
@@ -123,62 +130,65 @@ public class RobotContainer {
   private void configureButtonBindings() {
     if (!kUseController) return;
 
-    if (kUseDrive) {
-      buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
-      buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
-      if (kUseNavX)
-        buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(2, 1, 1, drive));
-    }
-
-    if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
-
-    if (!kDiagnostic) {
-      if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
-      if (kUseShooter && kUseFeeder) {
-        buttonBoard.shootButton.whileHeld(shoot);
-        buttonBoard.toggleShootingHeightButton.whenPressed(new InstantCommand(shoot::toggleMode));
+    if (useDriveJoystick) {
+      System.out.println("Setting up drive joystick commands");
+      if (kUseDrive) {
+        System.out.println("... drive");
+        buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
+        buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
+        if (kUseNavX) {
+          System.out.println("... navX");
+          buttonBoard.navXAlignButton.whileHeld(navXAlign);
+          buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(2, 1, 1, drive));
+          buttonBoard.autoDriveTestReverseButton.whenPressed(new DriveDistanceProfile(-2, 1, 1, drive));
+        }
       }
-    } // else {
-    //      if (kUseIntake)
-    // buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
-    //      if (kUseFeeder)
-    // buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
-    //      if (kUseShooter)
-    // buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
-    //    }
-    if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
 
-    if (kUseClimber && kUsePivot){
-      buttonBoard.trapezoidClimber.whenPressed(
-          () -> {
-            climberGoal = climberGoal.toggle();
-            new PositionClimber(climber, climberGoal.state)
-                .andThen(new Hold(climber, climberGoal.state.position))
-                .schedule();
-          });
-      buttonBoard.trapezoidPivot.whenPressed(
-          () -> {
-            pivotGoal = pivotGoal.toggle();
-            new PositionPivot(pivot, pivotGoal.state)
-                .andThen(new Hold(pivot, pivotGoal.state.position))
-                .schedule();
-          });
-      buttonBoard.manualClimberButton.whenPressed(testClimber);
-      buttonBoard.homeClimbing.whenPressed(getHomingSequence());
+      if (!kDiagnostic) {
+        if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
+        if (kUseShooter && kUseFeeder) {
+          buttonBoard.shootButton.whileHeld(shoot);
+          buttonBoard.toggleShootingHeightButton.whenPressed(new InstantCommand(shoot::toggleMode));
+        }
+      }
+
+      if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
     }
+
+    if (useSecondaryJoystick) {
+      System.out.println("Setting up secondary joystick commands");
+      if (kUseClimber && kUsePivot) {
+        System.out.println("... climber and pivot");
+        buttonBoard.manualClimberButton.whenPressed(testClimber);
+//        buttonBoard.homeClimbing.whenPressed(getHomingSequence());
+//
+//        buttonBoard.trapezoidClimber.whenPressed(
+//                () -> {
+//                  climberGoal = climberGoal.toggle();
+//                  new PositionClimber(climber, climberGoal.state)
+//                          .andThen(new Hold(climber, climberGoal.state.position))
+//                          .schedule();
+//                });
+//        buttonBoard.trapezoidPivot.whenPressed(
+//                () -> {
+//                  pivotGoal = pivotGoal.toggle();
+//                  new PositionPivot(pivot, pivotGoal.state)
+//                          .andThen(new Hold(pivot, pivotGoal.state.position))
+//                          .schedule();
+//                });
+      }
+    }
+
   }
 
   private void configureDefaultCommands() {
-    if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
-    if (kUseClimber && kUsePivot) {
+    if (useDriveJoystick) {
+      if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
+      //if (kUseClimber && kUsePivot) {
       //      climber.setDefaultCommand(new Hold(climber));
       //      pivot.setDefaultCommand(new Hold(pivot));
+      //}
     }
-
-//    if (kDiagnostic) {diagnosticIntake.setDefaultCommand(testIntake);
-
-    // See robot.teleopInit() for climber scheduling. It cannot be a default command
-
   }
 
   public StormDrive getDrive() {

@@ -106,9 +106,9 @@ public abstract class ClimberParentSystem extends SubsystemBase {
 
   public void setSpeed(LRSpeeds lrSpeed) {
     setSpeed = true;
-    if (hasBeenHomed) {
+//    if (hasBeenHomed) {
       this.speeds = lrSpeed;
-    }
+//    }
     if (speeds.left() != 0) leftHome = false;
     if (speeds.right() != 0) rightHome = false;
   }

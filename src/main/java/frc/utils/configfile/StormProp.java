@@ -5,10 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 public class StormProp {
     // Maybe rename this file to something better
@@ -16,7 +13,6 @@ public class StormProp {
     private static final String name = "config.properties";
     private static final String backUP = "config_backup.properties";
     private static final File configFile = new File(path, name);
-    private static File overrideConfigFile;
 
     // In support of auto-detection
     private static final String rcPath = "/home/lvuser";
@@ -27,13 +23,11 @@ public class StormProp {
     private static final HashMap<String, Integer> m_int_map = new HashMap<>();
     private static final HashMap<String, Boolean> m_bool_map = new HashMap<>();
     private static final HashMap<String, String> m_string_map = new HashMap<>();
-    private static String overrideName = null;
     private static Properties properties;
     private static Properties overrideProperties;
-    private static Properties rcProperties;
     private static boolean initialized = false;
     private static boolean overrideInit = false;
-  private static final boolean rcInit = false;
+    private static boolean debug = false;
 
     public static void init() {
         System.out.println("Running in directory " + System.getProperty("user.dir"));
@@ -43,7 +37,9 @@ public class StormProp {
         try {
             inputStream = new FileInputStream(configFile);
             properties.load(inputStream);
-            System.out.println("LOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADEDLOADED");
+            System.out.println("*****************");
+            System.out.println("Loading Properties");
+            System.out.println("*****************");
         } catch (IOException e) {
             System.out.println("Using backup config file");
             try {
@@ -65,14 +61,16 @@ public class StormProp {
         if (!overrideInit) {
             overrideInit();
         }
+
+        debug = getBoolean("debugProperties", false);
     }
 
     public static void overrideInit() {
-        overrideName = properties.getProperty("override");
+        String overrideName = properties.getProperty("override");
 
-    if (overrideName.equalsIgnoreCase("auto")) {
+        if ( overrideName.equalsIgnoreCase("auto")) {
             System.out.println("Using AUTOMATIC configuration");
-            rcProperties = new Properties();
+            Properties rcProperties = new Properties();
             FileInputStream rcStream = null;
             try {
                 System.out.println("rcFile path: " + rcFile.getAbsolutePath());
@@ -94,7 +92,7 @@ public class StormProp {
         }
 
         System.out.println("Using override file " + overrideName);
-        overrideConfigFile = new File(path, overrideName);
+        File overrideConfigFile = new File(path, overrideName);
         overrideProperties = new Properties();
 
         FileInputStream OverrideInputStream = null;
@@ -132,8 +130,14 @@ public class StormProp {
     }
 
     public static String getString(String key, String defaultVal) {
+        String result = getStringInternal(key,defaultVal);
+        if(debug) System.out.println("debug property " + key + " = " + result);
+
+        return result;
+    }
+
+    private static String getStringInternal(String key, String defaultVal) {
         try {
-            String ret_val;
             if (m_string_map.containsKey(key)) return (m_string_map.get(key));
             else if (getPropString(key) != null) {
                 m_string_map.put(key, getPropString(key));
@@ -149,6 +153,13 @@ public class StormProp {
     }
 
     public static double getNumber(String key, Double defaultVal) {
+        double result = getNumberInternal(key, defaultVal);
+        if(debug) System.out.println("debug property " + key + " = " + result);
+
+        return result;
+    }
+
+    private static double getNumberInternal(String key, Double defaultVal) {
         try {
             if (m_number_map.containsKey(key)) return (m_number_map.get(key));
             else if (getPropString(key) != null) {
@@ -165,6 +176,13 @@ public class StormProp {
     }
 
     public static int getInt(String key, int defaultVal) {
+        int result = getIntInternal(key, defaultVal);
+        if(debug) System.out.println("debug property " + key + " = " + result);
+
+        return result;
+    }
+
+    private static int getIntInternal(String key, int defaultVal) {
         try {
             if (m_int_map.containsKey(key)) return (m_int_map.get(key));
             else if (getPropString(key) != null) {
@@ -181,6 +199,13 @@ public class StormProp {
     }
 
     public static boolean getBoolean(String key, Boolean defaultVal) {
+        boolean result = getBooleanInternal(key, defaultVal);
+        if(debug) System.out.println("debug property " + key + " = " + result);
+
+        return result;
+    }
+
+    private static boolean getBooleanInternal(String key, Boolean defaultVal) {
         try {
             if (m_bool_map.containsKey(key)) return (m_bool_map.get(key));
             else if (getPropString(key) != null) {
@@ -223,7 +248,7 @@ public class StormProp {
             if (!str.equals("MISSING")) {
                 overrideProperties.setProperty(key, str);
                 if (m_int_map.containsKey(key)) m_int_map.put(key, Integer.parseInt(str));
-                else if (m_int_map.containsKey(key)) m_number_map.put(key, Double.parseDouble(str));
+                else if (m_number_map.containsKey(key)) m_number_map.put(key, Double.parseDouble(str));
                 else if (m_bool_map.containsKey(key)) m_bool_map.put(key, str.equalsIgnoreCase("true"));
                 else if (m_string_map.containsKey(key)) m_string_map.put(key, str);
             }
