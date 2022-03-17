@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.utils.joysticks.StormXboxController;
 
+import static frc.robot.Constants.*;
+
 public class ButtonBoard {
     private static ButtonBoard instance;
 
@@ -21,6 +23,7 @@ public class ButtonBoard {
     public final JoystickButton navXAlignButton;
 
     public final JoystickButton autoDriveTestButton;
+    public final JoystickButton autoDriveTestReverseButton;
 
     public final JoystickButton loadButton;
     public final JoystickButton shootButton;
@@ -48,6 +51,7 @@ public class ButtonBoard {
         reverseButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
         navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
         autoDriveTestButton = new JoystickButton(driveJoystick, StormXboxController.littleLeftButton);
+        autoDriveTestReverseButton = new JoystickButton(driveJoystick, StormXboxController.littleRightButton);
 
         shootButton = new JoystickButton(driveJoystick, StormXboxController.rightBumper);
         loadButton = new JoystickButton(driveJoystick, StormXboxController.leftBumper);
@@ -56,7 +60,6 @@ public class ButtonBoard {
         // ********************************
         // Put Secondary Joystick settings here
         // ********************************
-
         manualClimberButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
         homePivotButton = new JoystickButton(secondaryJoystick, StormXboxController.stickRightButton);
         homeClimberButton = new JoystickButton(secondaryJoystick, StormXboxController.stickLeftButton);

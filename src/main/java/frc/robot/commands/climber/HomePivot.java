@@ -15,6 +15,7 @@ public class HomePivot extends CommandBase {
 
     @Override
     public void initialize() {
+        System.out.println("HomePivot.initialize()");
         pivot.disableLimits();
     }
 

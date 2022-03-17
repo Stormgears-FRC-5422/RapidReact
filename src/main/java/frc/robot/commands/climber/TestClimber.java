@@ -59,7 +59,7 @@ public class TestClimber extends CommandBase {
             climberSpeeds.disableLeft();
             pivotSpeeds.disableLeft();
         }
-
+//        System.out.println("climber: " + climberSpeeds.left() + ", pivot: " + pivotSpeeds.left());
         climber.setSpeed(climberSpeeds);
         pivot.setSpeed(pivotSpeeds);
     }

@@ -16,6 +16,9 @@ import frc.utils.configfile.StormProp;
  */
 public final class Constants {
   public static final boolean kUseController = StormProp.getBoolean("useController", false);
+  public static final boolean kUseJoystick0 = StormProp.getBoolean("useJoystick0", false);
+  public static final boolean kUseJoystick1 = StormProp.getBoolean("useJoystick1", false);
+
   public static final boolean kUseDrive = StormProp.getBoolean("useDrive", false);
   public static final boolean kUseNavX = StormProp.getBoolean("useNavX", false);
   public static final boolean kDiagnostic = StormProp.getBoolean("useDiagnostic", false);
@@ -26,6 +29,8 @@ public final class Constants {
   public static final boolean kUsePivot = StormProp.getBoolean("usePivot", false);
   public static final boolean kUseStatusLights = StormProp.getBoolean("useStatusLights", false);
 
+  public static final boolean kSquareDriveInputs = StormProp.getBoolean("squareDriveInputs", true);
+  public static final String kDriveStyle = StormProp.getString("driveStyle", "arcade");
   // MOTOR CONSTANTS
   public static final String kMotorType = StormProp.getString("stormMotorType", "");
   public static final double kSlewRate = StormProp.getNumber("slewRate", 0.0);
@@ -44,7 +49,7 @@ public final class Constants {
   public static final boolean kDriveIdleModeCoast = StormProp.getBoolean("driveIdleModeCoast", true);
 
   public static final int kSmartCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
-  public static final double kNullSize = StormProp.getNumber("driveNullSize", 0.055);
+  public static final double kStickNullSize = StormProp.getNumber("stickNullSize", 0.1);
   public static final double kXPrecision = StormProp.getNumber("xPrecision", 0.0);
   public static final double kZPrecision = StormProp.getNumber("zPrecision", 0.0);
 

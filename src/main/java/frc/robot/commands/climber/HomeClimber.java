@@ -15,6 +15,7 @@ public class HomeClimber extends CommandBase {
 
     @Override
     public void initialize() {
+        System.out.println("HomeClimber.initialize()");
         climber.disableLimits();
     }
 

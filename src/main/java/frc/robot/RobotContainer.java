@@ -59,10 +59,17 @@ public class RobotContainer {
   private final StormXboxController secondaryJoystick;
   private final ButtonBoard buttonBoard;
 
+  private boolean useDriveJoystick;
+  private boolean useSecondaryJoystick;
+
   public RobotContainer() {
     driveJoystick = new StormXboxController(0);
     secondaryJoystick = new StormXboxController(1);
     buttonBoard = ButtonBoard.getInstance(driveJoystick, secondaryJoystick);
+
+    useDriveJoystick = (kUseController && kUseJoystick0 && driveJoystick.isConnected());
+    useSecondaryJoystick = (kUseController && kUseJoystick1 && secondaryJoystick.isConnected());
+    System.out.println("useDriveJoystick is " + useDriveJoystick + ", useSecondaryJoystick is " + useSecondaryJoystick);
 
     initSubsystems();
     initCommands();
@@ -116,42 +123,49 @@ public class RobotContainer {
     if (kUseClimber) homeClimber = new HomeClimber(climber);
 
     if (kUsePivot) homePivot = new HomePivot(pivot);
-
   }
 
   private void configureButtonBindings() {
     if (!kUseController) return;
 
-    if (kUseDrive) {
-      buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
-      buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
-      if (kUseNavX)  buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(2,1,1,drive));
-    }
+    if (useDriveJoystick) {
+      System.out.println("Setting up drive joystick commands");
+      if (kUseDrive) {
+        buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
+        buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
+        if (kUseNavX) {
+          buttonBoard.navXAlignButton.whileHeld(navXAlign);
+          buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(2, 1, 1, drive));
+          buttonBoard.autoDriveTestReverseButton.whenPressed(new DriveDistanceProfile(-2, 1, 1, drive));
+        }
+      }
 
-    if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
-
-    if (kDiagnostic) {
-//      if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
-//      if (kUseFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
-//      if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
-    } else {
-      if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
-      if (kUseShooter && kUseFeeder) {
-        buttonBoard.shootButton.whileHeld(shoot);
-        buttonBoard.toggleShootingHeightButton.whenPressed(new InstantCommand(shoot::toggleMode));
+      if (kDiagnostic) {
+        //      if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
+        //      if (kUseFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
+        //      if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
+      } else {
+        if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
+        if (kUseShooter && kUseFeeder) {
+          buttonBoard.shootButton.whileHeld(shoot);
+          buttonBoard.toggleShootingHeightButton.whenPressed(new InstantCommand(shoot::toggleMode));
+        }
       }
     }
 
-    if (kUseClimber && kUsePivot) buttonBoard.manualClimberButton.whenPressed(testClimber);
-    if (kUseClimber) buttonBoard.homeClimberButton.whenPressed(homeClimber);
-    if (kUsePivot) buttonBoard.homePivotButton.whenPressed(homePivot);
+    if (useSecondaryJoystick) {
+      System.out.println("Setting up secondary joystick commands");
+      if (kUseClimber && kUsePivot) buttonBoard.manualClimberButton.whenPressed(testClimber);
+      if (kUseClimber) buttonBoard.homeClimberButton.whenPressed(homeClimber);
+      if (kUsePivot) buttonBoard.homePivotButton.whenPressed(homePivot);
+    }
   }
 
   private void configureDefaultCommands() {
-    if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
-//    if (kDiagnostic) {diagnosticIntake.setDefaultCommand(testIntake);
-
-    // See robot.teleopInit() for climber scheduling. It cannot be a default command
+    if (useDriveJoystick) {
+      if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
+//      if (kDiagnostic) {diagnosticIntake.setDefaultCommand(testIntake);
+    }
 
   }
 
