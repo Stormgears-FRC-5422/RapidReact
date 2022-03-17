@@ -106,9 +106,11 @@ public abstract class ClimberParentSystem extends SubsystemBase {
 
   public void setSpeed(LRSpeeds lrSpeed) {
     setSpeed = true;
-//    if (hasBeenHomed) {
+
+    if (hasBeenHomed) {
       this.speeds = lrSpeed;
-//    }
+    }
+
     if (speeds.left() != 0) leftHome = false;
     if (speeds.right() != 0) rightHome = false;
   }
@@ -155,6 +157,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
   public boolean isHome() {
     if (leftHome && rightHome) {
       hasBeenHomed = true;
+      System.out.println("Climber is home");
     }
     return leftHome && rightHome;
   }
@@ -172,6 +175,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
     rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    System.out.println("Climber.enableLimits()");
   }
 
   public void setLimits(
@@ -180,6 +184,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseLeft);
     rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardRight);
     rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseRight);
+    System.out.println("Climber.setLimits()");
   }
 
   @Override

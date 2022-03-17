@@ -160,7 +160,7 @@ public class RobotContainer {
       if (kUseClimber && kUsePivot) {
         System.out.println("... climber and pivot");
         buttonBoard.manualClimberButton.whenPressed(testClimber);
-//        buttonBoard.homeClimbing.whenPressed(getHomingSequence());
+        buttonBoard.homeClimbing.whenPressed(getHomingSequence());
 //
 //        buttonBoard.trapezoidClimber.whenPressed(
 //                () -> {

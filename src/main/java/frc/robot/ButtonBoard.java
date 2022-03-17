@@ -38,7 +38,7 @@ public class ButtonBoard {
     public final JoystickButton trapezoidClimber;
     public final JoystickButton trapezoidPivot;
 
-  public final JoystickButton homeClimbing;
+    public final JoystickButton homeClimbing;
     public final JoystickButton homeClimberButton;
     public final JoystickButton homePivotButton;
 
@@ -70,15 +70,10 @@ public class ButtonBoard {
     // ********************************
     homePivotButton = new JoystickButton(secondaryJoystick, stickRightButton);
     homeClimberButton = new JoystickButton(secondaryJoystick, stickLeftButton);
-
-//        selectIntakeButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
-//        selectFeederButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
-//        selectShooterButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);
+    homeClimbing = new JoystickButton(secondaryJoystick, stickLeftButton);
 
     trapezoidClimber = new JoystickButton(secondaryJoystick, littleLeftButton);
     trapezoidPivot = new JoystickButton(secondaryJoystick, littleRightButton);
-
-    homeClimbing = new JoystickButton(secondaryJoystick, stickLeftButton);
 
     manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
     }

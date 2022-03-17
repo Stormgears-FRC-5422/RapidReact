@@ -7,13 +7,15 @@ public class Home extends CommandBase {
   ClimberParentSystem subsystem;
 
   public Home(ClimberParentSystem subsystem) {
+    System.out.println("Home()");
     this.subsystem = subsystem;
     addRequirements(subsystem);
     }
 
     @Override
     public void initialize() {
-    subsystem.disableLimits();
+      System.out.println("Home.initialize()");
+      subsystem.disableLimits();
     }
 
     @Override
@@ -28,10 +30,10 @@ public class Home extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-    subsystem.enableLimits();
-        if (!interrupted) {
-            System.out.println("Not interrupted");
-      subsystem.zero();
-        }
+      System.out.println("Home.end( interrupted = " + interrupted + " )");
+
+      subsystem.enableLimits();
+      if (!interrupted) subsystem.zero();
+
     }
 }

@@ -51,8 +51,6 @@ public class TestClimber extends CommandBase {
         LRSpeeds pivotSpeeds = new LRSpeeds(joystick.getRightJoystickY() * kPivotSpeed,
                                            joystick.getRightJoystickY() * kPivotSpeed);
 
-        System.out.println("climber: " + climberSpeeds.left() + ", pivot: " + pivotSpeeds.left());
-
         // Move only the one on the side with the bumper held
         if (joystick.getLeftBumperIsHeld()) {
             climberSpeeds.disableRight();
@@ -62,7 +60,6 @@ public class TestClimber extends CommandBase {
             pivotSpeeds.disableLeft();
         }
 
-        System.out.println("climber: " + climberSpeeds.left() + ", pivot: " + pivotSpeeds.left());
         climber.setSpeed(climberSpeeds);
         pivot.setSpeed(pivotSpeeds);
     }
