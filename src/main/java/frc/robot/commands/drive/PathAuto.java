@@ -7,11 +7,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.subsystems.drive.SparkDrive;
@@ -24,7 +25,7 @@ public class PathAuto extends CommandBase {
     final SparkDrive drive;
     final RamseteCommand command;
     Trajectory trajectory;
-    final NavX nav;
+    final NavX navX;
     Pose2d pose2d;
     final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.58);
     final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(0.3,3,0);
@@ -35,9 +36,9 @@ public class PathAuto extends CommandBase {
     String path = "/home/lvuser/deploy/paths.json";
     final DifferentialDriveOdometry odometry;
 
-    public PathAuto(SparkDrive drive, NavX nav){
+    public PathAuto(SparkDrive drive, NavX navX){
         this.drive=drive;
-        this.nav = nav;
+        this.navX = navX;
         addRequirements(drive);
         try {
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path);
@@ -45,17 +46,17 @@ public class PathAuto extends CommandBase {
         } catch (IOException ex) {
             System.out.println("error");
         }
-        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(nav.getAngleDegrees()));
+        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(navX.getHeading()));
         command = new RamseteCommand(
                 trajectory,
                 this::getPose2d,
                 new RamseteController(2.0,0.7),
                 ff,
                 kinematics,
-                drive::getWheelSpeeds,
+                this::getWheelSpeeds,
                 pidLeft,
                 pidRight,
-                drive::setOutput,
+                drive::setOutputRamsete,
                 drive
         );
         Shuffleboard.getTab("PathFollowingShafflu").add(pidLeft);
@@ -66,20 +67,30 @@ public class PathAuto extends CommandBase {
         return pose2d;
     }
 
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(
+                (drive.getLeftVelocity()), /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60,
+                (drive.getRightVelocity())); /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60
+
+    }
+
     @Override
     public void initialize(){
-        nav.reset();
         command.initialize();
     }
 
     @Override
     public void execute(){
+        /*SmartDashboard.putNumber("",command.target);*/
+        SmartDashboard.getNumber("encoder", (drive.getLeftVelocity()));
+        SmartDashboard.getNumber("encoder", (drive.getRightVelocity()));
         pose2d = odometry.update(
-                Rotation2d.fromDegrees(nav.getAngleDegrees()),
-                Units.inchesToMeters(drive.getLeftEncoder())/60d, /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60,
-                Units.inchesToMeters(drive.getRightEncoder())/60d /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60
+                Rotation2d.fromDegrees(navX.getHeading()),
+                (drive.getLeftVelocity()), /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60,
+                (drive.getRightVelocity()) /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60
         );
         command.execute();
+        SmartDashboard.putNumber("pid left setpoint",pidLeft.getSetpoint());
     }
 
     @Override

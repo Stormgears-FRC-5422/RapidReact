@@ -25,7 +25,15 @@ public class NavX extends SubsystemBase {
     return(ahrs.getYaw() * Constants.kNavXGyroScaleFactor);
   }
 
-  public void reset(){ahrs.reset();}
+  public void reset(){
+    ahrs.zeroYaw();
+  }
+
+  public double getHeading(){
+    return ahrs.getYaw();
+    //return -26d;
+  }
+
 
   @Override
   public void periodic() {

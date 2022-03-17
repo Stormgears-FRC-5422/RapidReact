@@ -6,15 +6,8 @@ package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.sensors.NavX;
-import frc.utils.configfile.StormProp;
 import frc.utils.drive.StormDrive;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.filters.Filter;
@@ -23,8 +16,6 @@ import frc.utils.motorcontrol.StormSpark;
 import static edu.wpi.first.wpilibj.DriverStation.reportWarning;
 import static frc.robot.Constants.*;
 import static java.lang.Math.max;
-
-import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -234,24 +225,21 @@ public class SparkDrive extends StormDrive {
         return((masterLeft.getEncoder().getVelocity() + masterRight.getEncoder().getVelocity()) / 2);
     }
 
-    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return new DifferentialDriveWheelSpeeds(
-                Units.inchesToMeters(masterLeft.getEncoder().getVelocity()) / 60d, /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60,
-                Units.inchesToMeters(masterRight.getEncoder().getVelocity()) / 60d); /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60
 
-    }
 
-    public double getLeftEncoder(){
+    public double getLeftVelocity(){
         return masterLeft.getEncoder().getVelocity();
     }
 
-    public double getRightEncoder(){
+    public double getRightVelocity(){
         return masterRight.getEncoder().getVelocity();
     }
 
-    public void setOutput(double l, double r){
-        masterLeft.set(l/12);
-        masterRight.set(r/12);
+    public void setOutputRamsete(double left, double right){
+        left = MathUtil.clamp(left, -12d, 12d);
+        right = MathUtil.clamp(right, -12d, 12d);
+        masterLeft.set(-left/12d);
+        masterRight.set(right/12d);
     }
 
 
