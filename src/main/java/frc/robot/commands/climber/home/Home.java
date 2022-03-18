@@ -1,12 +1,12 @@
-package frc.robot.commands.climber;
+package frc.robot.commands.climber.home;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.climber.ClimberParentSystem;
+import frc.robot.subsystems.climber.ClimbingSubsystem;
 
-class Home extends CommandBase {
-  ClimberParentSystem subsystem;
+public class Home extends CommandBase {
+  ClimbingSubsystem subsystem;
 
-  public Home(ClimberParentSystem subsystem) {
+  public Home(ClimbingSubsystem subsystem) {
     System.out.println("Home()");
     this.subsystem = subsystem;
     addRequirements(subsystem);

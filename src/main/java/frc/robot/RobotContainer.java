@@ -2,14 +2,21 @@ package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
-import frc.robot.commands.climber.*;
+import frc.robot.commands.climber.ManualClimber;
+import frc.robot.commands.climber.hold.HoldCurrentPosition;
+import frc.robot.commands.climber.home.Home;
+import frc.robot.commands.climber.home.HomeClimbingSystem;
+import frc.robot.commands.climber.trapezoid.PositionClimber;
+import frc.robot.commands.climber.trapezoid.PositionPivot;
 import frc.robot.commands.drive.DriveDistanceProfile;
 import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.navX.NavXAlign;
@@ -55,11 +62,11 @@ public class RobotContainer {
   private Shoot shoot;
   private NavXAlign navXAlign;
 
-  private ParallelCommandGroup homingSequence;
+  private CommandBase homingSequence;
   private final boolean useDriveJoystick;
   private final boolean useSecondaryJoystick;
-  private TestClimber manualClimber;
-  private TestClimber manualPivot;
+  private ManualClimber manualClimber;
+  private ManualClimber manualPivot;
   private SendableChooser<ClimbingGoal> climberGoalChooser;
   private SendableChooser<PivotGoal> pivotGoalChooser;
 
@@ -125,14 +132,21 @@ public class RobotContainer {
 
     if (kUseNavX) navXAlign = new NavXAlign(drive, navX);
 
-    if (kUseClimber && kUsePivot) {
-      manualClimber =
-          new TestClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
-      manualPivot = new TestClimber(pivot, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
-      homingSequence = new HomeClimbingSystem(climber, pivot);
-      climberHoldCurrentPosition = new HoldCurrentPosition(climber);
+    if (kUsePivot && kUseClimber) homingSequence = new HomeClimbingSystem(climber, pivot);
+    else if (kUsePivot) homingSequence = new Home(pivot);
+    else if (kUseClimber) homingSequence = new Home(climber);
+
+    if (kUsePivot) {
+      manualPivot =
+          new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
       pivotHoldCurrentPosition = new HoldCurrentPosition(pivot);
-      initClimbingChoosers();
+      initPivotChooser();
+    }
+    if (kUseClimber) {
+      manualClimber =
+          new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
+      climberHoldCurrentPosition = new HoldCurrentPosition(climber);
+      initClimberChooser();
     }
   }
 
@@ -166,23 +180,20 @@ public class RobotContainer {
 
     if (useSecondaryJoystick) {
       System.out.println("Setting up secondary joystick commands");
-      if (kUseClimber && kUsePivot) {
-        System.out.println("... climber and pivot");
+      buttonBoard.homeClimbing.whenPressed(getHomingSequence());
+      if (kUsePivot && kUseClimber) {
         buttonBoard.manualClimberButton.whenPressed(
             new ParallelCommandGroup(manualClimber, manualPivot).withName("ManualMode"));
-        buttonBoard.homeClimbing.whenPressed(getHomingSequence());
-        //
+      } else if (kUsePivot) buttonBoard.manualClimberButton.whenPressed(manualPivot);
+      else if (kUseClimber) buttonBoard.manualClimberButton.whenPressed(manualClimber);
+      if (kUseClimber) {
+        System.out.println("... climber and pivot");
         buttonBoard.trapezoidClimber.whenPressed(
-            () -> {
-              MoveCommand command =
-                  new PositionClimber(climber, climberGoalChooser.getSelected().state);
-              command.schedule();
-            });
+            new PositionClimber(climber, climberGoalChooser.getSelected().state));
+      }
+      if (kUsePivot) {
         buttonBoard.trapezoidPivot.whenPressed(
-            () -> {
-              MoveCommand command = new PositionPivot(pivot, pivotGoalChooser.getSelected().state);
-              command.schedule();
-            });
+            new PositionPivot(pivot, pivotGoalChooser.getSelected().state));
       }
     }
 
@@ -191,10 +202,8 @@ public class RobotContainer {
   private void configureDefaultCommands() {
     if (useDriveJoystick) {
       if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
-      if (kUseClimber && kUsePivot) {
-        climber.setDefaultCommand(climberHoldCurrentPosition);
-        pivot.setDefaultCommand(pivotHoldCurrentPosition);
-      }
+      if (kUseClimber) climber.setDefaultCommand(climberHoldCurrentPosition);
+      if (kUsePivot) pivot.setDefaultCommand(pivotHoldCurrentPosition);
     }
   }
 
@@ -202,42 +211,76 @@ public class RobotContainer {
     return drive;
   }
 
-  public ParallelCommandGroup getHomingSequence() {
-    return homingSequence;
+  public CommandBase getHomingSequence() {
+    return homingSequence == null ? new InstantCommand() : homingSequence;
   }
 
-  private void initClimbingChoosers() {
-    climberGoalChooser = new SendableChooser<>();
+  private void initPivotChooser() {
     pivotGoalChooser = new SendableChooser<>();
-    climberGoalChooser.setDefaultOption("Low", ClimbingGoal.LOW);
-    pivotGoalChooser.setDefaultOption("High", PivotGoal.LOW);
-    for (ClimbingGoal goal : ClimbingGoal.values()) climberGoalChooser.addOption(goal.name(), goal);
     for (PivotGoal goal : PivotGoal.values()) pivotGoalChooser.addOption(goal.name(), goal);
-    Shuffleboard.getTab("Climber").add("Climbing Goal", climberGoalChooser);
     Shuffleboard.getTab("Pivot").add("Pivot Goal", pivotGoalChooser);
   }
 
+  private void initClimberChooser() {
+    climberGoalChooser = new SendableChooser<>();
+    for (ClimbingGoal goal : ClimbingGoal.values()) climberGoalChooser.addOption(goal.name(), goal);
+    Shuffleboard.getTab("Climber").add("Climbing Goal", climberGoalChooser);
+  }
+
+  private void shuffleBoardDriverTab() {
+    // TODO add Camera Feed
+    ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
+    driverTab.add("PivotChooser", pivotGoalChooser);
+    driverTab.add(
+        "Move Pivot To Goal", new PositionPivot(pivot, pivotGoalChooser.getSelected().state));
+    driverTab.add("ClimberChooser", climberGoalChooser);
+    driverTab.add(
+        "Move Climber To Goal",
+        new PositionClimber(climber, climberGoalChooser.getSelected().state));
+    driverTab.add(
+        "Climber To Value",
+        builder ->
+            builder.addDoubleProperty(
+                "Climber Value",
+                () -> 0,
+                value -> new PositionClimber(climber, new TrapezoidProfile.State(value, 0))));
+    driverTab.add(
+        "Pivot To Value",
+        builder ->
+            builder.addDoubleProperty(
+                "Pivot Value",
+                () -> 0,
+                value -> new PositionPivot(pivot, new TrapezoidProfile.State(value, 0))));
+    driverTab.add("Climber Position", climber);
+    driverTab.add("Pivot Position", pivot);
+  }
+
   enum PivotGoal {
-    LOW(15),
-    HIGH(52);
-    public TrapezoidProfile.State state;
+    MOST_BACK(5),
+    FIRST(52),
+    //    SECOND(150),
+    FURTHEST(145);
+
+    TrapezoidProfile.State state;
 
     PivotGoal(double state) {
       this.state = new TrapezoidProfile.State(state, 0);
     }
+
   }
 
   enum ClimbingGoal {
-    LOW(80),
-    HIGH(275);
-    public TrapezoidProfile.State state;
+    LOWEST(10),
+    SECOND(80),
+    FIRST(275),
+    HIGHEST(275);
+
+    TrapezoidProfile.State state;
 
     ClimbingGoal(double state) {
       this.state = new TrapezoidProfile.State(state, 0);
     }
 
-    ClimbingGoal toggle() {
-      return this == LOW ? HIGH : LOW;
-    }
   }
+
 }

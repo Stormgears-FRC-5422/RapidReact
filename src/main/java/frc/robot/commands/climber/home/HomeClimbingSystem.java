@@ -1,4 +1,4 @@
-package frc.robot.commands.climber;
+package frc.robot.commands.climber.home;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.subsystems.climber.Climber;

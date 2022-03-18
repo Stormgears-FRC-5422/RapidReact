@@ -8,12 +8,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.climber.HoldTargetPosition;
+import frc.robot.commands.climber.hold.HoldTargetPosition;
 import frc.utils.LRSpeeds;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
-// TODO add soft limits to constants
-public abstract class ClimberParentSystem extends SubsystemBase {
+
+public abstract class ClimbingSubsystem extends SubsystemBase {
 
   protected final String shuffleBoardTabName = this.getName();
 
@@ -42,7 +42,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
   protected double pidOutput = 0;
   protected double feedForwardOutputs = 0;
 
-  protected ClimberParentSystem(
+  protected ClimbingSubsystem(
       int leftMotorID,
       int rightMotorID,
       boolean leftInverted,
@@ -79,6 +79,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     rightMotor.setOpenLoopRampRate(0.25);
 
     // Optimistic - we need to zero if the robot has been off...
+    setLimits();
     enableLimits();
     shuffleBoard();
   }
@@ -182,7 +183,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     System.out.println("Climber.enableLimits()");
   }
 
-  void setLimits(double forward, double reverse) {
+  protected void setLimits(double forward, double reverse) {
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverse);
     rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);

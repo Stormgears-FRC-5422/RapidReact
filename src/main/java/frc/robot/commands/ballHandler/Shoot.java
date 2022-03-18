@@ -37,7 +37,7 @@ public class Shoot extends PIDCommand {
     public void execute() {
         super.execute();
         feeder.setLimit(!isReady(kShooterTolerance));
-        if (!isReady(kShooterkITolerance)) getController().reset();
+    if (!resetIntegral(kShooterkITolerance)) getController().reset();
         feeder.on();
     }
 
@@ -47,9 +47,14 @@ public class Shoot extends PIDCommand {
         shooter.off();
     }
 
-    private boolean isReady(double percentTolerance) {
+  private boolean resetIntegral(double percentTolerance) {
         return shooter.getSpeed() >= ((1 - (percentTolerance / 100)) * shooter.setpoint()) && shooter.getSpeed() <= ((1 + (percentTolerance / 100)) * shooter.setpoint());
     }
+
+  private boolean isReady(double percentTolerance) {
+    return shooter.getExponentialSpeed() >= ((1 - (percentTolerance / 100)) * shooter.setpoint())
+        && shooter.getExponentialSpeed() <= ((1 + (percentTolerance / 100)) * shooter.setpoint());
+  }
 
     public void toggleMode() {
         if (shooter.mode == Height.LOW) shooter.mode = Height.HIGH;
@@ -61,6 +66,6 @@ public class Shoot extends PIDCommand {
         builder.addDoubleProperty("I Value", getController()::getI, getController()::setI);
         builder.addDoubleProperty("P Value", getController()::getP, getController()::setP);
         builder.addDoubleProperty("D Value", getController()::getD, getController()::setD);
-        builder.addBooleanProperty("limit", () -> isReady(kShooterTolerance), null);
+    builder.addBooleanProperty("limit", () -> resetIntegral(kShooterTolerance), null);
     }
 }

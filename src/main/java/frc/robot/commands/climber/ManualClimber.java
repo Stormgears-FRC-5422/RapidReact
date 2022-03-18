@@ -2,7 +2,7 @@ package frc.robot.commands.climber;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.climber.ClimberParentSystem;
+import frc.robot.subsystems.climber.ClimbingSubsystem;
 import frc.utils.LRSpeeds;
 import frc.utils.joysticks.StormXboxController;
 
@@ -10,15 +10,15 @@ import java.util.function.DoubleSupplier;
 
 import static frc.robot.Constants.kClimberSpeed;
 
-public class TestClimber extends CommandBase {
-  private final ClimberParentSystem subsystem;
+public class ManualClimber extends CommandBase {
+  private final ClimbingSubsystem subsystem;
   private final StormXboxController joystick;
   private final DoubleSupplier joystickInput;
   double holdPosition = 0;
   double lastJoyVal = 0;
 
-  public TestClimber(
-      ClimberParentSystem subsystem, StormXboxController joystick, DoubleSupplier joyStickInput) {
+  public ManualClimber(
+      ClimbingSubsystem subsystem, StormXboxController joystick, DoubleSupplier joyStickInput) {
         System.out.println("TestClimber()");
     this.subsystem = subsystem;
         this.joystick = joystick;

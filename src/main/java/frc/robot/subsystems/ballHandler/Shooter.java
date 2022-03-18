@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
 
 import static frc.robot.Constants.*;
@@ -27,6 +28,7 @@ public class Shooter extends SubsystemBase {
     private final StormSpark motor = new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final SparkMaxPIDController pidController = motor.getPIDController();
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(kShooterS, kShooterV, kShooterA);
+  private final ExponentialAverage averageSpeed = new ExponentialAverage(this::getSpeed, 8);
     public Height mode = Height.LOW;
 
     public Shooter() {
@@ -40,6 +42,10 @@ public class Shooter extends SubsystemBase {
     public double getSpeed() {
         return motor.getEncoder().getVelocity();
     }
+
+  public double getExponentialSpeed() {
+    return averageSpeed.update();
+  }
 
     public void setSpeed(double speed) {
         pidController.setReference(speed, CANSparkMax.ControlType.kVelocity);

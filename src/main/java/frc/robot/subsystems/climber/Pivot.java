@@ -5,9 +5,8 @@ import edu.wpi.first.math.controller.PIDController;
 
 import static frc.robot.Constants.*;
 
-public class Pivot extends ClimberParentSystem {
+public class Pivot extends ClimbingSubsystem {
   private final ArmFeedforward feedforward = new ArmFeedforward(0.05, 0, 0.0686, 0);
-  // TODO Chin UP 50
   public Pivot() {
     super(
         kPivotLeftId,

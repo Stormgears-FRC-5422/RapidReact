@@ -1,15 +1,15 @@
-package frc.robot.commands.climber;
+package frc.robot.commands.climber.hold;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.climber.ClimberParentSystem;
+import frc.robot.subsystems.climber.ClimbingSubsystem;
 
 public abstract class HoldInterface extends CommandBase {
-  final ClimberParentSystem subsystem;
+  final ClimbingSubsystem subsystem;
   double initialLeftPosition;
   double initialRightPosition;
 
-  HoldInterface(ClimberParentSystem subsystem) {
+  HoldInterface(ClimbingSubsystem subsystem) {
     this.subsystem = subsystem;
     addRequirements(subsystem);
   }

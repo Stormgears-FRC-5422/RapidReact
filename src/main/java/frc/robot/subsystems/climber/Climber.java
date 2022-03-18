@@ -5,7 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 
 import static frc.robot.Constants.*;
 
-public class Climber extends ClimberParentSystem {
+public class Climber extends ClimbingSubsystem {
 
   private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.24, 0, 0.0686, 0);
 

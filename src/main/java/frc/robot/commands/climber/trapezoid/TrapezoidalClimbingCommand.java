@@ -1,16 +1,16 @@
-package frc.robot.commands.climber;
+package frc.robot.commands.climber.trapezoid;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
-import frc.robot.subsystems.climber.ClimberParentSystem;
+import frc.robot.subsystems.climber.ClimbingSubsystem;
 
 import static edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import static edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
-public abstract class MoveCommand extends CommandBase {
+public abstract class TrapezoidalClimbingCommand extends CommandBase {
 
-  protected final ClimberParentSystem subsystem;
+  protected final ClimbingSubsystem subsystem;
   protected final Constraints constraints;
 
   protected final TrapezoidProfileCommand leftTrapezoidProfileCommand;
@@ -18,8 +18,8 @@ public abstract class MoveCommand extends CommandBase {
 
   protected final State goal;
 
-  protected MoveCommand(ClimberParentSystem subsystem, Constraints constraints, State goal) {
-    // TODO remove goal and replace with constructor parameter
+  protected TrapezoidalClimbingCommand(
+      ClimbingSubsystem subsystem, Constraints constraints, State goal) {
     this.subsystem = subsystem;
     this.constraints = constraints;
     this.goal = goal;
@@ -40,6 +40,7 @@ public abstract class MoveCommand extends CommandBase {
   public void initialize() {
     leftTrapezoidProfileCommand.initialize();
     rightTrapezoidProfileCommand.initialize();
+    System.out.println("TRYING TO MOVE " + subsystem.getName() + " TO " + goal.position);
   }
 
     @Override

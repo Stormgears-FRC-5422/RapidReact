@@ -1,9 +1,9 @@
-package frc.robot.commands.climber;
+package frc.robot.commands.climber.hold;
 
-import frc.robot.subsystems.climber.ClimberParentSystem;
+import frc.robot.subsystems.climber.ClimbingSubsystem;
 
 public class HoldTargetPosition extends HoldInterface {
-  public HoldTargetPosition(ClimberParentSystem subsystem, double position) {
+  public HoldTargetPosition(ClimbingSubsystem subsystem, double position) {
     super(subsystem);
     updateTargetPosition(position);
   }
