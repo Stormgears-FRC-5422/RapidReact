@@ -22,6 +22,11 @@ public class Climber extends ClimberParentSystem {
   }
 
   @Override
+  void setLimits() {
+    setLimits(-kCLimberForwardLimit, -kCLimberReverseLimit);
+  }
+
+  @Override
   public double feedForward(double velocity) {
     return feedforward.calculate(velocity);
   }

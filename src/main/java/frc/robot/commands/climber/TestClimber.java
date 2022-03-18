@@ -1,74 +1,76 @@
 package frc.robot.commands.climber;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.Pivot;
+import frc.robot.subsystems.climber.ClimberParentSystem;
 import frc.utils.LRSpeeds;
 import frc.utils.joysticks.StormXboxController;
 
+import java.util.function.DoubleSupplier;
+
 import static frc.robot.Constants.kClimberSpeed;
-import static frc.robot.Constants.kPivotSpeed;
 
 public class TestClimber extends CommandBase {
-  private final Climber climber;
-  private final Pivot pivot;
+  private final ClimberParentSystem subsystem;
   private final StormXboxController joystick;
+  private final DoubleSupplier joystickInput;
+  double holdPosition = 0;
+  double lastJoyVal = 0;
 
-    public TestClimber(Climber climber, Pivot pivot, StormXboxController joystick) {
+  public TestClimber(
+      ClimberParentSystem subsystem, StormXboxController joystick, DoubleSupplier joyStickInput) {
         System.out.println("TestClimber()");
-        this.climber = climber;
-        this.pivot = pivot;
+    this.subsystem = subsystem;
         this.joystick = joystick;
+    this.joystickInput = joyStickInput;
 
-        addRequirements(climber,pivot);
+    addRequirements(subsystem);
     }
 
     @Override
     public void initialize() {
         System.out.println("TestClimber.initialize()");
+    lastJoyVal = joystickInput.getAsDouble();
     }
 
     @Override
     public void execute() {
         if (joystick.getAisPressed()) {
-            climber.zero();
-            pivot.zero();
+      subsystem.zero();
             return;
         }
 
-        if (joystick.getXisPressed()) {
-            climber.disableLimits();
-            pivot.disableLimits();
-        }
+    if (joystick.getXisPressed()) subsystem.disableLimits();
 
-        if (joystick.getYisPressed()) {
-            climber.enableLimits();
-            pivot.enableLimits();
-        }
+    if (joystick.getYisPressed()) subsystem.enableLimits();
 
-        LRSpeeds climberSpeeds = new LRSpeeds(joystick.getLeftJoystickY() * kClimberSpeed,
-                                            joystick.getLeftJoystickY() * kClimberSpeed);
-        LRSpeeds pivotSpeeds = new LRSpeeds(joystick.getRightJoystickY() * kPivotSpeed,
-                                           joystick.getRightJoystickY() * kPivotSpeed);
+    double joyVal = joystickInput.getAsDouble();
+    LRSpeeds speeds = new LRSpeeds(joyVal * kClimberSpeed, joyVal * kClimberSpeed);
 
         // Move only the one on the side with the bumper held
         if (joystick.getLeftBumperIsHeld()) {
-            climberSpeeds.disableRight();
-            pivotSpeeds.disableRight();
+      speeds.disableRight();
         } else if (joystick.getRightBumperIsHeld()) {
-            climberSpeeds.disableLeft();
-            pivotSpeeds.disableLeft();
+      speeds.disableLeft();
         }
 
-        climber.setSpeed(climberSpeeds);
-        pivot.setSpeed(pivotSpeeds);
+    if (joyVal == 0 && lastJoyVal > 0) setHoldPosition();
+    if (joyVal == 0) hold();
+    else subsystem.setSpeed(speeds);
     }
 
     @Override
     public void end(boolean interrupted) {
         System.out.println("TestClimber.end( interrupted = " + interrupted + " )");
-        climber.stop();
-        pivot.stop();
+    subsystem.stop();
     }
 
+  private void hold() {
+    subsystem.leftPID(new TrapezoidProfile.State(holdPosition, 0));
+    subsystem.rightPID(new TrapezoidProfile.State(holdPosition, 0));
+  }
+
+  private void setHoldPosition() {
+    holdPosition = subsystem.leftPosition();
+  }
 }

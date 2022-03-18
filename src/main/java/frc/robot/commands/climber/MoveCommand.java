@@ -1,8 +1,6 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import frc.robot.subsystems.climber.ClimberParentSystem;
@@ -20,10 +18,6 @@ public abstract class MoveCommand extends CommandBase {
 
   protected final State goal;
 
-  // For monitoring on Shuffleboard, does nothing
-  double position = 0;
-  double velocity = 0;
-
   protected MoveCommand(ClimberParentSystem subsystem, Constraints constraints, State goal) {
     // TODO remove goal and replace with constructor parameter
     this.subsystem = subsystem;
@@ -40,18 +34,13 @@ public abstract class MoveCommand extends CommandBase {
             this::rightPID);
 
     addRequirements(subsystem);
-
-    try {
-    Shuffleboard.getTab(subsystem.getName()).add(this);
-    } catch (Exception ignored) {
-    }
   }
 
   @Override
   public void initialize() {
     leftTrapezoidProfileCommand.initialize();
     rightTrapezoidProfileCommand.initialize();
-    }
+  }
 
     @Override
     public void execute() {
@@ -63,6 +52,7 @@ public abstract class MoveCommand extends CommandBase {
     public void end(boolean interrupted) {
     leftTrapezoidProfileCommand.end(interrupted);
     rightTrapezoidProfileCommand.end(interrupted);
+    if (!interrupted) subsystem.holdTarget(goal.position);
     }
 
   @Override
@@ -71,20 +61,10 @@ public abstract class MoveCommand extends CommandBase {
   }
 
   protected void leftPID(State state) {
-    position = state.position;
-    velocity = state.velocity;
-
     subsystem.leftPID(state);
     }
 
   protected void rightPID(State state) {
     subsystem.rightPID(state);
-  }
-
-  @Override
-  public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Goal", () -> goal.position, null);
-    builder.addDoubleProperty("Position Goal", () -> position, null);
-    builder.addDoubleProperty("Velocity Goal", () -> velocity, null);
   }
 }

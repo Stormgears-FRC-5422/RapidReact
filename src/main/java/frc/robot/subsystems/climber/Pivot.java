@@ -24,5 +24,10 @@ public class Pivot extends ClimberParentSystem {
   public double feedForward(double velocity) {
     return feedforward.calculate(0, velocity);
     }
+
+  @Override
+  void setLimits() {
+    setLimits(-kCLimberForwardLimit, -kCLimberReverseLimit);
+  }
 }
 

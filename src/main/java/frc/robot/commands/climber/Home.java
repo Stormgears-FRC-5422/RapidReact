@@ -3,7 +3,7 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.climber.ClimberParentSystem;
 
-public class Home extends CommandBase {
+class Home extends CommandBase {
   ClimberParentSystem subsystem;
 
   public Home(ClimberParentSystem subsystem) {
@@ -31,9 +31,8 @@ public class Home extends CommandBase {
     @Override
     public void end(boolean interrupted) {
       System.out.println("Home.end( interrupted = " + interrupted + " )");
-
+    System.out.println(subsystem.getName() + " is " + "homed");
       subsystem.enableLimits();
       if (!interrupted) subsystem.zero();
-
     }
 }

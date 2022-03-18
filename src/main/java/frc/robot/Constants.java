@@ -120,6 +120,13 @@ public final class Constants {
   public static final double kRightPivotI = StormProp.getNumber("rightPivotI", 0.0);
   public static final double kRightPivotD = StormProp.getNumber("rightPivotD", 0.0);
 
+  public static final double kCLimberForwardLimit =
+      StormProp.getNumber("climberSoftLimitForward", 0.0);
+  public static final double kCLimberReverseLimit =
+      StormProp.getNumber("climberSoftLimitReverse", 0.0);
+  public static final double kPivotForwardLimit = StormProp.getNumber("pivotSoftLimitForward", 0.0);
+  public static final double kPivotReverseLimit = StormProp.getNumber("pivotSoftLimitReverse", 0.0);
+
   public static final double kDriveProfileLeftP = StormProp.getNumber("driveProfileLeftP",0.0);
   public static final double kDriveProfileLeftI = StormProp.getNumber("driveProfileLeftI",0.0);
   public static final double kDriveProfileLeftD = StormProp.getNumber("driveProfileLeftD",0.0);

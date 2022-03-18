@@ -8,10 +8,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.climber.HoldTargetPosition;
 import frc.utils.LRSpeeds;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
-// TODO add soft limits to constants, make the pivot a little more then right now also
+// TODO add soft limits to constants
 public abstract class ClimberParentSystem extends SubsystemBase {
 
   protected final String shuffleBoardTabName = this.getName();
@@ -27,6 +28,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
 
   protected final double homeCurrentLimit;
   protected final double homeSpeed;
+  private final HoldTargetPosition holdTargetPosition;
 
   protected LRSpeeds speeds = new LRSpeeds();
 
@@ -63,6 +65,8 @@ public abstract class ClimberParentSystem extends SubsystemBase {
 
     this.homeCurrentLimit = homeCurrentLimit;
     this.homeSpeed = homeSpeed;
+
+    this.holdTargetPosition = new HoldTargetPosition(this, this.leftPosition());
 
     leftMotor.setInverted(leftInverted);
     leftMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -120,7 +124,7 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     leftMotor.getEncoder().setPosition(0.0);
     rightMotor.getEncoder().setPosition(0.0);
 
-    setLimits(-10.0f, -280.0f, -10.0f, -280.0f);
+    setLimits();
     enableLimits();
 
     leftHome = false;
@@ -178,14 +182,15 @@ public abstract class ClimberParentSystem extends SubsystemBase {
     System.out.println("Climber.enableLimits()");
   }
 
-  public void setLimits(
-      float forwardLeft, float reverseLeft, float forwardRight, float reverseRight) {
-    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardLeft);
-    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseLeft);
-    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardRight);
-    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseRight);
+  void setLimits(double forward, double reverse) {
+    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
+    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverse);
+    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
+    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverse);
     System.out.println("Climber.setLimits()");
   }
+
+  abstract void setLimits();
 
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -218,4 +223,10 @@ public abstract class ClimberParentSystem extends SubsystemBase {
   }
 
   public abstract double feedForward(double velocity);
+
+  public void holdTarget(double target) {
+    this.getCurrentCommand().end(true);
+    holdTargetPosition.updateTargetPosition(target);
+    holdTargetPosition.schedule();
+  }
 }
