@@ -189,11 +189,11 @@ public class RobotContainer {
       if (kUseClimber) {
         System.out.println("... climber and pivot");
         buttonBoard.trapezoidClimber.whenPressed(
-            new PositionClimber(climber, climberGoalChooser.getSelected().state));
+            () -> new PositionClimber(climber, climberGoalChooser.getSelected().state));
       }
       if (kUsePivot) {
         buttonBoard.trapezoidPivot.whenPressed(
-            new PositionPivot(pivot, pivotGoalChooser.getSelected().state));
+            () -> new PositionPivot(pivot, pivotGoalChooser.getSelected().state));
       }
     }
 
@@ -218,12 +218,14 @@ public class RobotContainer {
   private void initPivotChooser() {
     pivotGoalChooser = new SendableChooser<>();
     for (PivotGoal goal : PivotGoal.values()) pivotGoalChooser.addOption(goal.name(), goal);
+    pivotGoalChooser.setDefaultOption(PivotGoal.values()[0].name(), PivotGoal.values()[0]);
     Shuffleboard.getTab("Pivot").add("Pivot Goal", pivotGoalChooser);
   }
 
   private void initClimberChooser() {
     climberGoalChooser = new SendableChooser<>();
     for (ClimbingGoal goal : ClimbingGoal.values()) climberGoalChooser.addOption(goal.name(), goal);
+    climberGoalChooser.setDefaultOption(ClimbingGoal.values()[0].name(), ClimbingGoal.values()[0]);
     Shuffleboard.getTab("Climber").add("Climbing Goal", climberGoalChooser);
   }
 

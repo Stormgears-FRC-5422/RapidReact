@@ -79,8 +79,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase {
     rightMotor.setOpenLoopRampRate(0.25);
 
     // Optimistic - we need to zero if the robot has been off...
-    setLimits();
-    enableLimits();
+    setSoftLimits();
     shuffleBoard();
   }
 
@@ -125,12 +124,10 @@ public abstract class ClimbingSubsystem extends SubsystemBase {
     leftMotor.getEncoder().setPosition(0.0);
     rightMotor.getEncoder().setPosition(0.0);
 
-    setLimits();
-    enableLimits();
-
     leftHome = false;
     rightHome = false;
     goingHome = false;
+    hasBeenHomed = true;
   }
 
   @Override
@@ -167,23 +164,27 @@ public abstract class ClimbingSubsystem extends SubsystemBase {
     return leftHome && rightHome;
   }
 
-  public void disableLimits() {
+  public void overrideHome() {
+    hasBeenHomed = true;
+  }
+
+  public void disableSoftLimits() {
     leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
     leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
     rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
     rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
-    System.out.println("Climber.disableLimits()");
+    System.out.println(getName() + ".disableSoft()");
   }
 
-  public void enableLimits() {
+  public void enableSoftLimits() {
     leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
     leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
     rightMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
-    System.out.println("Climber.enableLimits()");
+    System.out.println(getName() + ".enableLimits()");
   }
 
-  protected void setLimits(double forward, double reverse) {
+  protected void setSoftLimits(double forward, double reverse) {
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverse);
     rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
@@ -191,7 +192,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase {
     System.out.println("Climber.setLimits()");
   }
 
-  abstract void setLimits();
+  abstract void setSoftLimits();
 
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -230,4 +231,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase {
     holdTargetPosition.updateTargetPosition(target);
     holdTargetPosition.schedule();
   }
+
+  public abstract void disableAllLimits();
+
+  public abstract void enableAllLimits();
 }

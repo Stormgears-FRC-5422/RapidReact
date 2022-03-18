@@ -7,6 +7,7 @@ import static frc.robot.Constants.*;
 
 public class Pivot extends ClimbingSubsystem {
   private final ArmFeedforward feedforward = new ArmFeedforward(0.05, 0, 0.0686, 0);
+
   public Pivot() {
     super(
         kPivotLeftId,
@@ -17,7 +18,19 @@ public class Pivot extends ClimbingSubsystem {
         new PIDController(kRightPivotP, kRightPivotI, kRightPivotD),
         kPivotHomeCurrentLimit,
         kPivotHomeSetSpeed);
-    }
+
+    enableSoftLimits();
+  }
+
+  @Override
+  public void disableAllLimits() {
+    disableSoftLimits();
+  }
+
+  @Override
+  public void enableAllLimits() {
+    enableSoftLimits();
+  }
 
   @Override
   public double feedForward(double velocity) {
@@ -25,8 +38,8 @@ public class Pivot extends ClimbingSubsystem {
     }
 
   @Override
-  void setLimits() {
-    setLimits(-kCLimberForwardLimit, -kCLimberReverseLimit);
+  void setSoftLimits() {
+    setSoftLimits(-kCLimberForwardLimit, -kCLimberReverseLimit);
   }
 }
 

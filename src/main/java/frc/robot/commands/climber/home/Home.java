@@ -10,12 +10,12 @@ public class Home extends CommandBase {
     System.out.println("Home()");
     this.subsystem = subsystem;
     addRequirements(subsystem);
-    }
+  }
 
     @Override
     public void initialize() {
       System.out.println("Home.initialize()");
-      subsystem.disableLimits();
+    subsystem.disableSoftLimits();
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Home extends CommandBase {
     public void end(boolean interrupted) {
       System.out.println("Home.end( interrupted = " + interrupted + " )");
     System.out.println(subsystem.getName() + " is " + "homed");
-      subsystem.enableLimits();
+    subsystem.enableSoftLimits();
       if (!interrupted) subsystem.zero();
     }
 }

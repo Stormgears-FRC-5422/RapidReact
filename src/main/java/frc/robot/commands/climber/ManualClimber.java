@@ -37,31 +37,36 @@ public class ManualClimber extends CommandBase {
     public void execute() {
         if (joystick.getAisPressed()) {
       subsystem.zero();
-            return;
+      return;
         }
 
-    if (joystick.getXisPressed()) subsystem.disableLimits();
-
-    if (joystick.getYisPressed()) subsystem.enableLimits();
+    if (joystick.getXisPressed()) {
+      subsystem.disableAllLimits();
+    }
+    if (joystick.getYisPressed()) subsystem.enableAllLimits();
 
     double joyVal = joystickInput.getAsDouble();
     LRSpeeds speeds = new LRSpeeds(joyVal * kClimberSpeed, joyVal * kClimberSpeed);
 
-        // Move only the one on the side with the bumper held
-        if (joystick.getLeftBumperIsHeld()) {
+    // Move only the one on the side with the bumper held
+    if (joystick.getLeftBumperIsHeld()) {
       speeds.disableRight();
-        } else if (joystick.getRightBumperIsHeld()) {
+    } else if (joystick.getRightBumperIsHeld()) {
       speeds.disableLeft();
-        }
-
-    if (joyVal == 0 && lastJoyVal > 0) setHoldPosition();
-    if (joyVal == 0) hold();
-    else subsystem.setSpeed(speeds);
     }
+
+    //    if (joyVal == 0 && lastJoyVal > 0) setHoldPosition();
+
+    //    if (joyVal == 0) hold();
+    //    else {
+    subsystem.setSpeed(speeds);
+    //   }
+    this.lastJoyVal = joyVal;
+  }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("TestClimber.end( interrupted = " + interrupted + " )");
+    System.out.println("TestClimber.end( interrupted = " + interrupted + " )");
     subsystem.stop();
     }
 
