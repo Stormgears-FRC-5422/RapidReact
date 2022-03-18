@@ -24,4 +24,8 @@ public class LimitSwitch extends DigitalInput {
         return (!super.get()) && enabled;
     }
 
+    public boolean rawGet() {
+        return !super.get();
+    }
+
 }

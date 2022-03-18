@@ -54,6 +54,10 @@ public class Feeder extends SubsystemBase {
         return limitSwitch.get();
     }
 
+    public boolean getRawLimit() {
+        return limitSwitch.rawGet();
+    }
+
     public void setLimit(boolean limit) {
         if (limit) limitSwitch.enable();
         else limitSwitch.disable();

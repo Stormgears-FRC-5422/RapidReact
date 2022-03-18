@@ -1,10 +1,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
 import frc.robot.commands.ballHandler.LiftIntake;
+import frc.robot.commands.ballHandler.auto.AutoSequence;
 import frc.robot.commands.climber.HomeClimber;
 import frc.robot.commands.climber.HomePivot;
 import frc.robot.commands.climber.TestClimber;
@@ -167,6 +169,10 @@ public class RobotContainer {
 //      if (kDiagnostic) {diagnosticIntake.setDefaultCommand(testIntake);
     }
 
+  }
+
+  public SequentialCommandGroup getAutonomousCommandGroup(){
+    return new AutoSequence(shoot, drive);
   }
 
   public StormDrive getDrive() {
