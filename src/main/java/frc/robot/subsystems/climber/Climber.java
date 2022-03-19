@@ -3,9 +3,11 @@ package frc.robot.subsystems.climber;
 import com.revrobotics.SparkMaxLimitSwitch;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.*;
 
+@Log.Exclude
 public class Climber extends ClimbingSubsystem {
 
   private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.24, 0, 0.0686, 0);
@@ -55,6 +57,7 @@ public class Climber extends ClimbingSubsystem {
   public void onlyHardLimits() {
     disableSoftLimits();
     enableHardLimits(true);
+    allLimitsOn = false;
     System.out.println("Only Hard Limits");
   }
 
@@ -90,12 +93,14 @@ public class Climber extends ClimbingSubsystem {
   public void disableAllLimits() {
     disableSoftLimits();
     enableHardLimits(false);
+    allLimitsOn = false;
   }
 
   @Override
   public void enableAllLimits() {
     enableSoftLimits();
     enableHardLimits(true);
+    allLimitsOn = true;
   }
 
   private void enableHardLimits(boolean enabled) {

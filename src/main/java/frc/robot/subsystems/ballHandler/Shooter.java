@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
 import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.*;
@@ -16,8 +17,10 @@ public class Shooter extends SubsystemBase implements Loggable {
       new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless);
   private final SimpleMotorFeedforward feedforward =
       new SimpleMotorFeedforward(kShooterS, kShooterV, kShooterA);
-  public Height mode = Height.LOW;
-  private ExponentialAverage averageSpeed = new ExponentialAverage(this::getSpeed, 4);
+
+  public Height mode = Height.Custom;
+
+  private ExponentialAverage averageSpeed = new ExponentialAverage(this::getSpeed, 8);
 
   public Shooter() {
     motor.setInverted(false);
@@ -45,7 +48,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   //    @Log.Graph(name = "Exp Speed", visibleTime = 3)
 
   public void resetExponential() {
-    averageSpeed = new ExponentialAverage(this::getSpeed, 4);
+    averageSpeed = new ExponentialAverage(this::getSpeed, 8);
   }
 
   public void off() {
@@ -57,18 +60,34 @@ public class Shooter extends SubsystemBase implements Loggable {
     return mode.rps;
   }
 
+  @Config.NumberSlider(
+      name = "New Setpoint",
+      min = 10,
+      max = 90,
+      blockIncrement = 1,
+      defaultValue = 35)
+  public void setSetpoint(double setpoint) {
+    mode = Height.fromRPS(setpoint);
+  }
+
   public void runToSpeed(double pidOutput) {
     motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), 0));
   }
 
   public enum Height {
     LOW(kShooterLowRPS),
-    HIGH(kShooterHighRPS);
+    HIGH(kShooterHighRPS),
+    Custom(kShooterLowRPS);
 
-    private final double rps;
+    private double rps;
 
     Height(double rps) {
       this.rps = rps;
+    }
+
+    public static Height fromRPS(double rps) {
+      Custom.rps = rps;
+      return Custom;
     }
   }
 

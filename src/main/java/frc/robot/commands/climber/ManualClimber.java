@@ -5,16 +5,22 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.climber.ClimbingSubsystem;
 import frc.utils.LRSpeeds;
 import frc.utils.joysticks.StormXboxController;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
 import java.util.function.DoubleSupplier;
 
 import static frc.robot.Constants.kClimberSpeed;
 
-public class ManualClimber extends CommandBase {
-  private final ClimbingSubsystem subsystem;
+@Log.Exclude
+public class ManualClimber extends CommandBase implements Loggable {
+  @Log.Exclude private final ClimbingSubsystem subsystem;
   private final StormXboxController joystick;
   private final DoubleSupplier joystickInput;
-  double lastJoyVal = 0;
+  @Log boolean isHolding = false;
+
+  double holdLeft = 0;
+  double holdRight = 0;
 
   public ManualClimber(
       ClimbingSubsystem subsystem, StormXboxController joystick, DoubleSupplier joyStickInput) {
@@ -29,7 +35,6 @@ public class ManualClimber extends CommandBase {
   @Override
   public void initialize() {
     System.out.println("TestClimber.initialize()");
-    lastJoyVal = joystickInput.getAsDouble();
   }
 
   @Override
@@ -55,10 +60,19 @@ public class ManualClimber extends CommandBase {
     }
 
     //    if (joyVal == 0 && lastJoyVal > 0) setHoldPosition();
-
-    if (joyVal == 0) hold(subsystem.leftPosition(), subsystem.rightPosition());
-    else subsystem.setSpeed(speeds);
-    this.lastJoyVal = joyVal;
+    if (joyVal == 0) {
+      if (!isHolding) {
+        holdLeft = subsystem.leftPosition();
+        holdRight = subsystem.rightPosition();
+        hold(holdLeft, holdRight);
+        isHolding = true;
+      } else {
+        hold(holdLeft, holdRight);
+      }
+    } else {
+      isHolding = false;
+      subsystem.setSpeed(speeds);
+    }
   }
 
   @Override

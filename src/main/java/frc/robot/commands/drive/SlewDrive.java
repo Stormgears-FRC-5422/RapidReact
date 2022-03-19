@@ -35,6 +35,12 @@ public class SlewDrive extends CommandBase {
   }
 
   @Override
+  public void initialize() {
+    System.out.println(
+        "INITIALINITIALINITIALINITIALINITIALINITIALINITIALINITIALINITIALINITIALINITIAL");
+  }
+
+  @Override
   public void execute() {
     double targetSpeed = (drive.getPrecision() ? kXPrecision : 1) * joystick.getTriggerSpeed();
     double targetZRotation = (drive.getPrecision() ? kZPrecision : 1) * joystick.getLeftJoystickX();

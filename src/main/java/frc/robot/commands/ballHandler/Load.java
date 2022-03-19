@@ -7,7 +7,7 @@ import frc.robot.subsystems.ballHandler.Intake;
 public class Load extends CommandBase {
 
   private final Intake intake;
-  private final Feeder feeder;
+  public final Feeder feeder;
 
   public Load(Intake intake, Feeder feeder) {
     this.intake = intake;

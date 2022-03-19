@@ -6,7 +6,8 @@ public enum PivotGoal {
   MOST_BACK(5),
   FIRST(52),
   //    SECOND(150),
-  FURTHEST(145);
+  FURTHEST(145),
+  Custom(0);
 
   TrapezoidProfile.State state;
 
@@ -16,5 +17,10 @@ public enum PivotGoal {
 
   public TrapezoidProfile.State getState() {
     return state;
+  }
+
+  public static PivotGoal setCustom(double position) {
+    Custom.state.position = position;
+    return Custom;
   }
 }

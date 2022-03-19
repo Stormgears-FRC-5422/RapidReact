@@ -2,9 +2,10 @@ package frc.robot.commands.climber.home;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.climber.ClimbingSubsystem;
+import io.github.oblarg.oblog.annotations.Log;
 
 public class Home extends CommandBase {
-  ClimbingSubsystem subsystem;
+  @Log.Exclude ClimbingSubsystem subsystem;
 
   public Home(ClimbingSubsystem subsystem) {
     System.out.println("Home()");

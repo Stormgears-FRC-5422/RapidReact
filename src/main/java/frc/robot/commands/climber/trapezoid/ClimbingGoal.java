@@ -6,7 +6,8 @@ public enum ClimbingGoal {
   LOWEST(10),
   SECOND(80),
   FIRST(275),
-  HIGHEST(275);
+  HIGHEST(275),
+  Custom(0);
 
   TrapezoidProfile.State state;
 
@@ -16,5 +17,10 @@ public enum ClimbingGoal {
 
   public TrapezoidProfile.State getState() {
     return state;
+  }
+
+  public static ClimbingGoal setCustom(double position) {
+    Custom.state.position = position;
+    return Custom;
   }
 }

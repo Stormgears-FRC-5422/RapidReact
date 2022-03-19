@@ -68,7 +68,9 @@ public class Robot extends TimedRobot {
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    robotContainer.getAutonomous().schedule();
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -86,8 +88,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
+    // Cancels all running commands at the start of test mode.//
   }
 
   /** This function is called periodically during test mode. */

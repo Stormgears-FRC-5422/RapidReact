@@ -64,6 +64,10 @@ public class Feeder extends SubsystemBase implements Loggable {
     return limitSwitch.get();
   }
 
+  public boolean getAbsoluteLimit() {
+    return limitSwitch.getAbsoluteLimit();
+  }
+
   public void setLimit(boolean limit) {
     if (limit) limitSwitch.enable();
     else limitSwitch.disable();

@@ -44,10 +44,10 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
 
   @Override
   public void initialize() {
-    updatePosition(goal.get());
+    updatePosition(currentGoal);
     leftTrapezoidProfileCommand.initialize();
     rightTrapezoidProfileCommand.initialize();
-    System.out.println("TRYING TO MOVE " + subsystem.getName() + " TO " + goal.get().position);
+    System.out.println("TRYING TO MOVE " + subsystem.getName() + " TO " + currentGoal);
   }
 
   @Override
@@ -60,7 +60,7 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   public void end(boolean interrupted) {
     leftTrapezoidProfileCommand.end(interrupted);
     rightTrapezoidProfileCommand.end(interrupted);
-    if (!interrupted) subsystem.holdTarget(goal.get().position);
+    if (!interrupted) subsystem.holdTarget(currentGoal.position);
   }
 
   @Override
@@ -77,7 +77,10 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   }
 
   public void updatePosition(State newPosition) {
+    System.out.println("Updated to" + newPosition.position);
     currentGoal = newPosition;
+    System.out.println("Updated to" + currentGoal.position);
+
     this.leftTrapezoidProfileCommand =
         new TrapezoidProfileCommand(
             new TrapezoidProfile(constraints, currentGoal, new State(subsystem.leftPosition(), 0)),

@@ -12,41 +12,38 @@ import frc.utils.LRSpeeds;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
 import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 public abstract class ClimbingSubsystem extends SubsystemBase implements Loggable {
   @Log(name = "lc", methodName = "update")
   protected final ExponentialAverage leftCurrent;
 
-  protected final StormSpark leftMotor;
-  protected final StormSpark rightMotor;
-
   @Log(name = "rc", methodName = "update")
   protected final ExponentialAverage rightCurrent;
 
-  @Override
-  public String configureLogName() {
-    return getName();
-  }
+  protected final StormSpark leftMotor;
+  protected final StormSpark rightMotor;
 
-  protected final PIDController leftPIDController;
-  protected final PIDController rightPIDController;
+  protected final String name = getName();
+  @Config.PIDController protected final PIDController leftPIDController;
+  @Config.PIDController protected final PIDController rightPIDController;
 
   protected final double homeCurrentLimit;
   protected final double homeSpeed;
-  private final HoldTargetPosition holdTargetPosition;
 
+  @Log.Exclude private final HoldTargetPosition holdTargetPosition;
+  @Log public boolean allLimitsOn;
+  @Log.Exclude // TODO
   protected LRSpeeds speeds = new LRSpeeds();
-
-  protected boolean setSpeed = true;
-  protected boolean goingHome = false;
-  protected boolean leftHome = false;
-  protected boolean rightHome = false;
-  protected boolean hasBeenHomed = false;
-
+  @Log protected boolean setSpeed = true;
+  @Log protected boolean goingHome = false;
+  @Log protected boolean leftHome = false;
+  @Log protected boolean rightHome = false;
+  @Log protected boolean hasBeenHomed = false;
   // For monitoring on Shuffleboard, does nothing
-  protected double pidOutput = 0;
-  protected double feedForwardOutputs = 0;
+  @Log protected double pidOutput = 0;
+  @Log protected double feedForwardOutputs = 0;
 
   protected ClimbingSubsystem(
       int leftMotorID,
@@ -85,7 +82,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     rightMotor.setOpenLoopRampRate(0.25);
 
     // Optimistic - we need to zero if the robot has been off...
-    setSoftLimits();
+    enableSoftLimits();
+    allLimitsOn = false;
     shuffleBoard();
   }
 
@@ -206,10 +204,12 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     builder.addDoubleProperty("right position", this::rightPosition, null);
   }
 
+  @Log(name = "left position")
   public double leftPosition() {
     return -leftMotor.getEncoder().getPosition();
   }
 
+  @Log(name = "right position")
   public double rightPosition() {
     return -rightMotor.getEncoder().getPosition();
   }
@@ -240,9 +240,10 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
   public abstract void disableAllLimits();
 
+  public boolean isAllLimitsOn() {
+    return allLimitsOn;
+  }
+
   public abstract void enableAllLimits();
 
-  private double getCurrent(ExponentialAverage current) {
-    return current.getValue();
-  }
 }

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
@@ -30,6 +31,7 @@ import frc.robot.subsystems.drive.TalonDrive;
 import frc.robot.subsystems.sensors.NavX;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
+import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.*;
@@ -57,8 +59,8 @@ public class RobotContainer {
   private Intake intake;
   private TestIntake testIntake;
   private LiftIntake liftIntake;
-  private Climber climber;
-  private Pivot pivot;
+  @Log.Exclude private Climber climber;
+  @Log.Exclude private Pivot pivot;
   private Load load;
   @Log private Shoot shoot;
   private NavXAlign navXAlign;
@@ -67,30 +69,27 @@ public class RobotContainer {
   private ManualClimber manualPivot;
   private SendableChooser<ClimbingGoal> climberGoalChooser;
   private SendableChooser<PivotGoal> pivotGoalChooser;
-  private HoldCurrentPosition climberHoldCurrentPosition;
-  private HoldCurrentPosition pivotHoldCurrentPosition;
-  private PositionClimber climberTrapezoid;
-  private PositionPivot pivotTrapezoid;
+  @Log.Exclude private HoldCurrentPosition climberHoldCurrentPosition;
+  @Log.Exclude private HoldCurrentPosition pivotHoldCurrentPosition;
+  @Log private PositionClimber climberTrapezoid;
 
-  public RobotContainer() {
-    driveJoystick = new StormXboxController(0);
-    secondaryJoystick = new StormXboxController(1);
-    buttonBoard = ButtonBoard.getInstance(driveJoystick, secondaryJoystick);
+  @Config.Command(tabName = "Driver", name = "Up Climber")
+  private final InstantCommand goFirst =
+      new InstantCommand(
+          () -> {
+            climberTrapezoid.updatePosition(ClimbingGoal.HIGHEST.getState());
+            climberTrapezoid.schedule();
+          });
 
-    useDriveJoystick = true; // (kUseController && kUseJoystick0 && driveJoystick.isConnected());
-    useSecondaryJoystick =
-        true; // (kUseController && kUseJoystick1 && secondaryJoystick.isConnected());
-    System.out.println(
-        "useDriveJoystick is "
-            + useDriveJoystick
-            + ", useSecondaryJoystick is "
-            + useSecondaryJoystick);
+  @Config.Command(tabName = "Driver", name = "Down Climber")
+  private final InstantCommand goLow =
+      new InstantCommand(
+          () -> {
+            climberTrapezoid.updatePosition(ClimbingGoal.LOWEST.getState());
+            climberTrapezoid.schedule();
+          });
 
-    initSubsystems();
-    initCommands();
-    configureButtonBindings();
-    configureDefaultCommands();
-  }
+  @Log private PositionPivot pivotTrapezoid;
 
   private void initSubsystems() {
     if (kUseDrive) {
@@ -117,6 +116,61 @@ public class RobotContainer {
       if (kUseFeeder) feeder = new Feeder();
       if (kUseIntake) intake = new Intake();
     }
+  }
+
+  @Config.Command(tabName = "Driver", name = "back Pivot")
+  private final InstantCommand backPivot =
+      new InstantCommand(
+          () -> {
+            pivotTrapezoid.updatePosition(PivotGoal.MOST_BACK.getState());
+            pivotTrapezoid.schedule();
+          });
+
+  @Config.Command(tabName = "Driver", name = "in pivot")
+  private final InstantCommand goIn =
+      new InstantCommand(
+          () -> {
+            pivotTrapezoid.updatePosition(PivotGoal.FIRST.getState());
+            pivotTrapezoid.schedule();
+          });
+
+  private void configureDefaultCommands() {
+    if (useDriveJoystick) {
+      if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
+    }
+    if (useSecondaryJoystick) {
+      if (kUseClimber) climber.setDefaultCommand(climberHoldCurrentPosition);
+      if (kUsePivot) pivot.setDefaultCommand(pivotHoldCurrentPosition);
+    }
+  }
+
+  public StormDrive getDrive() {
+    return drive;
+  }
+
+  public CommandBase getHomingSequence() {
+    return homingSequence == null ? new InstantCommand() : homingSequence;
+  }
+
+  private Autonomous autonomous;
+
+  public RobotContainer() {
+    driveJoystick = new StormXboxController(0);
+    secondaryJoystick = new StormXboxController(1);
+    buttonBoard = ButtonBoard.getInstance(driveJoystick, secondaryJoystick);
+
+    useDriveJoystick = (kUseController && kUseJoystick0 && driveJoystick.isConnected());
+    useSecondaryJoystick = (kUseController && kUseJoystick1 && secondaryJoystick.isConnected());
+    System.out.println(
+        "useDriveJoystick is "
+            + useDriveJoystick
+            + ", useSecondaryJoystick is "
+            + useSecondaryJoystick);
+
+    initSubsystems();
+    initCommands();
+    configureButtonBindings();
+    configureDefaultCommands();
   }
 
   private void initCommands() {
@@ -150,6 +204,8 @@ public class RobotContainer {
       initClimberChooser();
       climberTrapezoid = new PositionClimber(climber, climberGoalChooser.getSelected()::getState);
     }
+    if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
+      autonomous = new Autonomous(load, shoot, drive);
   }
 
   private void configureButtonBindings() {
@@ -192,44 +248,60 @@ public class RobotContainer {
       if (kUseClimber) {
         System.out.println("... climber and pivot");
         climberTrapezoid = new PositionClimber(climber, climberGoalChooser.getSelected()::getState);
-        buttonBoard.trapezoidClimber.whenPressed(climberTrapezoid);
+        buttonBoard.trapezoidClimber.whenPressed(
+            () -> {
+              climberTrapezoid.updatePosition(climberGoalChooser.getSelected().getState());
+              climberTrapezoid.schedule();
+            });
       }
       if (kUsePivot) {
         pivotTrapezoid = new PositionPivot(pivot, pivotGoalChooser.getSelected()::getState);
-        buttonBoard.trapezoidPivot.whenPressed(pivotTrapezoid);
+        buttonBoard.trapezoidPivot.whenPressed(
+            () -> {
+              pivotTrapezoid.updatePosition(pivotGoalChooser.getSelected().getState());
+              pivotTrapezoid.schedule();
+            });
       }
     }
-  }
-
-  private void configureDefaultCommands() {
-    if (useDriveJoystick) {
-      if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
-    }
-    if (useSecondaryJoystick) {
-      if (kUseClimber) climber.setDefaultCommand(climberHoldCurrentPosition);
-      if (kUsePivot) pivot.setDefaultCommand(pivotHoldCurrentPosition);
-    }
-  }
-
-  public StormDrive getDrive() {
-    return drive;
-  }
-
-  public CommandBase getHomingSequence() {
-    return homingSequence == null ? new InstantCommand() : homingSequence;
   }
 
   private void initPivotChooser() {
     pivotGoalChooser = new SendableChooser<>();
     for (PivotGoal goal : PivotGoal.values()) pivotGoalChooser.addOption(goal.name(), goal);
     pivotGoalChooser.setDefaultOption(PivotGoal.values()[0].name(), PivotGoal.values()[0]);
-    //    Shuffleboard.getTab("Driver").add("Pivot Goal", pivotGoalChooser);
+    //        Shuffleboard.getTab("Driver").add("Pivot Goal", pivotGoalChooser);
   }
 
   private void initClimberChooser() {
     climberGoalChooser = new SendableChooser<>();
     for (ClimbingGoal goal : ClimbingGoal.values()) climberGoalChooser.addOption(goal.name(), goal);
     climberGoalChooser.setDefaultOption(ClimbingGoal.values()[0].name(), ClimbingGoal.values()[0]);
-    //    Shuffleboard.getTab("Driver").add("Climbing Goal", climberGoalChooser);
+    //        Shuffleboard.getTab("Driver").add("Climbing Goal", climberGoalChooser);
+  }
+
+  public Autonomous getAutonomous() {
+    return autonomous;
+  }
+
+  @Config.ToggleSwitch(
+      name = "Climber Limits",
+      methodName = "climber.isAllLimitsEnabled()",
+      defaultValue = true,
+      tabName = "Driver")
+  private void toggleLimits(boolean toggle) {
+    if (climber == null) return;
+    if (toggle) climber.enableAllLimits();
+    if (toggle) climber.disableAllLimits();
+  }
+
+  @Config.ToggleSwitch(
+      name = "Pivot Limits",
+      methodName = "pivot.isAllLimitsEnabled()",
+      defaultValue = true,
+      tabName = "Driver")
+  private void toggleLimitsPivot(boolean toggle) {
+    if (pivot == null) return;
+    if (toggle) pivot.enableAllLimits();
+    if (toggle) pivot.disableAllLimits();
   }
 }

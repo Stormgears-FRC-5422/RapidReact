@@ -41,6 +41,8 @@ public class DriveDistanceProfile extends TrapezoidProfileCommand {
     super.end(interrupted);
     m_drive.getDifferentialDrive().setSafetyEnabled(true);
     m_drive.getDifferentialDrive().arcadeDrive(0, 0);
+    System.out.println(
+        "FINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHEDFINISHED");
     //    SmartDashboard.putString("DriveDistance", "finished");
   }
 }
