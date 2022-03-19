@@ -6,30 +6,29 @@ import frc.robot.subsystems.ballHandler.Intake;
 
 public class Load extends CommandBase {
 
-    private final Intake intake;
-    private final Feeder feeder;
+  private final Intake intake;
+  private final Feeder feeder;
 
-    public Load(Intake intake, Feeder feeder) {
-        this.intake = intake;
-        this.feeder = feeder;
-        addRequirements(intake, feeder);
-    }
+  public Load(Intake intake, Feeder feeder) {
+    this.intake = intake;
+    this.feeder = feeder;
+    addRequirements(intake, feeder);
+  }
 
-    @Override
-    public void initialize() {
-        feeder.setLimit(true);
-    }
+  @Override
+  public void initialize() {
+    feeder.setLimit(true);
+  }
 
-    @Override
-    public void execute() {
-        intake.on();
-        feeder.on();
-    }
+  @Override
+  public void execute() {
+    intake.on();
+    feeder.on();
+  }
 
-    @Override
-    public void end(boolean interrupted) {
-        intake.off();
-        feeder.off();
-    }
-
+  @Override
+  public void end(boolean interrupted) {
+    intake.off();
+    feeder.off();
+  }
 }

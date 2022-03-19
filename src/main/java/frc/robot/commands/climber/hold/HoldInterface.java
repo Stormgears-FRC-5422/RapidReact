@@ -3,11 +3,23 @@ package frc.robot.commands.climber.hold;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.climber.ClimbingSubsystem;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
-public abstract class HoldInterface extends CommandBase {
-  final ClimbingSubsystem subsystem;
+public abstract class HoldInterface extends CommandBase implements Loggable {
+
+  @Log.Exclude final ClimbingSubsystem subsystem;
+
+  @Log(name = "Holding Left Position")
   double initialLeftPosition;
+
+  @Log(name = "Holding Right Position")
   double initialRightPosition;
+
+  @Override
+  public String configureLogName() {
+    return subsystem.getName();
+  }
 
   HoldInterface(ClimbingSubsystem subsystem) {
     this.subsystem = subsystem;

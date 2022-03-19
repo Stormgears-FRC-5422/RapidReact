@@ -1,8 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -15,6 +12,8 @@ import frc.robot.commands.climber.ManualClimber;
 import frc.robot.commands.climber.hold.HoldCurrentPosition;
 import frc.robot.commands.climber.home.Home;
 import frc.robot.commands.climber.home.HomeClimbingSystem;
+import frc.robot.commands.climber.trapezoid.ClimbingGoal;
+import frc.robot.commands.climber.trapezoid.PivotGoal;
 import frc.robot.commands.climber.trapezoid.PositionClimber;
 import frc.robot.commands.climber.trapezoid.PositionPivot;
 import frc.robot.commands.drive.DriveDistanceProfile;
@@ -31,6 +30,7 @@ import frc.robot.subsystems.drive.TalonDrive;
 import frc.robot.subsystems.sensors.NavX;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
+import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.*;
 
@@ -42,48 +42,49 @@ import static frc.robot.Constants.*;
  */
 public class RobotContainer {
 
-  /**
-   * Declare subsystems - initialize below
-   */
+  private final boolean useDriveJoystick;
+  private final boolean useSecondaryJoystick;
+  private final StormXboxController driveJoystick;
+  private final StormXboxController secondaryJoystick;
+  private final ButtonBoard buttonBoard;
+  /** Declare subsystems - initialize below */
   private StormDrive drive;
-  private NavX navX;
-  private DiagnosticIntake diagnosticIntake;
 
-  private Shooter shooter;
+  @Log private NavX navX;
+  private DiagnosticIntake diagnosticIntake;
+  @Log private Shooter shooter;
   private Feeder feeder;
   private Intake intake;
   private TestIntake testIntake;
   private LiftIntake liftIntake;
-
   private Climber climber;
   private Pivot pivot;
-
   private Load load;
-  private Shoot shoot;
+  @Log private Shoot shoot;
   private NavXAlign navXAlign;
-
   private CommandBase homingSequence;
-  private final boolean useDriveJoystick;
-  private final boolean useSecondaryJoystick;
   private ManualClimber manualClimber;
   private ManualClimber manualPivot;
   private SendableChooser<ClimbingGoal> climberGoalChooser;
   private SendableChooser<PivotGoal> pivotGoalChooser;
-
-  private final StormXboxController driveJoystick;
-  private final StormXboxController secondaryJoystick;
-  private final ButtonBoard buttonBoard;
   private HoldCurrentPosition climberHoldCurrentPosition;
   private HoldCurrentPosition pivotHoldCurrentPosition;
+  private PositionClimber climberTrapezoid;
+  private PositionPivot pivotTrapezoid;
 
   public RobotContainer() {
     driveJoystick = new StormXboxController(0);
     secondaryJoystick = new StormXboxController(1);
     buttonBoard = ButtonBoard.getInstance(driveJoystick, secondaryJoystick);
 
-    useDriveJoystick = (kUseController && kUseJoystick0 && driveJoystick.isConnected());
-    useSecondaryJoystick = (kUseController && kUseJoystick1 && secondaryJoystick.isConnected());
-    System.out.println("useDriveJoystick is " + useDriveJoystick + ", useSecondaryJoystick is " + useSecondaryJoystick);
+    useDriveJoystick = true; // (kUseController && kUseJoystick0 && driveJoystick.isConnected());
+    useSecondaryJoystick =
+        true; // (kUseController && kUseJoystick1 && secondaryJoystick.isConnected());
+    System.out.println(
+        "useDriveJoystick is "
+            + useDriveJoystick
+            + ", useSecondaryJoystick is "
+            + useSecondaryJoystick);
 
     initSubsystems();
     initCommands();
@@ -109,10 +110,9 @@ public class RobotContainer {
     if (kUsePivot) pivot = new Pivot();
 
     if (kDiagnostic) {
-      //diagnosticIntake = new DiagnosticIntake();
+      // diagnosticIntake = new DiagnosticIntake();
       if (kUseFeeder) feeder = new Feeder();
-    }
-    else {
+    } else {
       if (kUseShooter) shooter = new Shooter();
       if (kUseFeeder) feeder = new Feeder();
       if (kUseIntake) intake = new Intake();
@@ -124,7 +124,7 @@ public class RobotContainer {
       if (kUseIntake && kUseFeeder) load = new Load(intake, feeder);
       if (kUseShooter && kUseFeeder) shoot = new Shoot(feeder, shooter);
     } else {
-      //testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
+      // testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
       if (kUseFeeder) {
         liftIntake = new LiftIntake(feeder, secondaryJoystick);
       }
@@ -141,12 +141,14 @@ public class RobotContainer {
           new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
       pivotHoldCurrentPosition = new HoldCurrentPosition(pivot);
       initPivotChooser();
+      pivotTrapezoid = new PositionPivot(pivot, pivotGoalChooser.getSelected()::getState);
     }
     if (kUseClimber) {
       manualClimber =
-          new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
+          new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getRightJoystickY);
       climberHoldCurrentPosition = new HoldCurrentPosition(climber);
       initClimberChooser();
+      climberTrapezoid = new PositionClimber(climber, climberGoalChooser.getSelected()::getState);
     }
   }
 
@@ -163,7 +165,8 @@ public class RobotContainer {
           System.out.println("... navX");
           buttonBoard.navXAlignButton.whileHeld(navXAlign);
           buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(2, 1, 1, drive));
-          buttonBoard.autoDriveTestReverseButton.whenPressed(new DriveDistanceProfile(-2, 1, 1, drive));
+          buttonBoard.autoDriveTestReverseButton.whenPressed(
+              new DriveDistanceProfile(-2, 1, 1, drive));
         }
       }
 
@@ -188,20 +191,21 @@ public class RobotContainer {
       else if (kUseClimber) buttonBoard.manualClimberButton.whenPressed(manualClimber);
       if (kUseClimber) {
         System.out.println("... climber and pivot");
-        buttonBoard.trapezoidClimber.whenPressed(
-            () -> new PositionClimber(climber, climberGoalChooser.getSelected().state));
+        climberTrapezoid = new PositionClimber(climber, climberGoalChooser.getSelected()::getState);
+        buttonBoard.trapezoidClimber.whenPressed(climberTrapezoid);
       }
       if (kUsePivot) {
-        buttonBoard.trapezoidPivot.whenPressed(
-            () -> new PositionPivot(pivot, pivotGoalChooser.getSelected().state));
+        pivotTrapezoid = new PositionPivot(pivot, pivotGoalChooser.getSelected()::getState);
+        buttonBoard.trapezoidPivot.whenPressed(pivotTrapezoid);
       }
     }
-
   }
 
   private void configureDefaultCommands() {
     if (useDriveJoystick) {
       if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
+    }
+    if (useSecondaryJoystick) {
       if (kUseClimber) climber.setDefaultCommand(climberHoldCurrentPosition);
       if (kUsePivot) pivot.setDefaultCommand(pivotHoldCurrentPosition);
     }
@@ -219,70 +223,13 @@ public class RobotContainer {
     pivotGoalChooser = new SendableChooser<>();
     for (PivotGoal goal : PivotGoal.values()) pivotGoalChooser.addOption(goal.name(), goal);
     pivotGoalChooser.setDefaultOption(PivotGoal.values()[0].name(), PivotGoal.values()[0]);
-    Shuffleboard.getTab("Pivot").add("Pivot Goal", pivotGoalChooser);
+    //    Shuffleboard.getTab("Driver").add("Pivot Goal", pivotGoalChooser);
   }
 
   private void initClimberChooser() {
     climberGoalChooser = new SendableChooser<>();
     for (ClimbingGoal goal : ClimbingGoal.values()) climberGoalChooser.addOption(goal.name(), goal);
     climberGoalChooser.setDefaultOption(ClimbingGoal.values()[0].name(), ClimbingGoal.values()[0]);
-    Shuffleboard.getTab("Climber").add("Climbing Goal", climberGoalChooser);
+    //    Shuffleboard.getTab("Driver").add("Climbing Goal", climberGoalChooser);
   }
-
-  private void shuffleBoardDriverTab() {
-    // TODO add Camera Feed
-    ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
-    driverTab.add("PivotChooser", pivotGoalChooser);
-    driverTab.add(
-        "Move Pivot To Goal", new PositionPivot(pivot, pivotGoalChooser.getSelected().state));
-    driverTab.add("ClimberChooser", climberGoalChooser);
-    driverTab.add(
-        "Move Climber To Goal",
-        new PositionClimber(climber, climberGoalChooser.getSelected().state));
-    driverTab.add(
-        "Climber To Value",
-        builder ->
-            builder.addDoubleProperty(
-                "Climber Value",
-                () -> 0,
-                value -> new PositionClimber(climber, new TrapezoidProfile.State(value, 0))));
-    driverTab.add(
-        "Pivot To Value",
-        builder ->
-            builder.addDoubleProperty(
-                "Pivot Value",
-                () -> 0,
-                value -> new PositionPivot(pivot, new TrapezoidProfile.State(value, 0))));
-    driverTab.add("Climber Position", climber);
-    driverTab.add("Pivot Position", pivot);
-  }
-
-  enum PivotGoal {
-    MOST_BACK(5),
-    FIRST(52),
-    //    SECOND(150),
-    FURTHEST(145);
-
-    TrapezoidProfile.State state;
-
-    PivotGoal(double state) {
-      this.state = new TrapezoidProfile.State(state, 0);
-    }
-
-  }
-
-  enum ClimbingGoal {
-    LOWEST(10),
-    SECOND(80),
-    FIRST(275),
-    HIGHEST(275);
-
-    TrapezoidProfile.State state;
-
-    ClimbingGoal(double state) {
-      this.state = new TrapezoidProfile.State(state, 0);
-    }
-
-  }
-
 }

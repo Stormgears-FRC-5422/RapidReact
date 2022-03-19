@@ -35,11 +35,10 @@ public class Pivot extends ClimbingSubsystem {
   @Override
   public double feedForward(double velocity) {
     return feedforward.calculate(0, velocity);
-    }
+  }
 
   @Override
   void setSoftLimits() {
     setSoftLimits(-kCLimberForwardLimit, -kCLimberReverseLimit);
   }
 }
-

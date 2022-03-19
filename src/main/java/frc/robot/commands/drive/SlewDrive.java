@@ -9,72 +9,69 @@ import frc.utils.joysticks.StormXboxController;
 import static frc.robot.Constants.*;
 
 public class SlewDrive extends CommandBase {
-    private final StormDrive drive;
-    private final StormXboxController joystick;
-    private final DifferentialDrive differentialDrive;
+  private final StormDrive drive;
+  private final StormXboxController joystick;
+  private final DifferentialDrive differentialDrive;
+  protected SlewRateLimiter limiter;
+  protected SlewRateLimiter turnLimiter;
+  private double prevSlewRate;
+  private double prevTurnSlewRate;
 
-    private double prevSlewRate;
-    private double prevTurnSlewRate;
+  public SlewDrive(StormDrive drive, StormXboxController joystick) {
+    System.out.println("Just created the SlewDrive command");
+    addRequirements(drive);
 
-    protected SlewRateLimiter limiter;
-    protected SlewRateLimiter turnLimiter;
+    this.drive = drive;
+    this.joystick = joystick;
+    differentialDrive = drive.getDifferentialDrive();
 
-    public SlewDrive(StormDrive drive, StormXboxController joystick) {
-        System.out.println("Just created the SlewDrive command");
-        addRequirements(drive);
+    prevSlewRate = drive.getSlewRate();
+    prevTurnSlewRate = drive.getTurnSlewRate();
+    System.out.println(
+        "Initial slewRate: " + prevSlewRate + "  initial turnSlewRate: " + prevTurnSlewRate);
 
-        this.drive = drive;
-        this.joystick = joystick;
-        differentialDrive = drive.getDifferentialDrive();
+    limiter = new SlewRateLimiter(prevSlewRate);
+    turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
+  }
 
-        prevSlewRate = drive.getSlewRate();
-        prevTurnSlewRate = drive.getTurnSlewRate();
-        System.out.println("Initial slewRate: " + prevSlewRate + "  initial turnSlewRate: " + prevTurnSlewRate);
+  @Override
+  public void execute() {
+    double targetSpeed = (drive.getPrecision() ? kXPrecision : 1) * joystick.getTriggerSpeed();
+    double targetZRotation = (drive.getPrecision() ? kZPrecision : 1) * joystick.getLeftJoystickX();
 
-        limiter = new SlewRateLimiter(prevSlewRate);
-        turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
+    if (drive.getSlewRate() != prevSlewRate) {
+      System.out.println("updated slewRate: " + prevSlewRate);
+      prevSlewRate = drive.getSlewRate();
+      limiter = new SlewRateLimiter(prevSlewRate);
     }
 
-    @Override
-    public void execute() {
-        double targetSpeed = (drive.getPrecision() ? kXPrecision : 1 ) * joystick.getTriggerSpeed();
-        double targetZRotation = (drive.getPrecision() ? kZPrecision : 1 ) * joystick.getLeftJoystickX();
-
-        if (drive.getSlewRate() != prevSlewRate) {
-            System.out.println("updated slewRate: " + prevSlewRate);
-            prevSlewRate = drive.getSlewRate();
-            limiter = new SlewRateLimiter(prevSlewRate);
-        }
-
-        if (drive.getTurnSlewRate() != prevTurnSlewRate) {
-            System.out.println("updated turnSlewRate: " + prevSlewRate);
-            prevTurnSlewRate = drive.getTurnSlewRate();
-            turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
-        }
-
-        targetSpeed=limiter.calculate(targetSpeed);
-        targetZRotation=turnLimiter.calculate(targetZRotation);
-
-        if (kSquareDriveInputs) {
-            targetSpeed = Math.copySign(targetSpeed * targetSpeed, targetSpeed);
-            targetZRotation = Math.copySign(targetZRotation * targetZRotation, targetZRotation);
-        }
-
-        //System.out.println("targetSpeed: " + targetSpeed + ", targetZRotation: " + targetZRotation);
-        if (kDriveStyle.equalsIgnoreCase("curvature"))
-            differentialDrive.curvatureDrive(targetSpeed, targetZRotation,true);
-        else
-            differentialDrive.arcadeDrive(targetSpeed, targetZRotation, false); // inputs already squared above
-
-
-
+    if (drive.getTurnSlewRate() != prevTurnSlewRate) {
+      System.out.println("updated turnSlewRate: " + prevSlewRate);
+      prevTurnSlewRate = drive.getTurnSlewRate();
+      turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
     }
 
-    @Override
-    public void end(boolean interrupted) {}
+    targetSpeed = limiter.calculate(targetSpeed);
+    targetZRotation = turnLimiter.calculate(targetZRotation);
 
-    @Override
-    public boolean isFinished() {
-        return false;
+    if (kSquareDriveInputs) {
+      targetSpeed = Math.copySign(targetSpeed * targetSpeed, targetSpeed);
+      targetZRotation = Math.copySign(targetZRotation * targetZRotation, targetZRotation);
     }
+
+    // System.out.println("targetSpeed: " + targetSpeed + ", targetZRotation: " + targetZRotation);
+    if (kDriveStyle.equalsIgnoreCase("curvature"))
+      differentialDrive.curvatureDrive(targetSpeed, targetZRotation, true);
+    else
+      differentialDrive.arcadeDrive(
+          targetSpeed, targetZRotation, false); // inputs already squared above
+  }
+
+  @Override
+  public void end(boolean interrupted) {}
+
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }

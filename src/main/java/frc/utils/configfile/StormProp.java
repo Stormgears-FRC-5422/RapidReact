@@ -1,15 +1,20 @@
 package frc.utils.configfile;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.Set;
 
 public class StormProp {
-    // Maybe rename this file to something better
-    private static final String path = "/home/lvuser/deploy";
+  // Maybe rename this file to something better
+  private static final String path =
+      Filesystem.getDeployDirectory().getPath(); // "/home/lvuser/deploy";
     private static final String name = "config.properties";
     private static final String backUP = "config_backup.properties";
     private static final File configFile = new File(path, name);
@@ -231,9 +236,9 @@ public class StormProp {
         String[] Blacklist = {"robotName", "hasNavX", "rearRightTalonId", "rearLeftTalonId", "frontRightTalonId", "frontLeftTalonId", "wheelRadius"};
         Set<String> keys = properties.stringPropertyNames();
         for (String key : keys) {
-            if (!Arrays.asList(Blacklist).contains(key)) {
-                SmartDashboard.putString(key, getPropString(key));
-            }
+      if (!Arrays.asList(Blacklist).contains(key)) {
+        //                SmartDashboard.putString(key, getPropString(key));
+      }
         }
     }
 

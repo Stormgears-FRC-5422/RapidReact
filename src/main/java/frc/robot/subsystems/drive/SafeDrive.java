@@ -2,23 +2,16 @@ package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.configfile.StormProp;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.filters.Filter;
 import frc.utils.motorcontrol.StormSpark;
 
-import java.util.Map;
-
-import static java.lang.Math.*;
-
 import static edu.wpi.first.wpilibj.DriverStation.reportWarning;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
 
 public class SafeDrive extends SubsystemBase {
   /*
@@ -43,14 +36,14 @@ public class SafeDrive extends SubsystemBase {
   private final Filter leftMasterTemp;
   private final Filter leftSlaveTemp;
   private final double delta;
-  private final NetworkTableEntry m_shuffle_slew_rate;
-  private final NetworkTableEntry m_shuffle_turn_slew_rate;
+  private final double m_shuffle_slew_rate;
+  private final double m_shuffle_turn_slew_rate;
   private final DifferentialDrive differentialDrive;
   private final CANSparkMax.IdleMode idleMode = CANSparkMax.IdleMode.kCoast;
   private double temp;
   private int tempWarningCount = 0;
-  private double m_slew_rate_value;
-  private double m_turn_slew_rate_value;
+  private final double m_slew_rate_value;
+  private final double m_turn_slew_rate_value;
   private boolean reverse;
   private boolean precision;
 
@@ -89,43 +82,44 @@ public class SafeDrive extends SubsystemBase {
     differentialDrive.setSafetyEnabled(true);
 
     m_slew_rate_value = 0.5;
-    m_shuffle_slew_rate =
-        Shuffleboard.getTab("Control")
-            .add("Drive Slew Rate", 1.5)
-            .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", .5, "max", 2.5))
-            .getEntry();
-    m_shuffle_slew_rate.addListener(
-        event -> {
-          m_slew_rate_value = event.value.getDouble();
-        },
-        EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+    m_shuffle_slew_rate = 1.5;
+    //    m_shuffle_slew_rate =
+    //        Shuffleboard.getTab("Control")
+    //            .add("Drive Slew Rate", 1.5)
+    //            .withWidget(BuiltInWidgets.kNumberSlider)
+    //            .withProperties(Map.of("min", .5, "max", 2.5))
+    //            .getEntry();
+    //    m_shuffle_slew_rate.addListener(
+    //        event -> {
+    //          m_slew_rate_value = event.value.getDouble();
+    //        },
+    //        EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
     m_turn_slew_rate_value = 5;
-    m_shuffle_turn_slew_rate =
-        Shuffleboard.getTab("Control")
-            .add("Turn Slew Rate", 1.5)
-            .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 1.0, "max", 10.0))
-            .getEntry();
-    m_shuffle_turn_slew_rate.addListener(
-        event -> {
-          m_turn_slew_rate_value = event.value.getDouble();
-        },
-        EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+    m_shuffle_turn_slew_rate = 1.5;
+    //        Shuffleboard.getTab("Control")
+    //            .add("Turn Slew Rate", 1.5)
+    //            .withWidget(BuiltInWidgets.kNumberSlider)
+    //            .withProperties(Map.of("min", 1.0, "max", 10.0))
+    //            .getEntry();
+    //    m_shuffle_turn_slew_rate.addListener(
+    //        event -> {
+    //          m_turn_slew_rate_value = event.value.getDouble();
+    //        },
+    //        EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Drive RightS Current", rightSlaveCurrent.update());
-    SmartDashboard.putNumber("Drive RightM Current", rightMasterCurrent.update());
-    SmartDashboard.putNumber("Drive LeftM Current", leftMasterCurrent.update());
-    SmartDashboard.putNumber("Drive LeftS Current", leftSlaveCurrent.update());
-
-    SmartDashboard.putNumber("Drive RightM Temp", rightMasterTemp.update());
-    SmartDashboard.putNumber("Drive RightS Temp", rightSlaveTemp.update());
-    SmartDashboard.putNumber("Drive LeftM Temp", leftMasterTemp.update());
-    SmartDashboard.putNumber("Drive LeftS Temp", leftSlaveTemp.update());
+    //    SmartDashboard.putNumber("Drive RightS Current", rightSlaveCurrent.update());
+    //    SmartDashboard.putNumber("Drive RightM Current", rightMasterCurrent.update());
+    //    SmartDashboard.putNumber("Drive LeftM Current", leftMasterCurrent.update());
+    //    SmartDashboard.putNumber("Drive LeftS Current", leftSlaveCurrent.update());
+    //
+    //    SmartDashboard.putNumber("Drive RightM Temp", rightMasterTemp.update());
+    //    SmartDashboard.putNumber("Drive RightS Temp", rightSlaveTemp.update());
+    //    SmartDashboard.putNumber("Drive LeftM Temp", leftMasterTemp.update());
+    //    SmartDashboard.putNumber("Drive LeftS Temp", leftSlaveTemp.update());
 
     temp =
         max(
@@ -160,8 +154,8 @@ public class SafeDrive extends SubsystemBase {
   }
 
   public void driveArcade(double x, double z) {
-    SmartDashboard.putNumber("Drive X", x);
-    SmartDashboard.putNumber("Drive Z", z);
+    //    SmartDashboard.putNumber("Drive X", x);
+    //    SmartDashboard.putNumber("Drive Z", z);
 
     // TODO: These are sticky and never getting reset to 0. Test effect of resetting in else
     if (abs(x) > 0.15 && abs(z) > 0.1) {

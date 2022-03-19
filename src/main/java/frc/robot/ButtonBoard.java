@@ -6,52 +6,28 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import static frc.utils.joysticks.StormXboxController.*;
 
-import static frc.robot.Constants.*;
-
 public class ButtonBoard {
-    private static ButtonBoard instance;
+  private static ButtonBoard instance;
+  /** Initialize DRIVE JOYSTICK BUTTONS */
+  public final JoystickButton precisionButton;
 
-    public static ButtonBoard getInstance(GenericHID driveJoystick, GenericHID secondaryJoystick) {
-        if (instance == null) instance = new ButtonBoard(driveJoystick, secondaryJoystick);
-        return instance;
-    }
+  public final JoystickButton reverseButton;
+  public final JoystickButton navXAlignButton;
+  public final JoystickButton autoDriveTestButton;
+  public final JoystickButton autoDriveTestReverseButton;
+  public final JoystickButton loadButton;
+  public final JoystickButton shootButton;
+  public final JoystickButton toggleShootingHeightButton;
+  /** Initialize SECONDARY JOYSTICK BUTTONS */
+  public final JoystickButton trapezoidClimber;
 
-    /**
-     * Initialize DRIVE JOYSTICK BUTTONS
-     */
-    public final JoystickButton precisionButton;
-    public final JoystickButton reverseButton;
+  public final JoystickButton trapezoidPivot;
+  public final JoystickButton homeClimbing;
+  public final JoystickButton homeClimberButton;
+  public final JoystickButton homePivotButton;
+  public final Button manualClimberButton;
 
-    public final JoystickButton navXAlignButton;
-
-    public final JoystickButton autoDriveTestButton;
-    public final JoystickButton autoDriveTestReverseButton;
-
-    public final JoystickButton loadButton;
-    public final JoystickButton shootButton;
-    public final JoystickButton toggleShootingHeightButton;
-
-    /**
-     * Initialize SECONDARY JOYSTICK BUTTONS
-     */
-
-    public final JoystickButton trapezoidClimber;
-    public final JoystickButton trapezoidPivot;
-
-    public final JoystickButton homeClimbing;
-    public final JoystickButton homeClimberButton;
-    public final JoystickButton homePivotButton;
-
-    public final Button manualClimberButton;
-//    public final JoystickButton selectIntakeButton;
-//    public final JoystickButton selectFeederButton;
-//    public final JoystickButton selectShooterButton;
-//    public final JoystickButton climbLeftUpButton;
-//    public final JoystickButton climbLeftDownButton;
-//    public final JoystickButton climbRightUpButton;
-//    public final JoystickButton climbRightDownButton;
-
-    private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
+  private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
     // ********************************
     // Put Drive Joystick settings here
     // ********************************
@@ -76,6 +52,17 @@ public class ButtonBoard {
     trapezoidPivot = new JoystickButton(secondaryJoystick, littleRightButton);
 
     manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
-    }
+  }
+  //    public final JoystickButton selectIntakeButton;
+  //    public final JoystickButton selectFeederButton;
+  //    public final JoystickButton selectShooterButton;
+  //    public final JoystickButton climbLeftUpButton;
+  //    public final JoystickButton climbLeftDownButton;
+  //    public final JoystickButton climbRightUpButton;
+  //    public final JoystickButton climbRightDownButton;
 
+  public static ButtonBoard getInstance(GenericHID driveJoystick, GenericHID secondaryJoystick) {
+    if (instance == null) instance = new ButtonBoard(driveJoystick, secondaryJoystick);
+    return instance;
+  }
 }

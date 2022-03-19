@@ -6,11 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import io.github.oblarg.oblog.Logger;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static frc.robot.Constants.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -30,10 +29,12 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
 
-    System.out.println("Robot starting at " + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
+    System.out.println(
+        "Robot starting at "
+            + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
     robotContainer = new RobotContainer();
+    Logger.configureLoggingAndConfig(robotContainer, false);
   }
-
 
   /**
    * This function is called every robot packet, no matter the mode. Use this for items like
@@ -45,6 +46,17 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    Logger.updateEntries();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    robotPeriodic();
+  }
+
+  @Override
+  public void simulationInit() {
+    super.simulationInit();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -56,8 +68,7 @@ public class Robot extends TimedRobot {
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
-  public void autonomousInit() {
-  }
+  public void autonomousInit() {}
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -71,8 +82,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {

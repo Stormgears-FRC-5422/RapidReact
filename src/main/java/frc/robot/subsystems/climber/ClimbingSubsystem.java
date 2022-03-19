@@ -6,22 +6,28 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.climber.hold.HoldTargetPosition;
 import frc.utils.LRSpeeds;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
-public abstract class ClimbingSubsystem extends SubsystemBase {
-
-  protected final String shuffleBoardTabName = this.getName();
+public abstract class ClimbingSubsystem extends SubsystemBase implements Loggable {
+  @Log(name = "lc", methodName = "update")
+  protected final ExponentialAverage leftCurrent;
 
   protected final StormSpark leftMotor;
   protected final StormSpark rightMotor;
 
-  protected final ExponentialAverage leftCurrent;
+  @Log(name = "rc", methodName = "update")
   protected final ExponentialAverage rightCurrent;
+
+  @Override
+  public String configureLogName() {
+    return getName();
+  }
 
   protected final PIDController leftPIDController;
   protected final PIDController rightPIDController;
@@ -84,21 +90,21 @@ public abstract class ClimbingSubsystem extends SubsystemBase {
   }
 
   private void shuffleBoard() {
-    Shuffleboard.getTab(shuffleBoardTabName).add(this);
-    Shuffleboard.getTab(shuffleBoardTabName).add("leftPID", this.leftPIDController);
-    Shuffleboard.getTab(shuffleBoardTabName).add("rightPID", this.rightPIDController);
-    Shuffleboard.getTab(shuffleBoardTabName).addNumber("PIDOutput", () -> pidOutput);
-    Shuffleboard.getTab(shuffleBoardTabName).addNumber("FFOutput", () -> feedForwardOutputs);
-    Shuffleboard.getTab(shuffleBoardTabName)
-        .addNumber("CombinedOutput", () -> pidOutput + feedForwardOutputs);
-    Shuffleboard.getTab(shuffleBoardTabName).addBoolean("setSpeed", () -> setSpeed);
-    Shuffleboard.getTab(shuffleBoardTabName).addNumber("lC", leftCurrent::update);
-    Shuffleboard.getTab(shuffleBoardTabName).addNumber("rC", rightCurrent::update);
-    Shuffleboard.getTab(shuffleBoardTabName)
-        .addString(
-            "command running",
-            () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "none");
-    }
+    //    Shuffleboard.getTab(shuffleBoardTabName).add(this);
+    //    Shuffleboard.getTab(shuffleBoardTabName).add("leftPID", this.leftPIDController);
+    //    Shuffleboard.getTab(shuffleBoardTabName).add("rightPID", this.rightPIDController);
+    //    Shuffleboard.getTab(shuffleBoardTabName).addNumber("PIDOutput", () -> pidOutput);
+    //    Shuffleboard.getTab(shuffleBoardTabName).addNumber("FFOutput", () -> feedForwardOutputs);
+    //    Shuffleboard.getTab(shuffleBoardTabName)
+    //        .addNumber("CombinedOutput", () -> pidOutput + feedForwardOutputs);
+    //    Shuffleboard.getTab(shuffleBoardTabName).addBoolean("setSpeed", () -> setSpeed);
+    //    Shuffleboard.getTab(shuffleBoardTabName).addNumber("lC", leftCurrent::update);
+    //    Shuffleboard.getTab(shuffleBoardTabName).addNumber("rC", rightCurrent::update);
+    //    Shuffleboard.getTab(shuffleBoardTabName)
+    //        .addString(
+    //            "command running",
+    //            () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "none");
+  }
 
   public void stop() {
     setSpeed(LRSpeeds.stop());
@@ -235,4 +241,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase {
   public abstract void disableAllLimits();
 
   public abstract void enableAllLimits();
+
+  private double getCurrent(ExponentialAverage current) {
+    return current.getValue();
+  }
 }

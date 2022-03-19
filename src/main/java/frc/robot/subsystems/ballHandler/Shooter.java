@@ -2,69 +2,78 @@ package frc.robot.subsystems.ballHandler;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.*;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemBase implements Loggable {
+  private final StormSpark motor =
+      new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final SimpleMotorFeedforward feedforward =
+      new SimpleMotorFeedforward(kShooterS, kShooterV, kShooterA);
+  public Height mode = Height.LOW;
+  private ExponentialAverage averageSpeed = new ExponentialAverage(this::getSpeed, 4);
 
-    public enum Height{
-        LOW(kShooterLowRPS),
-        HIGH(kShooterHighRPS);
+  public Shooter() {
+    motor.setInverted(false);
+    motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    motor.getEncoder().setVelocityConversionFactor(1 / 60d); // from rpm to rps
+    //        Shuffleboard.getTab("Shoot Command").add(this);
+  }
 
-        private final double rps;
+  @Override
+  public String configureLogName() {
+    return "BallHandler";
+  }
 
-        Height(double rps) {
-            this.rps = rps;
-        }
-    }
+  @Log.Graph(name = "Speed", visibleTime = 3)
+  public double getSpeed() {
+    return motor.getEncoder().getVelocity();
+  }
 
-    private final StormSpark motor = new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final SparkMaxPIDController pidController = motor.getPIDController();
-    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(kShooterS, kShooterV, kShooterA);
-  private final ExponentialAverage averageSpeed = new ExponentialAverage(this::getSpeed, 8);
-    public Height mode = Height.LOW;
+  //    @Log.Graph(name = "Speed", visibleTime = 3)
 
-    public Shooter() {
-        motor.setInverted(false);
-        motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        motor.getEncoder().setVelocityConversionFactor(1 / 60d); //from rpm to rps
-        Shuffleboard.getTab("Shoot Command").add(this);
-    }
-
-
-    public double getSpeed() {
-        return motor.getEncoder().getVelocity();
-    }
-
+  @Log(name = "Exp Speed #")
   public double getExponentialSpeed() {
     return averageSpeed.update();
   }
+  //    @Log.Graph(name = "Exp Speed", visibleTime = 3)
 
-    public void setSpeed(double speed) {
-        pidController.setReference(speed, CANSparkMax.ControlType.kVelocity);
-    }
+  public void resetExponential() {
+    averageSpeed = new ExponentialAverage(this::getSpeed, 4);
+  }
 
-    public void off() {
-        motor.set(0);
-    }
+  public void off() {
+    motor.set(0);
+  }
 
-    public double setpoint() {
-        return mode.rps;
-    }
+  @Log(name = "Setpoint")
+  public double setpoint() {
+    return mode.rps;
+  }
 
-    public void runToSpeed(double pidOutput){
-        motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), 0));
-    }
+  public void runToSpeed(double pidOutput) {
+    motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), 0));
+  }
 
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("speed", motor.getEncoder()::getVelocity, null);
+  public enum Height {
+    LOW(kShooterLowRPS),
+    HIGH(kShooterHighRPS);
+
+    private final double rps;
+
+    Height(double rps) {
+      this.rps = rps;
     }
+  }
+
+  //    @Override
+  //    public void initSendable(SendableBuilder builder) {
+  //        builder.addDoubleProperty("speed", motor.getEncoder()::getVelocity, null);
+  //    }
 }
