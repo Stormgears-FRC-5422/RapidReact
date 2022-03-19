@@ -61,6 +61,10 @@ public class PathAuto extends CommandBase {
         );
         Shuffleboard.getTab("PathFollowingShafflu").add(pidLeft);
         Shuffleboard.getTab("PathFollowingShafflu").add(pidRight);
+        Shuffleboard.getTab("PathFollowingShafflu").addNumber("Left Velocity", drive::getLeftVelocity);
+        Shuffleboard.getTab("PathFollowingShafflu").addNumber("Right Velocity", drive::getRightVelocity);
+        Shuffleboard.getTab("PathFollowingShafflu").addNumber("Left Error", () -> pidLeft.getSetpoint() - drive.getLeftVelocity());
+        Shuffleboard.getTab("PathFollowingShafflu").addNumber("Right Error", () -> pidRight.getSetpoint() - drive.getRightVelocity());
     }
 
     public Pose2d getPose2d(){
@@ -82,8 +86,6 @@ public class PathAuto extends CommandBase {
     @Override
     public void execute(){
         /*SmartDashboard.putNumber("",command.target);*/
-        SmartDashboard.getNumber("encoder", (drive.getLeftVelocity()));
-        SmartDashboard.getNumber("encoder", (drive.getRightVelocity()));
         pose2d = odometry.update(
                 Rotation2d.fromDegrees(navX.getHeading()),
                 (drive.getLeftVelocity()), /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60,
