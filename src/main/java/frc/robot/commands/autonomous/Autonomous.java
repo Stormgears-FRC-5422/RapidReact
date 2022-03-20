@@ -7,20 +7,16 @@ import frc.robot.commands.drive.DriveDistanceProfile;
 import frc.utils.drive.StormDrive;
 
 public class Autonomous extends SequentialCommandGroup {
-  private final LoadOne loadOne;
-  private final ShootOne shootOne;
-  private final DriveDistanceProfile driveDistanceProfile;
 
   public Autonomous(Load load, Shoot shoot, StormDrive drive) {
-    this.loadOne = new LoadOne(load, load.feeder::getAbsoluteLimit);
-    this.shootOne = new ShootOne(shoot, load.feeder::getAbsoluteLimit);
-    driveDistanceProfile = new DriveDistanceProfile(-3d, 3d, 2d, drive);
+    LoadOne loadOne = new LoadOne(load, load.feeder::getAbsoluteLimit);
+    ShootOne shootOne = new ShootOne(shoot, load.feeder::getAbsoluteLimit);
     addCommands(
         new DriveDistanceProfile(-1d, 10d, 5d, drive),
         new DriveDistanceProfile(1d, 10d, 5d, drive),
         loadOne,
         shootOne,
-        driveDistanceProfile);
+        new DriveDistanceProfile(-3d, 3d, 2d, drive));
   }
 
   @Override

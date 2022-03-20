@@ -5,8 +5,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 public enum ClimbingGoal {
   LOWEST(10),
   SECOND(80),
-  FIRST(275),
-  HIGHEST(275),
+  FIRST(225),
+  HIGHEST(285),
   Custom(0);
 
   TrapezoidProfile.State state;

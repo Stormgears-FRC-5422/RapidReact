@@ -70,7 +70,10 @@ public class SlewDrive extends CommandBase {
       differentialDrive.curvatureDrive(targetSpeed, targetZRotation, true);
     else
       differentialDrive.arcadeDrive(
-          targetSpeed, targetZRotation, false); // inputs already squared above
+          drive.getPrecision() ? kXPrecision : 0.85 * targetSpeed,
+          drive.getPrecision()
+              ? kZPrecision
+              : 0.85 * targetZRotation); // inputs already squared above
   }
 
   @Override

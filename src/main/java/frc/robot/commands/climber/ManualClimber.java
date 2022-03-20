@@ -17,10 +17,6 @@ public class ManualClimber extends CommandBase implements Loggable {
   @Log.Exclude private final ClimbingSubsystem subsystem;
   private final StormXboxController joystick;
   private final DoubleSupplier joystickInput;
-  @Log boolean isHolding = false;
-
-  double holdLeft = 0;
-  double holdRight = 0;
 
   public ManualClimber(
       ClimbingSubsystem subsystem, StormXboxController joystick, DoubleSupplier joyStickInput) {
@@ -60,19 +56,8 @@ public class ManualClimber extends CommandBase implements Loggable {
     }
 
     //    if (joyVal == 0 && lastJoyVal > 0) setHoldPosition();
-    if (joyVal == 0) {
-      if (!isHolding) {
-        holdLeft = subsystem.leftPosition();
-        holdRight = subsystem.rightPosition();
-        hold(holdLeft, holdRight);
-        isHolding = true;
-      } else {
-        hold(holdLeft, holdRight);
-      }
-    } else {
-      isHolding = false;
-      subsystem.setSpeed(speeds);
-    }
+
+    subsystem.setSpeed(speeds);
   }
 
   @Override

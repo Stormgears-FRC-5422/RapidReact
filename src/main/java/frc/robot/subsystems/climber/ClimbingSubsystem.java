@@ -115,9 +115,9 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   public void setSpeed(LRSpeeds lrSpeed) {
     setSpeed = true;
 
-    if (hasBeenHomed) {
-      this.speeds = lrSpeed;
-    }
+    //    if (hasBeenHomed) {
+    this.speeds = lrSpeed;
+    //    }
 
     if (speeds.left() != 0) leftHome = false;
     if (speeds.right() != 0) rightHome = false;
@@ -240,7 +240,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
   public abstract void disableAllLimits();
 
-  public boolean isAllLimitsOn() {
+  public boolean isAllLimitsEnabled() {
     return allLimitsOn;
   }
 

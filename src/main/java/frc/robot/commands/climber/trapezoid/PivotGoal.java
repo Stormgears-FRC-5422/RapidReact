@@ -3,9 +3,9 @@ package frc.robot.commands.climber.trapezoid;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public enum PivotGoal {
-  MOST_BACK(5),
-  FIRST(52),
-  //    SECOND(150),
+  MOST_BACK(0),
+  FIRST(58),
+  SECOND(150),
   FURTHEST(145),
   Custom(0);
 

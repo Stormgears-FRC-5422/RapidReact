@@ -44,6 +44,7 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
 
   @Override
   public void initialize() {
+    subsystem.disableAllLimits();
     updatePosition(currentGoal);
     leftTrapezoidProfileCommand.initialize();
     rightTrapezoidProfileCommand.initialize();
