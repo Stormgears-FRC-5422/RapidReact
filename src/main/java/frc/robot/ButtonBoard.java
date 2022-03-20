@@ -11,7 +11,7 @@ public class ButtonBoard {
   /** Initialize DRIVE JOYSTICK BUTTONS */
   public final JoystickButton precisionButton;
 
-  public final JoystickButton reverseButton;
+  //  public final JoystickButton reverseButton;
   //  public final JoystickButton autoDriveTestButton;
   //  public final JoystickButton autoDriveTestReverseButton;
   public final JoystickButton loadButton;
@@ -32,7 +32,7 @@ public class ButtonBoard {
     // Put Drive Joystick settings here
     // ********************************
     precisionButton = new JoystickButton(driveJoystick, leftBumper);
-    reverseButton = new JoystickButton(driveJoystick, rightBumper);
+    //    reverseButton = new JoystickButton(driveJoystick, rightBumper);
     //    autoDriveTestButton = new JoystickButton(driveJoystick, littleLeftButton);
     //    autoDriveTestReverseButton = new JoystickButton(driveJoystick, littleRightButton);
 

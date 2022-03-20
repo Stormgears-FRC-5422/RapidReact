@@ -220,7 +220,7 @@ public class RobotContainer {
       System.out.println("Setting up drive joystick commands");
       if (kUseDrive) {
         System.out.println("... drive");
-        buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
+        //        buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
         buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
         if (kUseNavX) {
           System.out.println("... navX");

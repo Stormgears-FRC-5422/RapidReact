@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
 import io.github.oblarg.oblog.Loggable;
@@ -52,7 +53,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   public void off() {
-    motor.set(0);
+    new WaitCommand(1).andThen(() -> motor.set(0)).schedule();
   }
 
   @Log(name = "Setpoint")
