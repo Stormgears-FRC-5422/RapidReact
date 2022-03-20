@@ -34,7 +34,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     return "BallHandler";
   }
 
-  @Log.Graph(name = "Speed", visibleTime = 3)
+  @Log(name = "Speed")
   public double getSpeed() {
     return motor.getEncoder().getVelocity();
   }
@@ -65,7 +65,7 @@ public class Shooter extends SubsystemBase implements Loggable {
       min = 10,
       max = 90,
       blockIncrement = 1,
-      defaultValue = 41)
+      defaultValue = 65)
   public void setSetpoint(double setpoint) {
     mode = Height.fromRPS(setpoint);
   }

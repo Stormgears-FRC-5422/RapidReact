@@ -49,9 +49,9 @@ public class ManualClimber extends CommandBase implements Loggable {
     LRSpeeds speeds = new LRSpeeds(joyVal * kClimberSpeed, joyVal * kClimberSpeed);
 
     // Move only the one on the side with the bumper held
-    if (joystick.getLeftBumperIsHeld()) {
+    if (joystick.getLeftLittleButtonIsHeld()) {
       speeds.disableRight();
-    } else if (joystick.getRightBumperIsHeld()) {
+    } else if (joystick.getRightLittleButtonIsHeld()) {
       speeds.disableLeft();
     }
 

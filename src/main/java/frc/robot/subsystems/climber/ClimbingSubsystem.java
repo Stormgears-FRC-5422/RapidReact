@@ -6,6 +6,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.climber.hold.HoldTargetPosition;
 import frc.utils.LRSpeeds;
@@ -233,7 +234,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   public abstract double feedForward(double velocity);
 
   public void holdTarget(double target) {
-    this.getCurrentCommand().end(true);
+    CommandScheduler.getInstance().cancelAll();
     holdTargetPosition.updateTargetPosition(target);
     holdTargetPosition.schedule();
   }

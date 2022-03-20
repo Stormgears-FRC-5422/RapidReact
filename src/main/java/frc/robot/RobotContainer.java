@@ -1,9 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.ballHandler.Load;
@@ -17,9 +15,7 @@ import frc.robot.commands.climber.trapezoid.ClimbingGoal;
 import frc.robot.commands.climber.trapezoid.PivotGoal;
 import frc.robot.commands.climber.trapezoid.PositionClimber;
 import frc.robot.commands.climber.trapezoid.PositionPivot;
-import frc.robot.commands.drive.DriveDistanceProfile;
 import frc.robot.commands.drive.SlewDrive;
-import frc.robot.commands.navX.NavXAlign;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
 import frc.robot.subsystems.ballHandler.Intake;
@@ -61,24 +57,25 @@ public class RobotContainer {
   private LiftIntake liftIntake;
 
   @Config.Command(tabName = "Driver", name = "Up Climber")
-  private final InstantCommand goFirst =
-      new InstantCommand(
-          () -> {
-            climberTrapezoid.updatePosition(ClimbingGoal.FIRST.getState());
-            climberTrapezoid.schedule();
-          });
+  private final SequentialCommandGroup goIn;
 
   @Config.Command(tabName = "Driver", name = "UP Climber TRAVERSE")
-  private final InstantCommand yert =
-      new InstantCommand(
-          () -> {
-            climberTrapezoid.updatePosition(ClimbingGoal.HIGHEST.getState());
-            climberTrapezoid.schedule();
-          });
+  private final SequentialCommandGroup highestClimber;
+
+  @Config.Command(tabName = "Driver", name = "Down Climber")
+  private final SequentialCommandGroup lowestClimber;
+
+  @Config.Command(tabName = "Driver", name = "Chin Up pivot")
+  private final SequentialCommandGroup firstpivot;
+
+  @Config.Command(tabName = "Driver", name = "Level 2 pivot")
+  private final SequentialCommandGroup secondPivot;
+
+  @Config.Command(tabName = "Driver", name = "back Pivot")
+  private final SequentialCommandGroup mostBack;
 
   private Load load;
   @Log private Shoot shoot;
-  private NavXAlign navXAlign;
   private CommandBase homingSequence;
   private ManualClimber manualClimber;
   private ManualClimber manualPivot;
@@ -87,32 +84,57 @@ public class RobotContainer {
   @Log.Exclude private HoldCurrentPosition climberHoldCurrentPosition;
   @Log.Exclude private HoldCurrentPosition pivotHoldCurrentPosition;
   @Log private PositionClimber climberTrapezoid;
-
-  @Config.Command(tabName = "Driver", name = "Chin Up pivot")
-  private final InstantCommand goIn =
-      new InstantCommand(
-          () -> {
-            pivotTrapezoid.updatePosition(PivotGoal.FIRST.getState());
-            pivotTrapezoid.schedule();
-          });
-
-  @Config.Command(tabName = "Driver", name = "Down Climber")
-  private final InstantCommand goLow =
-      new InstantCommand(
-          () -> {
-            climberTrapezoid.updatePosition(ClimbingGoal.LOWEST.getState());
-            climberTrapezoid.schedule();
-          });
-
-  @Config.Command(tabName = "Driver", name = "Level 2 pivot")
-  private final InstantCommand itDonotMatter =
-      new InstantCommand(
-          () -> {
-            pivotTrapezoid.updatePosition(PivotGoal.SECOND.getState());
-            pivotTrapezoid.schedule();
-          });
-
   @Log private PositionPivot pivotTrapezoid;
+  @Log private Climber climber;
+  @Log private Pivot pivot;
+  private Autonomous autonomous;
+
+  public RobotContainer() {
+    driveJoystick = new StormXboxController(0);
+    secondaryJoystick = new StormXboxController(1);
+    buttonBoard = ButtonBoard.getInstance(driveJoystick, secondaryJoystick);
+
+    useDriveJoystick = true; // (kUseController && kUseJoystick0 && driveJoystick.isConnected());
+    useSecondaryJoystick =
+        true; // (kUseController && kUseJoystick1 && secondaryJoystick.isConnected());
+    System.out.println(
+        "useDriveJoystick is "
+            + useDriveJoystick
+            + ", useSecondaryJoystick is "
+            + useSecondaryJoystick);
+
+    initSubsystems();
+    initCommands();
+    configureDefaultCommands();
+    configureButtonBindings();
+    goIn =
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> climberTrapezoid.updatePosition(ClimbingGoal.FIRST.getState())),
+            new ScheduleCommand(climberTrapezoid));
+    highestClimber =
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> climberTrapezoid.updatePosition(ClimbingGoal.HIGHEST.getState())),
+            new ScheduleCommand(climberTrapezoid));
+    lowestClimber =
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> climberTrapezoid.updatePosition(ClimbingGoal.LOWEST.getState())),
+            new ScheduleCommand(climberTrapezoid));
+    firstpivot =
+        new SequentialCommandGroup(
+            new InstantCommand(() -> pivotTrapezoid.updatePosition(PivotGoal.FIRST.getState())),
+            new ProxyScheduleCommand(pivotTrapezoid));
+    secondPivot =
+        new SequentialCommandGroup(
+            new InstantCommand(() -> pivotTrapezoid.updatePosition(PivotGoal.SECOND.getState())),
+            new ProxyScheduleCommand(pivotTrapezoid));
+    mostBack =
+        new SequentialCommandGroup(
+            new InstantCommand(() -> pivotTrapezoid.updatePosition(PivotGoal.MOST_BACK.getState())),
+            new ProxyScheduleCommand(pivotTrapezoid));
+  }
 
   private void initSubsystems() {
     if (kUseDrive) {
@@ -141,38 +163,6 @@ public class RobotContainer {
     }
   }
 
-  @Config.Command(tabName = "Driver", name = "back Pivot")
-  private final InstantCommand backPivot =
-      new InstantCommand(
-          () -> {
-            pivotTrapezoid.updatePosition(PivotGoal.MOST_BACK.getState());
-            pivotTrapezoid.schedule();
-          });
-
-  @Log private Climber climber;
-  @Log private Pivot pivot;
-  private Autonomous autonomous;
-
-  public RobotContainer() {
-    driveJoystick = new StormXboxController(0);
-    secondaryJoystick = new StormXboxController(1);
-    buttonBoard = ButtonBoard.getInstance(driveJoystick, secondaryJoystick);
-
-    useDriveJoystick = true; // (kUseController && kUseJoystick0 && driveJoystick.isConnected());
-    useSecondaryJoystick =
-        true; // (kUseController && kUseJoystick1 && secondaryJoystick.isConnected());
-    System.out.println(
-        "useDriveJoystick is "
-            + useDriveJoystick
-            + ", useSecondaryJoystick is "
-            + useSecondaryJoystick);
-
-    initSubsystems();
-    initCommands();
-    configureDefaultCommands();
-    configureButtonBindings();
-  }
-
   public StormDrive getDrive() {
     return drive;
   }
@@ -183,7 +173,6 @@ public class RobotContainer {
 
   public void configureDefaultCommands() {
     if (useDriveJoystick) {
-      if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
     }
     if (useSecondaryJoystick) {
       if (kUseClimber) climber.setDefaultCommand(climberHoldCurrentPosition);
@@ -201,9 +190,6 @@ public class RobotContainer {
         liftIntake = new LiftIntake(feeder, secondaryJoystick);
       }
     }
-
-    if (kUseNavX) navXAlign = new NavXAlign(drive, navX);
-
     if (kUsePivot && kUseClimber) homingSequence = new HomeClimbingSystem(climber, pivot);
     else if (kUsePivot) homingSequence = new Home(pivot);
     else if (kUseClimber) homingSequence = new Home(climber);
@@ -237,10 +223,10 @@ public class RobotContainer {
         buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
         if (kUseNavX) {
           System.out.println("... navX");
-          buttonBoard.navXAlignButton.whileHeld(navXAlign);
-          buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(2, 1, 1, drive));
-          buttonBoard.autoDriveTestReverseButton.whenPressed(
-              new DriveDistanceProfile(-2, 1, 1, drive));
+          //          buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(2, 1, 1,
+          // drive));
+          //          buttonBoard.autoDriveTestReverseButton.whenPressed(
+          //              new DriveDistanceProfile(-2, 1, 1, drive));
         }
       }
 
@@ -252,7 +238,6 @@ public class RobotContainer {
         }
       }
 
-      if (kUseNavX) buttonBoard.navXAlignButton.whileHeld(navXAlign);
     }
 
     if (useSecondaryJoystick) {
@@ -266,19 +251,20 @@ public class RobotContainer {
       if (kUseClimber) {
         System.out.println("... climber and pivot");
         climberTrapezoid = new PositionClimber(climber, climberGoalChooser.getSelected()::getState);
-        buttonBoard.trapezoidClimber.whenPressed(
-            () -> {
-              climberTrapezoid.updatePosition(climberGoalChooser.getSelected().getState());
-              climberTrapezoid.schedule();
-            });
+        //        buttonBoard.trapezoidClimber.whenPressed(
+        //            () -> {
+        //
+        // climberTrapezoid.updatePosition(climberGoalChooser.getSelected().getState());
+        //              climberTrapezoid.schedule();
+        //            });
       }
       if (kUsePivot) {
         pivotTrapezoid = new PositionPivot(pivot, pivotGoalChooser.getSelected()::getState);
-        buttonBoard.trapezoidPivot.whenPressed(
-            () -> {
-              pivotTrapezoid.updatePosition(pivotGoalChooser.getSelected().getState());
-              pivotTrapezoid.schedule();
-            });
+        //        buttonBoard.trapezoidPivot.whenPressed(
+        //            () -> {
+        //              pivotTrapezoid.updatePosition(pivotGoalChooser.getSelected().getState());
+        //              pivotTrapezoid.schedule();
+        //            });
       }
     }
   }
@@ -299,6 +285,10 @@ public class RobotContainer {
 
   public Autonomous getAutonomous() {
     return autonomous;
+  }
+
+  public void setDrive() {
+    if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
   }
 
   //  @Config.ToggleSwitch(

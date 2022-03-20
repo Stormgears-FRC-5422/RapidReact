@@ -80,6 +80,8 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     //    if (kDiagnostic && kUseFeeder) robotContainer.getLiftIntake().schedule();
     //    CommandScheduler.getInstance().schedule(robotContainer.getHomingSequence());
+    CommandScheduler.getInstance().cancelAll();
+    robotContainer.setDrive();
   }
 
   /** This function is called periodically during operator control. */

@@ -42,8 +42,8 @@ public class SlewDrive extends CommandBase {
 
   @Override
   public void execute() {
-    double targetSpeed = (drive.getPrecision() ? kXPrecision : 1) * joystick.getTriggerSpeed();
-    double targetZRotation = (drive.getPrecision() ? kZPrecision : 1) * joystick.getLeftJoystickX();
+    double targetSpeed = joystick.getTriggerSpeed();
+    double targetZRotation = joystick.getLeftJoystickX();
 
     if (drive.getSlewRate() != prevSlewRate) {
       System.out.println("updated slewRate: " + prevSlewRate);
@@ -67,13 +67,18 @@ public class SlewDrive extends CommandBase {
 
     // System.out.println("targetSpeed: " + targetSpeed + ", targetZRotation: " + targetZRotation);
     if (kDriveStyle.equalsIgnoreCase("curvature"))
-      differentialDrive.curvatureDrive(targetSpeed, targetZRotation, true);
+      differentialDrive.curvatureDrive(
+          (drive.getReverse() ? -1 : 1) * (drive.getPrecision() ? kXPrecision : 0.75) * targetSpeed,
+          (drive.getReverse() ? -1 : 1)
+              * (drive.getPrecision() ? kZPrecision : 0.6)
+              * targetZRotation,
+          true);
     else
       differentialDrive.arcadeDrive(
-          drive.getPrecision() ? kXPrecision : 0.85 * targetSpeed,
-          drive.getPrecision()
-              ? kZPrecision
-              : 0.85 * targetZRotation); // inputs already squared above
+          (drive.getReverse() ? -1 : 1) * (drive.getPrecision() ? kXPrecision : 0.85) * targetSpeed,
+          (drive.getReverse() ? -1 : 1)
+              * (drive.getPrecision() ? kZPrecision : 0.85)
+              * targetZRotation); // inputs already squared above
   }
 
   @Override

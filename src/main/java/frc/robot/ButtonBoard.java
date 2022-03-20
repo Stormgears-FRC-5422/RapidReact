@@ -12,17 +12,17 @@ public class ButtonBoard {
   public final JoystickButton precisionButton;
 
   public final JoystickButton reverseButton;
-  public final JoystickButton navXAlignButton;
-  public final JoystickButton autoDriveTestButton;
-  public final JoystickButton autoDriveTestReverseButton;
+  //  public final JoystickButton autoDriveTestButton;
+  //  public final JoystickButton autoDriveTestReverseButton;
   public final JoystickButton loadButton;
   public final JoystickButton shootButton;
   public final JoystickButton toggleShootingHeightButton;
   /** Initialize SECONDARY JOYSTICK BUTTONS */
-  public final JoystickButton trapezoidClimber;
+  //  public final JoystickButton trapezoidClimber;
 
-  public final JoystickButton trapezoidPivot;
+  //  public final JoystickButton trapezoidPivot;
   public final JoystickButton homeClimbing;
+
   public final JoystickButton homeClimberButton;
   public final JoystickButton homePivotButton;
   public final Button manualClimberButton;
@@ -31,25 +31,24 @@ public class ButtonBoard {
     // ********************************
     // Put Drive Joystick settings here
     // ********************************
-    precisionButton = new JoystickButton(driveJoystick, stickRightButton);
-    reverseButton = new JoystickButton(driveJoystick, AButton);
-    navXAlignButton = new JoystickButton(driveJoystick, stickRightButton);
-    autoDriveTestButton = new JoystickButton(driveJoystick, littleLeftButton);
-    autoDriveTestReverseButton = new JoystickButton(driveJoystick, littleRightButton);
+    precisionButton = new JoystickButton(driveJoystick, leftBumper);
+    reverseButton = new JoystickButton(driveJoystick, rightBumper);
+    //    autoDriveTestButton = new JoystickButton(driveJoystick, littleLeftButton);
+    //    autoDriveTestReverseButton = new JoystickButton(driveJoystick, littleRightButton);
 
-    shootButton = new JoystickButton(driveJoystick, rightBumper);
-    loadButton = new JoystickButton(driveJoystick, leftBumper);
-    toggleShootingHeightButton = new JoystickButton(driveJoystick, stickLeftButton);
+    shootButton = new JoystickButton(secondaryJoystick, rightBumper);
+    loadButton = new JoystickButton(secondaryJoystick, leftBumper);
+    toggleShootingHeightButton = new JoystickButton(secondaryJoystick, stickRightButton);
 
     // ********************************
     // Put Secondary Joystick settings here
     // ********************************
-    homePivotButton = new JoystickButton(secondaryJoystick, stickRightButton);
+    homePivotButton = new JoystickButton(secondaryJoystick, stickLeftButton);
     homeClimberButton = new JoystickButton(secondaryJoystick, stickLeftButton);
     homeClimbing = new JoystickButton(secondaryJoystick, stickLeftButton);
 
-    trapezoidClimber = new JoystickButton(secondaryJoystick, littleLeftButton);
-    trapezoidPivot = new JoystickButton(secondaryJoystick, littleRightButton);
+    //    trapezoidClimber = new JoystickButton(secondaryJoystick, littleLeftButton);
+    //    trapezoidPivot = new JoystickButton(secondaryJoystick, littleRightButton);
 
     manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
   }

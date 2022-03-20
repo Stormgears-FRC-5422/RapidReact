@@ -61,7 +61,7 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   public void end(boolean interrupted) {
     leftTrapezoidProfileCommand.end(interrupted);
     rightTrapezoidProfileCommand.end(interrupted);
-    if (!interrupted) subsystem.holdTarget(currentGoal.position);
+    subsystem.holdTarget(currentGoal.position);
   }
 
   @Override

@@ -43,6 +43,6 @@ public class Pivot extends ClimbingSubsystem {
 
   @Override
   void setSoftLimits() {
-    setSoftLimits(-kPivotForwardLimit, -kCLimberReverseLimit);
+    setSoftLimits(-kPivotForwardLimit, -kPivotReverseLimit);
   }
 }

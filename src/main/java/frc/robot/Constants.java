@@ -50,7 +50,7 @@ public final class Constants {
   public static final int kSmartCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double kStickNullSize = StormProp.getNumber("stickNullSize", 0.1);
   public static final double kXPrecision = .65; // StormProp.getNumber("xPrecision", 0.0);
-  public static final double kZPrecision = .65; // StormProp.getNumber("zPrecision", 0.0);
+  public static final double kZPrecision = .45; // StormProp.getNumber("zPrecision", 0.0);
 
   public static final double kAlignP = StormProp.getNumber("alignP", 0.05);
   public static final double kAlignI = StormProp.getNumber("alignI", 0.01);

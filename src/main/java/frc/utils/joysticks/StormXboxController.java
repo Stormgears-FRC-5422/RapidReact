@@ -3,8 +3,9 @@ package frc.utils.joysticks;
 
 import edu.wpi.first.wpilibj.Joystick;
 
-import static frc.robot.Constants.*;
-import static java.lang.Math.*;
+import static frc.robot.Constants.kStickNullSize;
+import static java.lang.Math.abs;
+import static java.lang.Math.signum;
 
 public class StormXboxController extends Joystick implements DriveJoystick {
 
@@ -89,6 +90,14 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     public boolean getLeftBumperIsHeld() {
         return getRawButton(leftBumper);
     }
+
+  public boolean getRightLittleButtonIsHeld() {
+    return getRawButton(littleRightButton);
+  }
+
+  public boolean getLeftLittleButtonIsHeld() {
+    return getRawButton(littleRightButton);
+  }
 
     public double getLeftJoystickX() {
         return applyNullZone(getRawAxis(leftXAxis));
