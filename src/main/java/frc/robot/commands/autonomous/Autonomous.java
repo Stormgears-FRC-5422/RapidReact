@@ -11,7 +11,12 @@ public class Autonomous extends SequentialCommandGroup {
   public Autonomous(Load load, Shoot shoot, StormDrive drive) {
     LoadOne loadOne = new LoadOne(load, load.feeder::getAbsoluteLimit);
     ShootOne shootOne = new ShootOne(shoot, load.feeder::getAbsoluteLimit);
-    addCommands(loadOne, new DriveDistanceProfile(-2.2d, 3d, 2d, drive), shootOne);
+    addCommands(
+        new DriveDistanceProfile(-1d, 10d, 5d, drive),
+        new DriveDistanceProfile(1d, 10d, 5d, drive),
+        loadOne,
+        new DriveDistanceProfile(-2.2d, 3d, 2d, drive),
+        shootOne);
   }
 
   @Override

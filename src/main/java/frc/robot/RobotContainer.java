@@ -88,6 +88,7 @@ public class RobotContainer {
   @Log private Climber climber;
   @Log private Pivot pivot;
   private Autonomous autonomous;
+  private SlewDrive slewDrive;
 
   public RobotContainer() {
     driveJoystick = new StormXboxController(0);
@@ -288,7 +289,11 @@ public class RobotContainer {
   }
 
   public void setDrive() {
-    if (kUseDrive) drive.setDefaultCommand(new SlewDrive(drive, driveJoystick));
+    if (kUseDrive) {
+      slewDrive = new SlewDrive(drive, driveJoystick);
+      drive.setDefaultCommand(slewDrive);
+      slewDrive.schedule(false);
+    }
   }
 
   //  @Config.ToggleSwitch(
