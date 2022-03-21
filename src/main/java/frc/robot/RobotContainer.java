@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.ballHandler.LiftIntake;
@@ -79,8 +78,6 @@ public class RobotContainer {
   private CommandBase homingSequence;
   private ManualClimber manualClimber;
   private ManualClimber manualPivot;
-  private SendableChooser<ClimbingGoal> climberGoalChooser;
-  private SendableChooser<PivotGoal> pivotGoalChooser;
   @Log.Exclude private HoldCurrentPosition climberHoldCurrentPosition;
   @Log.Exclude private HoldCurrentPosition pivotHoldCurrentPosition;
   @Log private PositionClimber climberTrapezoid;
@@ -107,7 +104,6 @@ public class RobotContainer {
     initSubsystems();
     initCommands();
     configureDefaultCommands();
-    configureButtonBindings();
     goIn =
         new SequentialCommandGroup(
             new InstantCommand(
@@ -135,6 +131,7 @@ public class RobotContainer {
         new SequentialCommandGroup(
             new InstantCommand(() -> pivotTrapezoid.updatePosition(PivotGoal.MOST_BACK.getState())),
             new ProxyScheduleCommand(pivotTrapezoid));
+    configureButtonBindings();
   }
 
   private void initSubsystems() {
@@ -199,15 +196,13 @@ public class RobotContainer {
       manualPivot =
           new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getRightJoystickY);
       pivotHoldCurrentPosition = new HoldCurrentPosition(pivot);
-      initPivotChooser();
-      pivotTrapezoid = new PositionPivot(pivot, pivotGoalChooser.getSelected()::getState);
+      pivotTrapezoid = new PositionPivot(pivot, () -> ClimbingGoal.LOWEST.getState());
     }
     if (kUseClimber) {
       manualClimber =
           new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
       climberHoldCurrentPosition = new HoldCurrentPosition(climber);
-      initClimberChooser();
-      climberTrapezoid = new PositionClimber(climber, climberGoalChooser.getSelected()::getState);
+      climberTrapezoid = new PositionClimber(climber, () -> ClimbingGoal.HIGHEST.getState());
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
       autonomous = new Autonomous(load, shoot, drive);
@@ -229,7 +224,6 @@ public class RobotContainer {
           //          buttonBoard.autoDriveTestReverseButton.whenPressed(
           //              new DriveDistanceProfile(-2, 1, 1, drive));
         }
-      }
 
       if (!kDiagnostic) {
         if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
@@ -247,11 +241,14 @@ public class RobotContainer {
       if (kUsePivot && kUseClimber) {
         buttonBoard.manualClimberButton.whenPressed(
             new ParallelCommandGroup(manualClimber, manualPivot).withName("ManualMode"));
+          buttonBoard.climberUP.whenPressed(highestClimber);
+          buttonBoard.climberDown.whenPressed(lowestClimber);
+          buttonBoard.pivotIN.whenPressed(firstpivot);
+          buttonBoard.pivotOut.whenPressed(mostBack);
       } else if (kUsePivot) buttonBoard.manualClimberButton.whenPressed(manualPivot);
       else if (kUseClimber) buttonBoard.manualClimberButton.whenPressed(manualClimber);
       if (kUseClimber) {
         System.out.println("... climber and pivot");
-        climberTrapezoid = new PositionClimber(climber, climberGoalChooser.getSelected()::getState);
         //        buttonBoard.trapezoidClimber.whenPressed(
         //            () -> {
         //
@@ -260,7 +257,6 @@ public class RobotContainer {
         //            });
       }
       if (kUsePivot) {
-        pivotTrapezoid = new PositionPivot(pivot, pivotGoalChooser.getSelected()::getState);
         //        buttonBoard.trapezoidPivot.whenPressed(
         //            () -> {
         //              pivotTrapezoid.updatePosition(pivotGoalChooser.getSelected().getState());
@@ -268,20 +264,7 @@ public class RobotContainer {
         //            });
       }
     }
-  }
-
-  private void initPivotChooser() {
-    pivotGoalChooser = new SendableChooser<>();
-    for (PivotGoal goal : PivotGoal.values()) pivotGoalChooser.addOption(goal.name(), goal);
-    pivotGoalChooser.setDefaultOption(PivotGoal.values()[0].name(), PivotGoal.values()[0]);
-    //        Shuffleboard.getTab("Driver").add("Pivot Goal", pivotGoalChooser);
-  }
-
-  private void initClimberChooser() {
-    climberGoalChooser = new SendableChooser<>();
-    for (ClimbingGoal goal : ClimbingGoal.values()) climberGoalChooser.addOption(goal.name(), goal);
-    climberGoalChooser.setDefaultOption(ClimbingGoal.values()[0].name(), ClimbingGoal.values()[0]);
-    //        Shuffleboard.getTab("Driver").add("Climbing Goal", climberGoalChooser);
+    }
   }
 
   public Autonomous getAutonomous() {

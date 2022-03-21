@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import static frc.utils.joysticks.StormXboxController.*;
@@ -25,13 +24,21 @@ public class ButtonBoard {
 
   public final JoystickButton homeClimberButton;
   public final JoystickButton homePivotButton;
-  public final Button manualClimberButton;
+  public final JoystickButton manualClimberButton;
+  public final JoystickButton climberUP;
+  public final JoystickButton climberDown;
+  public final JoystickButton pivotIN;
+  public final JoystickButton pivotOut;
 
   private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
     // ********************************
     // Put Drive Joystick settings here
     // ********************************
     precisionButton = new JoystickButton(driveJoystick, leftBumper);
+    climberUP = new JoystickButton(driveJoystick, YButton);
+    climberDown = new JoystickButton(driveJoystick, AButton);
+    pivotIN = new JoystickButton(driveJoystick, BButton);
+    pivotOut = new JoystickButton(driveJoystick, XButton);
     //    reverseButton = new JoystickButton(driveJoystick, rightBumper);
     //    autoDriveTestButton = new JoystickButton(driveJoystick, littleLeftButton);
     //    autoDriveTestReverseButton = new JoystickButton(driveJoystick, littleRightButton);

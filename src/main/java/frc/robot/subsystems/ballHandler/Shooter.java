@@ -78,7 +78,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   public enum Height {
     LOW(kShooterLowRPS),
     HIGH(kShooterHighRPS),
-    Custom(kShooterLowRPS);
+    Custom(kShooterHighRPS);
 
     private double rps;
 
