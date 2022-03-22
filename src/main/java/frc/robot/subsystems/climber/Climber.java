@@ -69,6 +69,20 @@ public class Climber extends ClimbingSubsystem {
 
   @Override
   public void periodic() {
+    if (leftPosition() < 150){
+      leftReverseLimitSwitch.enableLimitSwitch(false);
+      leftForwardLimitSwitch.enableLimitSwitch(true);
+    } else{
+      leftReverseLimitSwitch.enableLimitSwitch(true);
+      leftReverseLimitSwitch.enableLimitSwitch(false);
+    }
+    if (rightPosition()<150){
+      rightReverseLimitSwitch.enableLimitSwitch(false);
+      rightForwardLimitSwitch.enableLimitSwitch(true);
+    } else{
+      rightReverseLimitSwitch.enableLimitSwitch(true);
+      rightForwardLimitSwitch.enableLimitSwitch(false);
+    }
     if (goingHome) {
       leftHome = leftHome || leftReverseLimitSwitch.isPressed();
       rightHome = rightHome || rightReverseLimitSwitch.isPressed();
