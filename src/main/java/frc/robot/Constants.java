@@ -74,6 +74,8 @@ public final class Constants {
       StormProp.getNumber("pivotHomeCurrentLimit", 0.0);
   public static final double kPivotHomeSetSpeed = StormProp.getNumber("pivotHomeSetSpeed", 0.0);
 
+
+
   public static final double kFeederSpeed = StormProp.getNumber("feederSpeed", 0.0);
   public static final double kIntakeSpeed = StormProp.getNumber("intakeSpeed", 0.0);
 
@@ -163,6 +165,11 @@ public final class Constants {
 
   public static final double kNavXGyroScaleFactor = StormProp.getNumber("navXGyroScaleFactor", 1.0);
   public static final double kClimberMidpoint = StormProp.getNumber("climberMidpoint", 0.0);
+
+  public static final double kClimberCushion = StormProp.getNumber("climberCushion", 0.0);
+  public static final double kClimberCushionFloor = StormProp.getNumber("climberCushionFloor", 0.0);
+  public static final double kPivotCushion = StormProp.getNumber("pivotCushion", 0.0);
+  public static final double kPivotCushionFloor = StormProp.getNumber("pivotCushionFloor", 0.0);
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");

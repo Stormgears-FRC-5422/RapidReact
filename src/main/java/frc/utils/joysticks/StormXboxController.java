@@ -53,38 +53,20 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     @Override
     public double getTriggerSpeed(){ return getRawAxis(rightTrigger) - getRawAxis(leftTrigger); }
 
-  public boolean getAButton() {
-    return getRawButton(AButton);
-  }
-
-    public boolean getBisPressed() {
-        return getRawButtonPressed(BButton);
+    public boolean getAButtonIsHeld() {
+        return getRawButton(AButton);
     }
 
-  public boolean getXButton() {
+    public boolean getBButtonIsHeld() {
+        return getRawButton(BButton);
+    }
+
+    public boolean getXButtonIsHeld() {
     return getRawButton(XButton);
     }
 
-  public boolean getYButton() {
+    public boolean getYButtonIsHeld() {
     return getRawButton(YButton);
-    }
-
-    public boolean getBackIsPressed() {
-        return getRawButtonPressed(littleLeftButton);
-    }
-    
-    public boolean getRightBumperIsPressed() {return getRawButtonPressed(rightBumper); }
-
-    public boolean getLeftBumperIsPressed() {
-        return getRawButtonPressed(leftBumper);
-    }
-
-    public boolean getRotateIsPressed() {
-        return getRawButtonPressed(littleRightButton);
-    }
-
-    public boolean getAlignedIsPressed(){
-        return getRawButtonPressed(stickLeftButton);
     }
 
     public boolean getRightBumperIsHeld() {return getRawButton(rightBumper); }
@@ -93,12 +75,12 @@ public class StormXboxController extends Joystick implements DriveJoystick {
         return getRawButton(leftBumper);
     }
 
-  public boolean getRightLittleButtonIsHeld() {
+    public boolean getRightLittleButtonIsHeld() {
     return getRawButton(littleRightButton);
   }
 
-  public boolean getLeftLittleButtonIsHeld() {
-    return getRawButton(littleRightButton);
+    public boolean getLeftLittleButtonIsHeld() {
+    return getRawButton(littleLeftButton);
   }
 
     public double getLeftJoystickX() {
@@ -114,4 +96,28 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     public double getRightJoystickY() {
         return applyNullZone(getRawAxis(rightYAxis));
     }
+
+    public boolean getBisPressed() {
+        return getRawButtonPressed(BButton);
+    }
+
+    public boolean getBackIsPressed() {
+        return getRawButtonPressed(littleLeftButton);
+    }
+
+    public boolean getRightBumperIsPressed() {return getRawButtonPressed(rightBumper); }
+
+    public boolean getLeftBumperIsPressed() {
+        return getRawButtonPressed(leftBumper);
+    }
+
+    public boolean getRotateIsPressed() {
+        return getRawButtonPressed(littleRightButton);
+    }
+
+    public boolean getAlignedIsPressed(){
+        return getRawButtonPressed(stickLeftButton);
+    }
+
+
 }

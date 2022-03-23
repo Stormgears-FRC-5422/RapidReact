@@ -184,13 +184,11 @@ public class RobotContainer {
     else if (kUseClimber) homingSequence = new Home(climber);
 
     if (kUsePivot) {
-      manualPivot =
-          new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getRightJoystickY);
+      manualPivot = new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getRightJoystickY);
       pivotHoldCurrentPosition = new HoldCurrentPosition(pivot);
     }
     if (kUseClimber) {
-      manualClimber =
-          new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
+      manualClimber = new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
       climberHoldCurrentPosition = new HoldCurrentPosition(climber);
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
@@ -230,12 +228,13 @@ public class RobotContainer {
       if (kUsePivot && kUseClimber) {
         buttonBoard.manualClimberButton.whenPressed(
             new ParallelCommandGroup(manualClimber, manualPivot).withName("ManualMode"));
-          buttonBoard.climberUP.whenPressed(highestClimber);
-          buttonBoard.climberDown.whenPressed(lowestClimber);
-          buttonBoard.pivotIN.whenPressed(firstpivot);
-          buttonBoard.pivotOut.whenPressed(mostBack);
+
+        buttonBoard.climberUP.whenPressed(highestClimber);
+        buttonBoard.climberDown.whenPressed(lowestClimber);
+        buttonBoard.pivotIN.whenPressed(firstpivot);
+        buttonBoard.pivotOut.whenPressed(mostBack);
       } else if (kUsePivot) buttonBoard.manualClimberButton.whenPressed(manualPivot);
-      else if (kUseClimber) buttonBoard.manualClimberButton.whenPressed(manualClimber);
+        else if (kUseClimber) buttonBoard.manualClimberButton.whenPressed(manualClimber);
       if (kUseClimber) {
         System.out.println("... climber and pivot");
         //        buttonBoard.trapezoidClimber.whenPressed(

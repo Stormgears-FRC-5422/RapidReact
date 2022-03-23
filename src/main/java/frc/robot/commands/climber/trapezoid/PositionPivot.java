@@ -11,7 +11,7 @@ import static frc.robot.Constants.kPivotMaxVelocity;
 public class PositionPivot extends TrapezoidalClimbingCommand {
   @Log.Exclude Pivot pivot;
 
-  public PositionPivot(Pivot pivot, State goalSupplier) {
+  public PositionPivot(Pivot pivot, State goal) {
     super(pivot, new Constraints(kPivotMaxVelocity, kPivotMaxAcceleration), goal);
   }
 }

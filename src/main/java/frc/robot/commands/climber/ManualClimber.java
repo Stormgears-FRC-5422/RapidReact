@@ -41,15 +41,20 @@ public class ManualClimber extends CommandBase implements Loggable {
 
   @Override
   public void execute() {
-    if (joystick.getAButton()) {
+    if (joystick.getAButtonIsHeld()) {
       subsystem.zero();
       return;
     }
 
-    if (joystick.getXButton()) {
+    if (joystick.getXButtonIsHeld()) {
       subsystem.disableAllLimits();
+      return;
     }
-    if (joystick.getYButton()) subsystem.enableAllLimits();
+
+    if (joystick.getYButtonIsHeld()) {
+      subsystem.enableAllLimits();
+      return;
+    }
 
     double joyVal = joystickInput.getAsDouble();
     LRSpeeds speeds = new LRSpeeds(joyVal * kClimberSpeed, joyVal * kClimberSpeed);
@@ -61,18 +66,20 @@ public class ManualClimber extends CommandBase implements Loggable {
       speeds.disableLeft();
     }
 
+    subsystem.setSpeed(speeds);
+
     //    if (joyVal == 0 && lastJoyVal > 0) setHoldPosition();
-    if (joyVal == 0) {
-      if (!holding) {
-        holding = true;
-        leftPosition = subsystem.leftPosition();
-        rightPosition = subsystem.rightPosition();
-      }
-      hold(leftPosition, rightPosition);
-    } else {
-      holding = false;
-      subsystem.setSpeed(speeds);
-    }
+//    if (joyVal == 0) {
+//      if (!holding) {
+//        holding = true;
+//        leftPosition = subsystem.leftPosition();
+//        rightPosition = subsystem.rightPosition();
+//      }
+//      hold(leftPosition, rightPosition);
+//    } else {
+//      holding = false;
+//      subsystem.setSpeed(speeds);
+//    }
   }
 
   @Override

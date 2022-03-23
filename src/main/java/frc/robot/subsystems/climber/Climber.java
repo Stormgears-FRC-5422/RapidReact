@@ -17,7 +17,7 @@ public class Climber extends ClimbingSubsystem {
   private final SparkMaxLimitSwitch rightReverseLimitSwitch;
   private final SparkMaxLimitSwitch rightForwardLimitSwitch;
 
-  private final SparkMaxLimitSwitch[] allLimitSwitches;
+  private final SparkMaxLimitSwitch[] allHardLimitSwitches;
 
   public Climber() {
     super(
@@ -28,7 +28,9 @@ public class Climber extends ClimbingSubsystem {
         new PIDController(kLeftClimberP, kLeftClimberI, kLeftClimberD),
         new PIDController(kRightClimberP, kRightClimberI, kRightClimberD),
         kClimberHomeCurrentLimit,
-        kClimberHomeSetSpeed);
+        kClimberHomeSetSpeed,
+        kClimberCushion,
+        kClimberCushionFloor);
 
     leftReverseLimitSwitch =
         leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
@@ -38,15 +40,13 @@ public class Climber extends ClimbingSubsystem {
         rightMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
     rightForwardLimitSwitch =
         rightMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
-    allLimitSwitches =
+    allHardLimitSwitches =
         new SparkMaxLimitSwitch[] {
           rightReverseLimitSwitch,
           rightForwardLimitSwitch,
           leftReverseLimitSwitch,
           leftForwardLimitSwitch
         };
-
-    enableSoftLimits();
   }
 
   @Override
@@ -68,20 +68,24 @@ public class Climber extends ClimbingSubsystem {
 
   @Override
   public void periodic() {
-    if (leftPosition() < kClimberMidpoint) {
-      leftReverseLimitSwitch.enableLimitSwitch(false);
-      leftForwardLimitSwitch.enableLimitSwitch(true);
-    } else{
-      leftReverseLimitSwitch.enableLimitSwitch(true);
-      leftForwardLimitSwitch.enableLimitSwitch(false);
+
+    if (hasBeenHomed) {
+      if (leftPosition() < kClimberMidpoint) {
+        leftReverseLimitSwitch.enableLimitSwitch(false);
+        leftForwardLimitSwitch.enableLimitSwitch(true);
+      } else {
+        leftReverseLimitSwitch.enableLimitSwitch(true);
+        leftForwardLimitSwitch.enableLimitSwitch(false);
+      }
+      if (rightPosition() < kClimberMidpoint) {
+        rightReverseLimitSwitch.enableLimitSwitch(false);
+        rightForwardLimitSwitch.enableLimitSwitch(true);
+      } else {
+        rightReverseLimitSwitch.enableLimitSwitch(true);
+        rightForwardLimitSwitch.enableLimitSwitch(false);
+      }
     }
-    if (rightPosition() < kClimberMidpoint) {
-      rightReverseLimitSwitch.enableLimitSwitch(false);
-      rightForwardLimitSwitch.enableLimitSwitch(true);
-    } else{
-      rightReverseLimitSwitch.enableLimitSwitch(true);
-      rightForwardLimitSwitch.enableLimitSwitch(false);
-    }
+
     if (goingHome) {
       leftHome = leftHome || leftReverseLimitSwitch.isPressed();
       rightHome = rightHome || rightReverseLimitSwitch.isPressed();
@@ -105,12 +109,29 @@ public class Climber extends ClimbingSubsystem {
   @Override
   public void disableAllLimits() {
     disableSoftLimits();
+    disableAllHardLimits();
     allLimitsOn = false;
   }
 
   @Override
   public void enableAllLimits() {
     enableSoftLimits();
+    enableHardLimits();
     allLimitsOn = true;
   }
+
+  public void enableHardLimits() {
+    leftReverseLimitSwitch.enableLimitSwitch(true);
+    leftForwardLimitSwitch.enableLimitSwitch(true);
+    rightForwardLimitSwitch.enableLimitSwitch(true);
+    rightForwardLimitSwitch.enableLimitSwitch(true);
+  }
+
+  public void disableAllHardLimits() {
+    leftReverseLimitSwitch.enableLimitSwitch(false);
+    leftForwardLimitSwitch.enableLimitSwitch(false);
+    rightForwardLimitSwitch.enableLimitSwitch(false);
+    rightForwardLimitSwitch.enableLimitSwitch(false);
+  }
+
 }

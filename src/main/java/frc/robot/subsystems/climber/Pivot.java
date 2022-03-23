@@ -19,9 +19,10 @@ public class Pivot extends ClimbingSubsystem {
         new PIDController(kLeftPivotP, kLeftPivotI, kLeftPivotD),
         new PIDController(kRightPivotP, kRightPivotI, kRightPivotD),
         kPivotHomeCurrentLimit,
-        kPivotHomeSetSpeed);
+        kPivotHomeSetSpeed,
+        kPivotCushion,
+        kPivotCushionFloor);
 
-    enableSoftLimits();
   }
 
   @Override

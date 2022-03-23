@@ -16,6 +16,8 @@ import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
+import static java.lang.Math.*;
+
 @Log.Exclude
 public abstract class ClimbingSubsystem extends SubsystemBase implements Loggable {
   @Log(name = "lc", methodName = "update")
@@ -33,6 +35,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
   protected final double homeCurrentLimit;
   protected final double homeSpeed;
+  protected final double cushion;
+  protected final double cushionFloor;
 
   @Log.Exclude private final HoldTargetPosition holdTargetPosition;
   @Log public boolean allLimitsOn;
@@ -47,6 +51,9 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   @Log protected double pidOutput = 0;
   @Log protected double feedForwardOutputs = 0;
 
+  @Log protected double forwardSoftLimit;
+  @Log protected double reverseSoftLimit;
+
   protected ClimbingSubsystem(
       int leftMotorID,
       int rightMotorID,
@@ -55,7 +62,9 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
       PIDController leftPIDController,
       PIDController rightPIDController,
       double homeCurrentLimit,
-      double homeSpeed) {
+      double homeSpeed,
+      double cushion,
+      double cushionFloor) {
     leftMotor = new StormSpark(leftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
     rightMotor = new StormSpark(rightMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
@@ -70,6 +79,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
     this.homeCurrentLimit = homeCurrentLimit;
     this.homeSpeed = homeSpeed;
+    this.cushion = cushion;
+    this.cushionFloor = cushionFloor;
 
     this.holdTargetPosition = new HoldTargetPosition(this, this.leftPosition());
 
@@ -84,6 +95,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     rightMotor.setOpenLoopRampRate(0.25);
 
     // Optimistic - we need to zero if the robot has been off...
+    setSoftLimits();
     enableSoftLimits();
     allLimitsOn = false;
     shuffleBoard();
@@ -149,9 +161,31 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
     if (setSpeed) {
       // This assumes nothing is moving these components after the home sequence
-      leftMotor.set(leftHome ? 0 : speeds.left());
-      rightMotor.set(rightHome ? 0 : speeds.right());
+      leftMotor.set(leftHome ? 0 : applyCushion(speeds.left(),leftPosition()));
+      rightMotor.set(rightHome ? 0 : applyCushion(speeds.right(), rightPosition()));
     }
+  }
+
+  // Automatically ramp down if we are getting close to the soft limits
+  // but bottom out at the cushionFloor so we don't stall.
+  // further. preserve speeds that are already within these bounds as-is.
+  double applyCushion(double speed, double position) {
+    if (!hasBeenHomed) return speed;
+    double delta;  // How close are we?
+    double limit;
+
+    if (abs(position - forwardSoftLimit) < cushion) {
+       delta = abs(position - forwardSoftLimit);
+    } else if (abs(position - reverseSoftLimit) < cushion) {
+       delta = abs(position - reverseSoftLimit);
+    } else return speed;
+
+    //limit = cushionFloor + (delta / cushion) * (1 - cushionFloor);
+    limit = cushionFloor;
+
+    //System.out.println("Name: " + name + " limit: " + limit + " speed: " + speed + " position: " + position + " forwardSoftLimit: " + forwardSoftLimit + " reverseSoftLimit: " + reverseSoftLimit);
+
+    return ( abs(speed) < limit ? speed : copySign(limit, speed) );
   }
 
   public void goHome() {
@@ -191,6 +225,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   }
 
   protected void setSoftLimits(double forward, double reverse) {
+    forwardSoftLimit = forward;
+    reverseSoftLimit = reverse;
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverse);
     rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
