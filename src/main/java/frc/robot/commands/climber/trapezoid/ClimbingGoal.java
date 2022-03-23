@@ -3,10 +3,10 @@ package frc.robot.commands.climber.trapezoid;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public enum ClimbingGoal {
-  LOWEST(10),
+  LOWEST(0),
   SECOND(80),
   FIRST(225),
-  HIGHEST(285),
+  HIGHEST(260),
   Custom(0);
 
   TrapezoidProfile.State state;

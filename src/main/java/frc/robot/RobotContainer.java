@@ -1,6 +1,9 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.ballHandler.LiftIntake;
 import frc.robot.commands.ballHandler.Load;
@@ -104,23 +107,23 @@ public class RobotContainer {
     configureDefaultCommands();
     highestClimber =
         new SequentialCommandGroup(
-            new ScheduleCommand(new PositionClimber(climber, ClimbingGoal.HIGHEST.getState())),
+            new PositionClimber(climber, ClimbingGoal.HIGHEST.getState()),
             new HoldTargetPosition(climber, ClimbingGoal.HIGHEST.getState().position));
     lowestClimber =
         new SequentialCommandGroup(
-            new ScheduleCommand(new PositionClimber(climber, ClimbingGoal.LOWEST.getState())),
+            new PositionClimber(climber, ClimbingGoal.LOWEST.getState()),
             new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position));
     firstpivot =
         new SequentialCommandGroup(
-            new ProxyScheduleCommand(new PositionPivot(pivot, PivotGoal.FIRST.getState())),
+            new PositionPivot(pivot, PivotGoal.FIRST.getState()),
             new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position));
     secondPivot =
         new SequentialCommandGroup(
-            new ProxyScheduleCommand(new PositionPivot(pivot, PivotGoal.SECOND.getState())),
+            new PositionPivot(pivot, PivotGoal.SECOND.getState()),
             new HoldTargetPosition(pivot, PivotGoal.SECOND.getState().position));
     mostBack =
         new SequentialCommandGroup(
-            new ProxyScheduleCommand(new PositionPivot(pivot, PivotGoal.MOST_BACK.getState())),
+            new PositionPivot(pivot, PivotGoal.MOST_BACK.getState()),
             new HoldTargetPosition(pivot, PivotGoal.MOST_BACK.getState().position));
     configureButtonBindings();
   }
@@ -164,8 +167,8 @@ public class RobotContainer {
     if (useDriveJoystick) {
     }
     if (useSecondaryJoystick) {
-      if (kUseClimber) climber.setDefaultCommand(climberHoldCurrentPosition);
-      if (kUsePivot) pivot.setDefaultCommand(pivotHoldCurrentPosition);
+      //      if (kUseClimber) climber.setDefaultCommand(climberHoldCurrentPosition);
+      //      if (kUsePivot) pivot.setDefaultCommand(pivotHoldCurrentPosition);
     }
   }
 
