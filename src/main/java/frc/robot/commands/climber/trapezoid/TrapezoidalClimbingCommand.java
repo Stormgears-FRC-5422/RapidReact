@@ -7,8 +7,6 @@ import frc.robot.subsystems.climber.ClimbingSubsystem;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
-import java.util.function.Supplier;
-
 import static edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import static edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
@@ -20,23 +18,21 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   protected TrapezoidProfileCommand leftTrapezoidProfileCommand;
   protected TrapezoidProfileCommand rightTrapezoidProfileCommand;
 
-  protected Supplier<State> goal;
-  private State currentGoal;
+  private final State goal;
 
   protected TrapezoidalClimbingCommand(
-      ClimbingSubsystem subsystem, Constraints constraints, Supplier<State> goal) {
+      ClimbingSubsystem subsystem, Constraints constraints, State goal) {
     this.subsystem = subsystem;
     this.constraints = constraints;
     this.goal = goal;
-    currentGoal = goal.get();
 
     this.leftTrapezoidProfileCommand =
         new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, currentGoal, new State(subsystem.leftPosition(), 0)),
+            new TrapezoidProfile(constraints, goal, new State(subsystem.leftPosition(), 0)),
             this::leftPID);
     this.rightTrapezoidProfileCommand =
         new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, currentGoal, new State(subsystem.rightPosition(), 0)),
+            new TrapezoidProfile(constraints, goal, new State(subsystem.rightPosition(), 0)),
             this::rightPID);
 
     addRequirements(subsystem);
@@ -45,10 +41,9 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   @Override
   public void initialize() {
     subsystem.disableAllLimits();
-    updatePosition(currentGoal);
     leftTrapezoidProfileCommand.initialize();
     rightTrapezoidProfileCommand.initialize();
-    System.out.println("TRYING TO MOVE " + subsystem.getName() + " TO " + currentGoal);
+    System.out.println("TRYING TO MOVE " + subsystem.getName() + " TO " + goal);
   }
 
   @Override
@@ -61,7 +56,7 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   public void end(boolean interrupted) {
     leftTrapezoidProfileCommand.end(interrupted);
     rightTrapezoidProfileCommand.end(interrupted);
-    subsystem.holdTarget(currentGoal.position);
+    subsystem.holdTarget(goal.position);
   }
 
   @Override
@@ -77,23 +72,8 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
     subsystem.rightPID(state);
   }
 
-  public void updatePosition(State newPosition) {
-    System.out.println("Updated to" + newPosition.position);
-    currentGoal = newPosition;
-    System.out.println("Updated to" + currentGoal.position);
-
-    this.leftTrapezoidProfileCommand =
-        new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, currentGoal, new State(subsystem.leftPosition(), 0)),
-            this::leftPID);
-    this.rightTrapezoidProfileCommand =
-        new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, currentGoal, new State(subsystem.rightPosition(), 0)),
-            this::rightPID);
-  }
-
   @Log(name = "Current Goal")
   double goalPosition() {
-    return currentGoal.position;
+    return goal.position;
   }
 }

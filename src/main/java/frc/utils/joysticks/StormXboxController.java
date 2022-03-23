@@ -53,18 +53,20 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     @Override
     public double getTriggerSpeed(){ return getRawAxis(rightTrigger) - getRawAxis(leftTrigger); }
 
-    public boolean getAisPressed() { return getRawButtonPressed(AButton); }
+  public boolean getAButton() {
+    return getRawButton(AButton);
+  }
 
     public boolean getBisPressed() {
         return getRawButtonPressed(BButton);
     }
 
-    public boolean getXisPressed() {
-        return getRawButtonPressed(XButton);
+  public boolean getXButton() {
+    return getRawButton(XButton);
     }
 
-    public boolean getYisPressed() {
-        return getRawButtonPressed(YButton);
+  public boolean getYButton() {
+    return getRawButton(YButton);
     }
 
     public boolean getBackIsPressed() {

@@ -162,6 +162,7 @@ public final class Constants {
       StormProp.getNumber("driveWheelCircumference", 0.0);
 
   public static final double kNavXGyroScaleFactor = StormProp.getNumber("navXGyroScaleFactor", 1.0);
+  public static final double kClimberMidpoint = StormProp.getNumber("climberMidpoint", 0.0);
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");

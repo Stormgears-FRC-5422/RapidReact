@@ -41,15 +41,15 @@ public class ManualClimber extends CommandBase implements Loggable {
 
   @Override
   public void execute() {
-    if (joystick.getAisPressed()) {
+    if (joystick.getAButton()) {
       subsystem.zero();
       return;
     }
 
-    if (joystick.getXisPressed()) {
+    if (joystick.getXButton()) {
       subsystem.disableAllLimits();
     }
-    if (joystick.getYisPressed()) subsystem.enableAllLimits();
+    if (joystick.getYButton()) subsystem.enableAllLimits();
 
     double joyVal = joystickInput.getAsDouble();
     LRSpeeds speeds = new LRSpeeds(joyVal * kClimberSpeed, joyVal * kClimberSpeed);

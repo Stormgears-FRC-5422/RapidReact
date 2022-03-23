@@ -8,6 +8,7 @@ import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.ballHandler.TestIntake;
 import frc.robot.commands.climber.ManualClimber;
 import frc.robot.commands.climber.hold.HoldCurrentPosition;
+import frc.robot.commands.climber.hold.HoldTargetPosition;
 import frc.robot.commands.climber.home.Home;
 import frc.robot.commands.climber.home.HomeClimbingSystem;
 import frc.robot.commands.climber.trapezoid.ClimbingGoal;
@@ -55,9 +56,6 @@ public class RobotContainer {
   private TestIntake testIntake;
   private LiftIntake liftIntake;
 
-  @Config.Command(tabName = "Driver", name = "Up Climber")
-  private final SequentialCommandGroup goIn;
-
   @Config.Command(tabName = "Driver", name = "UP Climber TRAVERSE")
   private final SequentialCommandGroup highestClimber;
 
@@ -78,12 +76,12 @@ public class RobotContainer {
   private CommandBase homingSequence;
   private ManualClimber manualClimber;
   private ManualClimber manualPivot;
-  @Log.Exclude private HoldCurrentPosition climberHoldCurrentPosition;
-  @Log.Exclude private HoldCurrentPosition pivotHoldCurrentPosition;
+  @Log private HoldCurrentPosition climberHoldCurrentPosition;
+  @Log private HoldCurrentPosition pivotHoldCurrentPosition;
   @Log private PositionClimber climberTrapezoid;
   @Log private PositionPivot pivotTrapezoid;
-  @Log private Climber climber;
-  @Log private Pivot pivot;
+  @Log.Include private Climber climber;
+  @Log.Include private Pivot pivot;
   private Autonomous autonomous;
   private SlewDrive slewDrive;
 
@@ -104,33 +102,26 @@ public class RobotContainer {
     initSubsystems();
     initCommands();
     configureDefaultCommands();
-    goIn =
-        new SequentialCommandGroup(
-            new InstantCommand(
-                () -> climberTrapezoid.updatePosition(ClimbingGoal.FIRST.getState())),
-            new ScheduleCommand(climberTrapezoid));
     highestClimber =
         new SequentialCommandGroup(
-            new InstantCommand(
-                () -> climberTrapezoid.updatePosition(ClimbingGoal.HIGHEST.getState())),
-            new ScheduleCommand(climberTrapezoid));
+            new ScheduleCommand(new PositionClimber(climber, ClimbingGoal.HIGHEST.getState())),
+            new HoldTargetPosition(climber, ClimbingGoal.HIGHEST.getState().position));
     lowestClimber =
         new SequentialCommandGroup(
-            new InstantCommand(
-                () -> climberTrapezoid.updatePosition(ClimbingGoal.LOWEST.getState())),
-            new ScheduleCommand(climberTrapezoid));
+            new ScheduleCommand(new PositionClimber(climber, ClimbingGoal.LOWEST.getState())),
+            new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position));
     firstpivot =
         new SequentialCommandGroup(
-            new InstantCommand(() -> pivotTrapezoid.updatePosition(PivotGoal.FIRST.getState())),
-            new ProxyScheduleCommand(pivotTrapezoid));
+            new ProxyScheduleCommand(new PositionPivot(pivot, PivotGoal.FIRST.getState())),
+            new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position));
     secondPivot =
         new SequentialCommandGroup(
-            new InstantCommand(() -> pivotTrapezoid.updatePosition(PivotGoal.SECOND.getState())),
-            new ProxyScheduleCommand(pivotTrapezoid));
+            new ProxyScheduleCommand(new PositionPivot(pivot, PivotGoal.SECOND.getState())),
+            new HoldTargetPosition(pivot, PivotGoal.SECOND.getState().position));
     mostBack =
         new SequentialCommandGroup(
-            new InstantCommand(() -> pivotTrapezoid.updatePosition(PivotGoal.MOST_BACK.getState())),
-            new ProxyScheduleCommand(pivotTrapezoid));
+            new ProxyScheduleCommand(new PositionPivot(pivot, PivotGoal.MOST_BACK.getState())),
+            new HoldTargetPosition(pivot, PivotGoal.MOST_BACK.getState().position));
     configureButtonBindings();
   }
 
@@ -196,13 +187,11 @@ public class RobotContainer {
       manualPivot =
           new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getRightJoystickY);
       pivotHoldCurrentPosition = new HoldCurrentPosition(pivot);
-      pivotTrapezoid = new PositionPivot(pivot, () -> ClimbingGoal.LOWEST.getState());
     }
     if (kUseClimber) {
       manualClimber =
           new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
       climberHoldCurrentPosition = new HoldCurrentPosition(climber);
-      climberTrapezoid = new PositionClimber(climber, () -> ClimbingGoal.HIGHEST.getState());
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
       autonomous = new Autonomous(load, shoot, drive);

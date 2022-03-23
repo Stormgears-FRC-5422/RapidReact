@@ -16,6 +16,7 @@ import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
+@Log.Exclude
 public abstract class ClimbingSubsystem extends SubsystemBase implements Loggable {
   @Log(name = "lc", methodName = "update")
   protected final ExponentialAverage leftCurrent;

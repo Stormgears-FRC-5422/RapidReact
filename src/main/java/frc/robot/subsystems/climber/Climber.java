@@ -56,7 +56,6 @@ public class Climber extends ClimbingSubsystem {
 
   public void onlyHardLimits() {
     disableSoftLimits();
-    enableHardLimits(true);
     allLimitsOn = false;
     System.out.println("Only Hard Limits");
   }
@@ -69,14 +68,14 @@ public class Climber extends ClimbingSubsystem {
 
   @Override
   public void periodic() {
-    if (leftPosition() < 150){
+    if (leftPosition() < kClimberMidpoint) {
       leftReverseLimitSwitch.enableLimitSwitch(false);
       leftForwardLimitSwitch.enableLimitSwitch(true);
     } else{
       leftReverseLimitSwitch.enableLimitSwitch(true);
-      leftReverseLimitSwitch.enableLimitSwitch(false);
+      leftForwardLimitSwitch.enableLimitSwitch(false);
     }
-    if (rightPosition()<150){
+    if (rightPosition() < kClimberMidpoint) {
       rightReverseLimitSwitch.enableLimitSwitch(false);
       rightForwardLimitSwitch.enableLimitSwitch(true);
     } else{
@@ -106,22 +105,12 @@ public class Climber extends ClimbingSubsystem {
   @Override
   public void disableAllLimits() {
     disableSoftLimits();
-    enableHardLimits(false);
     allLimitsOn = false;
   }
 
   @Override
   public void enableAllLimits() {
     enableSoftLimits();
-    enableHardLimits(true);
     allLimitsOn = true;
-  }
-
-  private void enableHardLimits(boolean enabled) {
-    System.out.println("Enabled: " + enabled);
-    for (SparkMaxLimitSwitch limitSwitch : allLimitSwitches) {
-      limitSwitch.enableLimitSwitch(enabled);
-      System.out.println(limitSwitch.isLimitSwitchEnabled());
-    }
   }
 }
