@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.utils.joysticks.StormXboxController;
 
@@ -28,6 +29,7 @@ public class ButtonBoard {
     public final JoystickButton loadButton;
     public final JoystickButton shootButton;
     public final JoystickButton toggleShootingHeightButton;
+    public final JoystickButton enableLiftIntakeButton;
 
     /**
      * Initialize SECONDARY JOYSTICK BUTTONS
@@ -35,6 +37,7 @@ public class ButtonBoard {
     public final JoystickButton manualClimberButton;
     public final JoystickButton homeClimberButton;
     public final JoystickButton homePivotButton;
+
 //    public final JoystickButton selectIntakeButton;
 //    public final JoystickButton selectFeederButton;
 //    public final JoystickButton selectShooterButton;
@@ -56,6 +59,8 @@ public class ButtonBoard {
         shootButton = new JoystickButton(driveJoystick, StormXboxController.rightBumper);
         loadButton = new JoystickButton(driveJoystick, StormXboxController.leftBumper);
         toggleShootingHeightButton = new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);
+
+        enableLiftIntakeButton = new JoystickButton(driveJoystick, StormXboxController.XButton);
 
         // ********************************
         // Put Secondary Joystick settings here

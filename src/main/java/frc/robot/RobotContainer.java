@@ -114,7 +114,7 @@ public class RobotContainer {
     } else {
       //testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
       if (kUseFeeder) {
-        liftIntake = new LiftIntake(feeder, secondaryJoystick);
+        liftIntake = new LiftIntake(feeder, driveJoystick);
       }
     }
 
@@ -143,6 +143,8 @@ public class RobotContainer {
       }
 
       if (kDiagnostic) {
+        if (kUseFeeder) buttonBoard.enableLiftIntakeButton.whenPressed(liftIntake);
+
         //      if (kUseIntake) buttonBoard.selectIntakeButton.whenPressed(diagnosticIntake::setModeIntake);
         //      if (kUseFeeder) buttonBoard.selectFeederButton.whenPressed(diagnosticIntake::setModeFeeder);
         //      if (kUseShooter) buttonBoard.selectShooterButton.whenPressed(diagnosticIntake::setModeShooter);
