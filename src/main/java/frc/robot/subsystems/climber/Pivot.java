@@ -29,13 +29,11 @@ public class Pivot extends ClimbingSubsystem {
   public void disableAllLimits() {
     overrideLimits = false;
     disableSoftLimits();
-    allLimitsOn = false;
   }
 
   @Override
   public void enableAllLimits() {
     overrideLimits = true;
-    allLimitsOn = true;
     enableSoftLimits();
   }
 

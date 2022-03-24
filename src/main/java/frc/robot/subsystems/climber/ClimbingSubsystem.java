@@ -96,7 +96,6 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     // Optimistic - we need to zero if the robot has been off...
     setSoftLimits();
     enableSoftLimits();
-    allLimitsOn = false;
     shuffleBoard();
   }
 
@@ -128,9 +127,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   public void setSpeed(LRSpeeds lrSpeed) {
     setSpeed = true;
 
-    //    if (hasBeenHomed) {
+    // Consider whether this should only be allowed if we have homed already. That may be a bit too conservative
     this.speeds = lrSpeed;
-    //    }
 
     if (speeds.left() != 0) leftHome = false;
     if (speeds.right() != 0) rightHome = false;
@@ -141,8 +139,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     leftMotor.getEncoder().setPosition(0.0);
     rightMotor.getEncoder().setPosition(0.0);
 
-    leftHome = false;
-    rightHome = false;
+    leftHome = true;
+    rightHome = true;
     goingHome = false;
     hasBeenHomed = true;
   }
@@ -179,12 +177,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
        delta = abs(position - reverseSoftLimit);
     } else return speed;
 
-    //limit = cushionFloor + (delta / cushion) * (1 - cushionFloor);
-    limit = cushionFloor;
-
-    // System.out.println("Name: " + name + " limit: " + limit + " speed: " + speed + " position: "
-    // + position + " forwardSoftLimit: " + forwardSoftLimit + " reverseSoftLimit: " +
-    // reverseSoftLimit);
+    limit = cushionFloor + (delta / cushion) * (1 - cushionFloor);
 
     if (abs(speed) < limit) return speed;
     return copySign(limit, speed);
@@ -206,9 +199,11 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     return leftHome && rightHome;
   }
 
-  public void overrideHome() {
-    hasBeenHomed = true;
-  }
+  public abstract void disableAllLimits();
+
+  public abstract void enableAllLimits();
+
+  abstract void setSoftLimits();
 
   public void disableSoftLimits() {
     leftMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
@@ -235,8 +230,6 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverse);
     System.out.println("Climber.setLimits()");
   }
-
-  abstract void setSoftLimits();
 
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -270,14 +263,17 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     rightMotor.setVoltage(-(pid + feed));
   }
 
-  public abstract double feedForward(double velocity);
+  public void simpleMotion(double position) {
+    double l, r;
 
-  public abstract void disableAllLimits();
+    l = abs(leftPosition() - position) < 30 ? 0 : leftPosition() - position;
+    r = abs(rightPosition() - position) < 30 ? 0 : rightPosition() - position;
 
-  public boolean isAllLimitsEnabled() {
-    return allLimitsOn;
+    setSpeed(new LRSpeeds(copySign(homeSpeed, l),
+                          copySign(homeSpeed, r)));
   }
 
-  public abstract void enableAllLimits();
+  public abstract double feedForward(double velocity);
+
 
 }

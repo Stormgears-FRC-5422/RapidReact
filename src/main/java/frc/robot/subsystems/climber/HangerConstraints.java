@@ -5,15 +5,16 @@ import static java.lang.Math.*;
 
 public class HangerConstraints {
     // kBaseClimberLength  -  the resting length of the climber at Home position
-    // kClimberLengthPerRotation - convert encoder position to extension length
+    // kClimberRotationPerUnitLength - convert encoder position to extension length
     // kPivotLength - from the pivot point to the center of the bar
+    // kPivotRotationPerUnitLength - convert encoder position to lead screw distance length
     // kBarDistance - from the center of one bar to the other
     // kPivotSupportLength = the polyCarb support
     // kPivotMountLength = along the pivot from the pivot point to the polyCarb attachment point
-    // kLeadOffset = the distance between home and the point where the pivot is exactly vertical
+    // kPivotLeadOffset = the number of rotations between home and the point where the pivot is exactly vertical
 
     public static double getPivotPosition(double climberPosition) {
-        double currentClimberLength = kClimberBaseLength + kClimberLengthPerRotation * climberPosition;
+        double currentClimberLength = climberPosition/kClimberRotationsPerUnitLength + kClimberBaseLength;
 
         // Use the law of cosines to calculate the idealPivotAngle
         // a is the length of the pivot arm.
@@ -42,9 +43,11 @@ public class HangerConstraints {
         double D = q * q - 4.0 * (kPivotMountLength * kPivotMountLength - kPivotSupportLength * kPivotSupportLength);
         double c = (-q + sqrt(D))/2.0; // the other solution isn't relevant
 
-        // c is the length along the lead screw to the base of the triangle. But this isn't home.
-        // we need to add in the distance from home to the pivot point before converting back to position
-        return ((c + kPivotLeadOffset) / kPivotLengthPerRotation);
+        // c is the length along the lead screw of the base of the triangle. But we have to map this back to rotation
+        // values.
+        // we need convert back to position
+
+        return ( (c - kPivotLeadBaseLength) * kPivotRotationsPerUnitLength + kPivotLeadOffset);
     }
 
 }

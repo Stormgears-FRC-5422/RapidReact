@@ -67,6 +67,7 @@ public class ManualClimber extends CommandBase implements Loggable {
 
     subsystem.setSpeed(speeds);
 
+    // TODO - re-enable?
     //    if (joyVal == 0 && lastJoyVal > 0) setHoldPosition();
 //    if (joyVal == 0) {
 //      if (!holding) {

@@ -1,9 +1,6 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.autonomous.DoubleBallAuto;
 import frc.robot.commands.ballHandler.*;
@@ -12,10 +9,7 @@ import frc.robot.commands.climber.hold.HoldCurrentPosition;
 import frc.robot.commands.climber.hold.HoldTargetPosition;
 import frc.robot.commands.climber.home.Home;
 import frc.robot.commands.climber.home.HomeClimbingSystem;
-import frc.robot.commands.climber.trapezoid.ClimbingGoal;
-import frc.robot.commands.climber.trapezoid.PivotGoal;
-import frc.robot.commands.climber.trapezoid.PositionClimber;
-import frc.robot.commands.climber.trapezoid.PositionPivot;
+import frc.robot.commands.climber.trapezoid.*;
 import frc.robot.commands.drive.SlewDrive;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
@@ -70,6 +64,7 @@ public class RobotContainer {
   @Log private Shoot shoot;
   private CommandBase homingSequence;
   private ManualClimber manualClimber;
+  private CoordinatingClimber coordinatingClimber;
   private ManualClimber manualPivot;
   @Log private HoldCurrentPosition climberHoldCurrentPosition;
   @Log private HoldCurrentPosition pivotHoldCurrentPosition;
@@ -106,8 +101,15 @@ public class RobotContainer {
             new HoldTargetPosition(climber, ClimbingGoal.HIGHEST.getState().position));
     lowestClimber =
         new SequentialCommandGroup(
-            new PositionClimber(climber, ClimbingGoal.LOWEST.getState()),
-            new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position));
+                new PositionPivot(pivot, PivotGoal.MOST_BACK.getState()),
+                new PositionClimber(climber, ClimbingGoal.LOWEST.getState()),
+                new ParallelRaceGroup(
+                        new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position),
+                        new PositionPivot(pivot, PivotGoal.FIRST.getState())),
+                new ParallelCommandGroup(
+                        new HoldTargetPosition(pivot,PivotGoal.FIRST.getState().position ),
+                        new PositionClimber(climber, ClimbingGoal.SECOND.getState()))
+        );
     firstpivot =
         new SequentialCommandGroup(
             new PositionPivot(pivot, PivotGoal.FIRST.getState()),
@@ -191,6 +193,9 @@ public class RobotContainer {
     if (kUseClimber) {
       manualClimber =
           new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
+      coordinatingClimber =
+              new CoordinatingClimber(climber,pivot,secondaryJoystick);
+
       climberHoldCurrentPosition = new HoldCurrentPosition(climber);
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
@@ -233,6 +238,7 @@ public class RobotContainer {
         if (kUsePivot && kUseClimber) {
           buttonBoard.manualClimberButton.whenPressed(
               new ParallelCommandGroup(manualClimber, manualPivot).withName("ManualMode"));
+          buttonBoard.coordinatingClimberButton.whenPressed(coordinatingClimber);
 
           buttonBoard.climberUP.whenPressed(highestClimber);
           buttonBoard.climberDown.whenPressed(lowestClimber);
@@ -271,29 +277,5 @@ public class RobotContainer {
       slewDrive.schedule(false);
     }
   }
-
-  //  @Config.ToggleSwitch(
-  //      name = "Climber Limits",
-  //      defaultValue = true,
-  //      tabName = "Driver")
-  //  private boolean toggleLimits(boolean toggle) {
-  //    if (toggle && climber == null) climber.enableAllLimits();
-  //    if (toggle && climber == null) climber.disableAllLimits();
-  //    return climber.isAllLimitsEnabled();
-  //  }
-  //
-  //  @Config.ToggleSwitch(
-  //      name = "Pivot Limits",
-  //      defaultValue = true,
-  //      tabName = "Driver")
-  //  private boolean toggleLimitsPivot(boolean toggle) {
-  //    if (toggle && pivot != null) pivot.enableAllLimits();
-  //    if (toggle && pivot != null) pivot.disableAllLimits();
-  //    assert pivot != null;
-  //    return pivot.isAllLimitsEnabled();
-  //  }
-  //
-  //  @Log.CameraStream(tabName = "Driver")
-  //  VideoSource cameraStream = new Stream()
 
 }
