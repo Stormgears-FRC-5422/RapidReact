@@ -171,6 +171,15 @@ public final class Constants {
   public static final double kPivotCushion = StormProp.getNumber("pivotCushion", 0.0);
   public static final double kPivotCushionFloor = StormProp.getNumber("pivotCushionFloor", 0.0);
 
+  public static final double kClimberBaseLength = StormProp.getNumber("climberBaseLength", 0.0);
+  public static final double kClimberLengthPerRotation = StormProp.getNumber("climberLengthPerRotation", 0.0);
+  public static final double kPivotLength = StormProp.getNumber("pivotLength", 0.0);
+  public static final double kPivotLengthPerRotation = StormProp.getNumber("pivotLengthPerRotation", 0.0);
+  public static final double kBarDistance = StormProp.getNumber("barDistance", 0.0);
+  public static final double kPivotSupportLength = StormProp.getNumber("pivotSupportLength", 0.0);
+  public static final double kPivotMountLength= StormProp.getNumber("pivotMountLength", 0.0);
+  public static final double kPivotLeadOffset = StormProp.getNumber("pivotLeadOffset", 0.0);
+  
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");
   }
