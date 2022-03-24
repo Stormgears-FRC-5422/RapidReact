@@ -5,10 +5,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.autonomous.Autonomous;
-import frc.robot.commands.ballHandler.LiftIntake;
-import frc.robot.commands.ballHandler.Load;
-import frc.robot.commands.ballHandler.Shoot;
-import frc.robot.commands.ballHandler.TestIntake;
+import frc.robot.commands.ballHandler.*;
 import frc.robot.commands.climber.ManualClimber;
 import frc.robot.commands.climber.hold.HoldCurrentPosition;
 import frc.robot.commands.climber.hold.HoldTargetPosition;
@@ -48,6 +45,16 @@ public class RobotContainer {
   private final StormXboxController driveJoystick;
   private final StormXboxController secondaryJoystick;
   private final ButtonBoard buttonBoard;
+  @Config.Command(tabName = "Driver", name = "UP Climber TRAVERSE")
+  private final SequentialCommandGroup highestClimber;
+  @Config.Command(tabName = "Driver", name = "Down Climber")
+  private final SequentialCommandGroup lowestClimber;
+  @Config.Command(tabName = "Driver", name = "Chin Up pivot")
+  private final SequentialCommandGroup firstpivot;
+  @Config.Command(tabName = "Driver", name = "Level 2 pivot")
+  private final SequentialCommandGroup secondPivot;
+  @Config.Command(tabName = "Driver", name = "back Pivot")
+  private final SequentialCommandGroup mostBack;
   /** Declare subsystems - initialize below */
   private StormDrive drive;
 
@@ -58,22 +65,6 @@ public class RobotContainer {
   private Intake intake;
   private TestIntake testIntake;
   private LiftIntake liftIntake;
-
-  @Config.Command(tabName = "Driver", name = "UP Climber TRAVERSE")
-  private final SequentialCommandGroup highestClimber;
-
-  @Config.Command(tabName = "Driver", name = "Down Climber")
-  private final SequentialCommandGroup lowestClimber;
-
-  @Config.Command(tabName = "Driver", name = "Chin Up pivot")
-  private final SequentialCommandGroup firstpivot;
-
-  @Config.Command(tabName = "Driver", name = "Level 2 pivot")
-  private final SequentialCommandGroup secondPivot;
-
-  @Config.Command(tabName = "Driver", name = "back Pivot")
-  private final SequentialCommandGroup mostBack;
-
   private Load load;
   @Log private Shoot shoot;
   private CommandBase homingSequence;
@@ -83,6 +74,9 @@ public class RobotContainer {
   @Log private HoldCurrentPosition pivotHoldCurrentPosition;
   @Log private PositionClimber climberTrapezoid;
   @Log private PositionPivot pivotTrapezoid;
+
+  private Reverse reverse;
+
   @Log.Include private Climber climber;
   @Log.Include private Pivot pivot;
   private Autonomous autonomous;
@@ -164,8 +158,7 @@ public class RobotContainer {
   }
 
   public void configureDefaultCommands() {
-    if (useDriveJoystick) {
-    }
+    if (useDriveJoystick) {}
     if (useSecondaryJoystick) {
       //      if (kUseClimber) climber.setDefaultCommand(climberHoldCurrentPosition);
       //      if (kUsePivot) pivot.setDefaultCommand(pivotHoldCurrentPosition);
@@ -174,7 +167,10 @@ public class RobotContainer {
 
   private void initCommands() {
     if (!kDiagnostic) {
-      if (kUseIntake && kUseFeeder) load = new Load(intake, feeder);
+      if (kUseIntake && kUseFeeder) {
+        reverse = new Reverse(intake, feeder);
+        load = new Load(intake, feeder);
+      }
       if (kUseShooter && kUseFeeder) shoot = new Shoot(feeder, shooter);
     } else {
       // testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
@@ -187,11 +183,13 @@ public class RobotContainer {
     else if (kUseClimber) homingSequence = new Home(climber);
 
     if (kUsePivot) {
-      manualPivot = new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getRightJoystickY);
+      manualPivot =
+          new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getRightJoystickY);
       pivotHoldCurrentPosition = new HoldCurrentPosition(pivot);
     }
     if (kUseClimber) {
-      manualClimber = new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
+      manualClimber =
+          new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
       climberHoldCurrentPosition = new HoldCurrentPosition(climber);
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
@@ -215,46 +213,49 @@ public class RobotContainer {
           //              new DriveDistanceProfile(-2, 1, 1, drive));
         }
 
-      if (!kDiagnostic) {
-        if (kUseIntake && kUseFeeder) buttonBoard.loadButton.whileHeld(load);
-        if (kUseShooter && kUseFeeder) {
-          buttonBoard.shootButton.whileHeld(shoot);
-          buttonBoard.toggleShootingHeightButton.whenPressed(new InstantCommand(shoot::toggleMode));
+        if (!kDiagnostic) {
+          if (kUseIntake && kUseFeeder) {
+            buttonBoard.reverseButton.whileHeld(reverse);
+            buttonBoard.loadButton.whileHeld(load);
+          }
+          if (kUseShooter && kUseFeeder) {
+            buttonBoard.shootButton.whileHeld(shoot);
+            buttonBoard.toggleShootingHeightButton.whenPressed(
+                new InstantCommand(shoot::toggleMode));
+          }
         }
       }
 
-    }
+      if (useSecondaryJoystick) {
+        System.out.println("Setting up secondary joystick commands");
+        buttonBoard.homeClimbing.whenPressed(getHomingSequence());
+        if (kUsePivot && kUseClimber) {
+          buttonBoard.manualClimberButton.whenPressed(
+              new ParallelCommandGroup(manualClimber, manualPivot).withName("ManualMode"));
 
-    if (useSecondaryJoystick) {
-      System.out.println("Setting up secondary joystick commands");
-      buttonBoard.homeClimbing.whenPressed(getHomingSequence());
-      if (kUsePivot && kUseClimber) {
-        buttonBoard.manualClimberButton.whenPressed(
-            new ParallelCommandGroup(manualClimber, manualPivot).withName("ManualMode"));
-
-        buttonBoard.climberUP.whenPressed(highestClimber);
-        buttonBoard.climberDown.whenPressed(lowestClimber);
-        buttonBoard.pivotIN.whenPressed(firstpivot);
-        buttonBoard.pivotOut.whenPressed(mostBack);
-      } else if (kUsePivot) buttonBoard.manualClimberButton.whenPressed(manualPivot);
+          buttonBoard.climberUP.whenPressed(highestClimber);
+          buttonBoard.climberDown.whenPressed(lowestClimber);
+          buttonBoard.pivotIN.whenPressed(firstpivot);
+          buttonBoard.pivotOut.whenPressed(mostBack);
+        } else if (kUsePivot) buttonBoard.manualClimberButton.whenPressed(manualPivot);
         else if (kUseClimber) buttonBoard.manualClimberButton.whenPressed(manualClimber);
-      if (kUseClimber) {
-        System.out.println("... climber and pivot");
-        //        buttonBoard.trapezoidClimber.whenPressed(
-        //            () -> {
-        //
-        // climberTrapezoid.updatePosition(climberGoalChooser.getSelected().getState());
-        //              climberTrapezoid.schedule();
-        //            });
+        if (kUseClimber) {
+          System.out.println("... climber and pivot");
+          //        buttonBoard.trapezoidClimber.whenPressed(
+          //            () -> {
+          //
+          // climberTrapezoid.updatePosition(climberGoalChooser.getSelected().getState());
+          //              climberTrapezoid.schedule();
+          //            });
+        }
+        if (kUsePivot) {
+          //        buttonBoard.trapezoidPivot.whenPressed(
+          //            () -> {
+          //              pivotTrapezoid.updatePosition(pivotGoalChooser.getSelected().getState());
+          //              pivotTrapezoid.schedule();
+          //            });
+        }
       }
-      if (kUsePivot) {
-        //        buttonBoard.trapezoidPivot.whenPressed(
-        //            () -> {
-        //              pivotTrapezoid.updatePosition(pivotGoalChooser.getSelected().getState());
-        //              pivotTrapezoid.schedule();
-        //            });
-      }
-    }
     }
   }
 

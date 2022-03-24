@@ -83,6 +83,11 @@ public class Feeder extends SubsystemBase implements Loggable {
     setSpeed(kFeederSpeed);
   }
 
+  public void reverse() {
+    forward = false;
+    motor.set(-1);
+  }
+
   public void initReverse() {
     // There are some issues here if we try to lift this while the motor is already spinning.
     // really we should wait for it to stop.
