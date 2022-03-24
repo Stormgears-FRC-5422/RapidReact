@@ -1,6 +1,7 @@
 package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.commands.ballHandler.Shoot;
 
 import java.util.function.BooleanSupplier;
@@ -12,6 +13,10 @@ public class ShootOne extends CommandBase {
   ShootOne(Shoot shoot, BooleanSupplier limitSensorTripped) {
     this.shoot = shoot;
     this.limitSensorTripped = limitSensorTripped;
+
+    for (Subsystem requirement : shoot.getRequirements()) {
+      addRequirements(requirement);
+    }
   }
 
   @Override

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.autonomous.Autonomous;
+import frc.robot.commands.autonomous.DoubleBallAuto;
 import frc.robot.commands.ballHandler.*;
 import frc.robot.commands.climber.ManualClimber;
 import frc.robot.commands.climber.hold.HoldCurrentPosition;
@@ -79,7 +80,7 @@ public class RobotContainer {
 
   @Log.Include private Climber climber;
   @Log.Include private Pivot pivot;
-  private Autonomous autonomous;
+  private DoubleBallAuto autonomous;
   private SlewDrive slewDrive;
 
   public RobotContainer() {
@@ -193,7 +194,7 @@ public class RobotContainer {
       climberHoldCurrentPosition = new HoldCurrentPosition(climber);
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
-      autonomous = new Autonomous(load, shoot, drive);
+      autonomous = new DoubleBallAuto(load, shoot, drive, navX);
   }
 
   public void configureButtonBindings() {
@@ -259,7 +260,7 @@ public class RobotContainer {
     }
   }
 
-  public Autonomous getAutonomous() {
+  public DoubleBallAuto getAutonomous() {
     return autonomous;
   }
 
