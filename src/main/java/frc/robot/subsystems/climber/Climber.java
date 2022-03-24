@@ -69,7 +69,7 @@ public class Climber extends ClimbingSubsystem {
   @Override
   public void periodic() {
 
-    if (hasBeenHomed) {
+    if (hasBeenHomed && !overrideLimits) {
       if (leftPosition() < kClimberMidpoint) {
         leftReverseLimitSwitch.enableLimitSwitch(false);
         leftForwardLimitSwitch.enableLimitSwitch(true);
@@ -121,6 +121,7 @@ public class Climber extends ClimbingSubsystem {
   }
 
   public void enableHardLimits() {
+    overrideLimits = false;
     leftReverseLimitSwitch.enableLimitSwitch(true);
     leftForwardLimitSwitch.enableLimitSwitch(true);
     rightForwardLimitSwitch.enableLimitSwitch(true);
@@ -128,6 +129,7 @@ public class Climber extends ClimbingSubsystem {
   }
 
   public void disableAllHardLimits() {
+    overrideLimits = true;
     leftReverseLimitSwitch.enableLimitSwitch(false);
     leftForwardLimitSwitch.enableLimitSwitch(false);
     rightForwardLimitSwitch.enableLimitSwitch(false);

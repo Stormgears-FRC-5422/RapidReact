@@ -20,7 +20,6 @@ public class HoldCurrentPosition extends HoldInterface {
 
   @Override
   public void initialize() {
-    super.initialize();
     holdCurrentPosition();
   }
 }

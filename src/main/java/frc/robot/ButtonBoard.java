@@ -29,6 +29,7 @@ public class ButtonBoard {
   public final JoystickButton climberDown;
   public final JoystickButton pivotIN;
   public final JoystickButton pivotOut;
+  public final JoystickButton reverseButton;
 
   private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
     // ********************************
@@ -39,6 +40,7 @@ public class ButtonBoard {
     climberDown = new JoystickButton(driveJoystick, AButton);
     pivotIN = new JoystickButton(driveJoystick, BButton);
     pivotOut = new JoystickButton(driveJoystick, XButton);
+    reverseButton = new JoystickButton(driveJoystick, littleLeftButton);
     //    reverseButton = new JoystickButton(driveJoystick, rightBumper);
     //    autoDriveTestButton = new JoystickButton(driveJoystick, littleLeftButton);
     //    autoDriveTestReverseButton = new JoystickButton(driveJoystick, littleRightButton);
@@ -58,6 +60,8 @@ public class ButtonBoard {
     //    trapezoidPivot = new JoystickButton(secondaryJoystick, littleRightButton);
 
     manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
+
+
   }
   //    public final JoystickButton selectIntakeButton;
   //    public final JoystickButton selectFeederButton;

@@ -17,7 +17,7 @@ public class ManualClimber extends CommandBase implements Loggable {
   @Log.Exclude private final ClimbingSubsystem subsystem;
   private final StormXboxController joystick;
   private final DoubleSupplier joystickInput;
-  private boolean holding = false;
+  private final boolean holding = false;
   private double leftPosition = 0;
   private double rightPosition = 0;
 
@@ -36,7 +36,6 @@ public class ManualClimber extends CommandBase implements Loggable {
     System.out.println("TestClimber.initialize()");
     leftPosition = subsystem.leftPosition();
     rightPosition = subsystem.rightPosition();
-    subsystem.disableAllLimits();
   }
 
   @Override

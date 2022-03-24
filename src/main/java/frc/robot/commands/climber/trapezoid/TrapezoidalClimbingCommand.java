@@ -40,7 +40,7 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
 
   @Override
   public void initialize() {
-    subsystem.disableAllLimits();
+    subsystem.enableAllLimits();
     leftTrapezoidProfileCommand.initialize();
     rightTrapezoidProfileCommand.initialize();
     System.out.println("TRYING TO MOVE " + subsystem.getName() + " TO " + goal);
@@ -56,7 +56,6 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   public void end(boolean interrupted) {
     leftTrapezoidProfileCommand.end(interrupted);
     rightTrapezoidProfileCommand.end(interrupted);
-    subsystem.holdTarget(goal.position);
   }
 
   @Override

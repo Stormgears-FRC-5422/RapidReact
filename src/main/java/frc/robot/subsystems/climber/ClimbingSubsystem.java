@@ -6,9 +6,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.climber.hold.HoldTargetPosition;
 import frc.utils.LRSpeeds;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
@@ -16,7 +14,8 @@ import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.copySign;
 
 @Log.Exclude
 public abstract class ClimbingSubsystem extends SubsystemBase implements Loggable {
@@ -38,7 +37,6 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   protected final double cushion;
   protected final double cushionFloor;
 
-  @Log.Exclude private final HoldTargetPosition holdTargetPosition;
   @Log public boolean allLimitsOn;
   @Log.Exclude // TODO
   protected LRSpeeds speeds = new LRSpeeds();
@@ -53,6 +51,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
   @Log protected double forwardSoftLimit;
   @Log protected double reverseSoftLimit;
+
+  @Log protected boolean overrideLimits = false;
 
   protected ClimbingSubsystem(
       int leftMotorID,
@@ -82,7 +82,6 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     this.cushion = cushion;
     this.cushionFloor = cushionFloor;
 
-    this.holdTargetPosition = new HoldTargetPosition(this, this.leftPosition());
 
     leftMotor.setInverted(leftInverted);
     leftMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -161,7 +160,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
     if (setSpeed) {
       // This assumes nothing is moving these components after the home sequence
-      leftMotor.set(leftHome ? 0 : applyCushion(speeds.left(),leftPosition()));
+      leftMotor.set(leftHome ? 0 : applyCushion(speeds.left(), leftPosition()));
       rightMotor.set(rightHome ? 0 : applyCushion(speeds.right(), rightPosition()));
     }
   }
@@ -183,9 +182,12 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     //limit = cushionFloor + (delta / cushion) * (1 - cushionFloor);
     limit = cushionFloor;
 
-    //System.out.println("Name: " + name + " limit: " + limit + " speed: " + speed + " position: " + position + " forwardSoftLimit: " + forwardSoftLimit + " reverseSoftLimit: " + reverseSoftLimit);
+    // System.out.println("Name: " + name + " limit: " + limit + " speed: " + speed + " position: "
+    // + position + " forwardSoftLimit: " + forwardSoftLimit + " reverseSoftLimit: " +
+    // reverseSoftLimit);
 
-    return ( abs(speed) < limit ? speed : copySign(limit, speed) );
+    if (abs(speed) < limit) return speed;
+    return copySign(limit, speed);
   }
 
   public void goHome() {
@@ -225,8 +227,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   }
 
   protected void setSoftLimits(double forward, double reverse) {
-    forwardSoftLimit = forward;
-    reverseSoftLimit = reverse;
+    forwardSoftLimit = -forward;
+    reverseSoftLimit = -reverse;
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverse);
     rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
@@ -269,12 +271,6 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   }
 
   public abstract double feedForward(double velocity);
-
-  public void holdTarget(double target) {
-    CommandScheduler.getInstance().cancelAll();
-    holdTargetPosition.updateTargetPosition(target);
-    holdTargetPosition.schedule();
-  }
 
   public abstract void disableAllLimits();
 
