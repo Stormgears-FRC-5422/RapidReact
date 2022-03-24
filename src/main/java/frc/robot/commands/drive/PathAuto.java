@@ -92,7 +92,7 @@ public class PathAuto extends CommandBase {
                 (drive.getRightVelocity()) /// 10.71 * StormProp.getNumber("wheelRadius",3.0) * 2 * Math.PI / 60
         );
         command.execute();
-        SmartDashboard.putNumber("pid left setpoint",pidLeft.getSetpoint());
+        //SmartDashboard.putNumber("pid left setpoint",pidLeft.getSetpoint());
     }
 
     @Override
