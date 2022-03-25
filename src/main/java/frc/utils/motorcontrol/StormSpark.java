@@ -7,15 +7,32 @@ import frc.robot.Constants;
 import edu.wpi.first.math.MathUtil;
 
 public class StormSpark extends CANSparkMax {
-    private static final int currentLimit = Constants.kCurrentLimit;
     private static final double temperatureRampThreshold = Constants.kTemperatureRampThreshold;
     private static final double temperatureRampLimit = Constants.kTemperatureRampLimit;
+    private MotorKind motorKind;
+    private int currentLimit;
     private final double delta;
     private double scale = 1.0;
     private long count = 0;
 
-    public StormSpark(int deviceID, MotorType type) {
+    public enum MotorKind {
+        kNeo,
+        k550;
+    }
+
+    public StormSpark(int deviceID, MotorType type, MotorKind kind) {
         super(deviceID, type);
+
+        this.motorKind = kind;
+
+        switch(motorKind) {
+            case kNeo:
+                currentLimit = Constants.kSparkMaxCurrentLimit;
+                break;
+            case k550:
+                currentLimit = Constants.kSparkMaxCurrentLimit550;
+                break;
+        }
 
         restoreFactoryDefaults();
         setSmartCurrentLimit(currentLimit);
@@ -36,7 +53,7 @@ public class StormSpark extends CANSparkMax {
 
         if (temp > temperatureRampThreshold) {
             speed *= Math.max((temperatureRampLimit - temp) / delta, 0.0);
-            if (count++ % 100 == 0) System.out.println("Id " + this.getDeviceId() + " safety control - factor " + speed);
+            if (count++ % 100 == 0) System.out.println("Id " + this.getDeviceId() + " safety control - speed: " + speed + " temperature:" + temp);
         }
 
         super.set(scale * speed);

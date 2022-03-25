@@ -65,8 +65,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
       double homeSpeed,
       double cushion,
       double cushionFloor) {
-    leftMotor = new StormSpark(leftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rightMotor = new StormSpark(rightMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    leftMotor = new StormSpark(leftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
+    rightMotor = new StormSpark(rightMotorID, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
 
     this.leftCurrent = new ExponentialAverage(leftMotor::getOutputCurrent, 4);
     this.rightCurrent = new ExponentialAverage(rightMotor::getOutputCurrent, 4);

@@ -47,7 +47,6 @@ public final class Constants {
   public static final boolean kDriveIdleModeCoast =
       StormProp.getBoolean("driveIdleModeCoast", true);
 
-  public static final int kSmartCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
   public static final double kStickNullSize = StormProp.getNumber("stickNullSize", 0.1);
   public static final double kXPrecision = .65; // StormProp.getNumber("xPrecision", 0.0);
   public static final double kZPrecision = .45; // StormProp.getNumber("zPrecision", 0.0);
@@ -57,7 +56,8 @@ public final class Constants {
   public static final double kAlignD = StormProp.getNumber("alignD", 0.01);
   public static final double kAlignTolerance = StormProp.getNumber("toleranceDegrees", 2.0);
 
-  public static final int kCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
+  public static final int kSparkMaxCurrentLimit = StormProp.getInt("SparkMaxCurrentLimit", 1);
+  public static final int kSparkMaxCurrentLimit550 = StormProp.getInt("SparkMax550CurrentLimit", 1);
   public static final double kTemperatureRampThreshold =
       StormProp.getInt("SparkMaxTemperatureRampThreshold", 40);
   public static final double kTemperatureRampLimit =

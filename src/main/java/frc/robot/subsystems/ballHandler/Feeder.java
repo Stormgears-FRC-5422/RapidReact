@@ -17,7 +17,7 @@ public class Feeder extends SubsystemBase implements Loggable {
   //  private static final String shuffleboardTabName = "Shooter";
 
   private final StormSpark motor =
-      new StormSpark(kFeederId, CANSparkMaxLowLevel.MotorType.kBrushless);
+      new StormSpark(kFeederId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
   private final LimitSwitch limitSwitch = new LimitSwitch(0, true);
   private double speed = 0;
   private double liftVoltage = 0;

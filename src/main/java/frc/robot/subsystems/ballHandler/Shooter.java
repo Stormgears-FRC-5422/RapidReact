@@ -14,7 +14,7 @@ import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase implements Loggable {
   private final StormSpark motor =
-      new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless);
+      new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
   private final SimpleMotorFeedforward feedforward =
       new SimpleMotorFeedforward(kShooterS, kShooterV, kShooterA);
 

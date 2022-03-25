@@ -31,15 +31,21 @@ public class CoordinatingClimber extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("CoordinatingClimber.initialize()");
-
+        leftClimberPosition = climber.leftPosition();
     }
 
     @Override
     public void execute() {
-        leftClimberPosition = climber.leftPosition();
         double joyVal = -joystick.getLeftJoystickY();
-        double climbTarget = leftClimberPosition + ( joyVal == 0.0 ? 0.0 : 40 * copySign(1.0, joyVal) );
+        double climbTarget;
 
+        // We don't want the position to drift if there is no joystick input -
+        // in that case just use the previous value (rather than the current one)
+        if (joyVal != 0) {
+            leftClimberPosition = climber.leftPosition() + 40 * copySign(1.0, joyVal);
+        }
+
+        climbTarget = leftClimberPosition;
         climberState.position = climbTarget;
         pivotState.position = HangerConstraints.getPivotPosition(climbTarget);
 
