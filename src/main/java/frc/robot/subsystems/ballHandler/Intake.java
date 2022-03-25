@@ -27,6 +27,6 @@ public class Intake extends SubsystemBase {
   }
 
   public void reverse() {
-    motor.set(-1);
+    motor.set(-kIntakeSpeed);
   }
 }
