@@ -38,7 +38,7 @@ public class CoordinatingClimber extends CommandBase {
     public void execute() {
         leftClimberPosition = climber.leftPosition();
         double joyVal = -joystick.getLeftJoystickY();
-        double climbTarget = leftClimberPosition + ( joyVal == 0.0 ? 0.0 : 10 * copySign(1.0, joyVal) );
+        double climbTarget = leftClimberPosition + ( joyVal == 0.0 ? 0.0 : 40 * copySign(1.0, joyVal) );
 
         climberState.position = climbTarget;
         pivotState.position = HangerConstraints.getPivotPosition(climbTarget);

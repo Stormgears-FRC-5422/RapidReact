@@ -26,21 +26,19 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
     this.constraints = constraints;
     this.goal = goal;
 
-    this.leftTrapezoidProfileCommand =
-        new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, goal, new State(subsystem.leftPosition(), 0)),
-            this::leftPID);
-    this.rightTrapezoidProfileCommand =
-        new TrapezoidProfileCommand(
-            new TrapezoidProfile(constraints, goal, new State(subsystem.rightPosition(), 0)),
-            this::rightPID);
-
     addRequirements(subsystem);
   }
 
   @Override
   public void initialize() {
-    subsystem.enableAllLimits();
+    this.leftTrapezoidProfileCommand =
+            new TrapezoidProfileCommand(
+                    new TrapezoidProfile(constraints, goal, new State(subsystem.leftPosition(), 0)),
+                    this::leftPID);
+    this.rightTrapezoidProfileCommand =
+            new TrapezoidProfileCommand(
+                    new TrapezoidProfile(constraints, goal, new State(subsystem.rightPosition(), 0)),
+                    this::rightPID);
     leftTrapezoidProfileCommand.initialize();
     rightTrapezoidProfileCommand.initialize();
     System.out.println("TRYING TO MOVE " + subsystem.getName() + " TO " + goal);
@@ -56,6 +54,7 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   public void end(boolean interrupted) {
     leftTrapezoidProfileCommand.end(interrupted);
     rightTrapezoidProfileCommand.end(interrupted);
+    subsystem.stop();
   }
 
   @Override

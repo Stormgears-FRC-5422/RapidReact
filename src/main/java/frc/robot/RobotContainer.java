@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.autonomous.DoubleBallAuto;
@@ -75,7 +76,7 @@ public class RobotContainer {
 
   @Log.Include private Climber climber;
   @Log.Include private Pivot pivot;
-  private DoubleBallAuto autonomous;
+  private CommandBase autonomous;
   private SlewDrive slewDrive;
 
   public RobotContainer() {
@@ -101,14 +102,16 @@ public class RobotContainer {
             new HoldTargetPosition(climber, ClimbingGoal.HIGHEST.getState().position));
     lowestClimber =
         new SequentialCommandGroup(
-                new PositionPivot(pivot, PivotGoal.MOST_BACK.getState()),
+                new ParallelCommandGroup(
+                        new PositionClimber(climber, new TrapezoidProfile.State(55, 0)),
+                        new PositionPivot(pivot, PivotGoal.MOST_BACK.getState())),
                 new PositionClimber(climber, ClimbingGoal.LOWEST.getState()),
                 new ParallelRaceGroup(
                         new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position),
-                        new PositionPivot(pivot, PivotGoal.FIRST.getState())),
-                new ParallelCommandGroup(
-                        new HoldTargetPosition(pivot,PivotGoal.FIRST.getState().position ),
-                        new PositionClimber(climber, ClimbingGoal.SECOND.getState()))
+                        new PositionPivot(pivot, PivotGoal.FIRST.getState())).withName("Hold Climb"),
+                new ParallelRaceGroup(
+                        new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position ),
+                        new PositionClimber(climber, ClimbingGoal.FIRST.getState())).withName("Hold Pivot")
         );
     firstpivot =
         new SequentialCommandGroup(
@@ -266,8 +269,14 @@ public class RobotContainer {
     }
   }
 
-  public DoubleBallAuto getAutonomous() {
+  public CommandBase getAutonomous() {
     return autonomous;
+  }
+
+
+  public void setAutonomous(@Config.ToggleSwitch(name = "ON FOR TWO BALLS (pause)", tabName = "Autonomous", defaultValue = true) boolean twoBall){
+    if (twoBall) autonomous = new DoubleBallAuto(load, shoot, drive, navX);
+    else autonomous = new Autonomous(load, shoot, drive);
   }
 
   public void setDrive() {

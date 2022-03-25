@@ -117,7 +117,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   }
 
   public void stop() {
-    setSpeed(LRSpeeds.stop());
+    leftMotor.setVoltage(0);
+    rightMotor.setVoltage(0);
   }
 
   public LRSpeeds getSpeed() {

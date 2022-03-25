@@ -26,10 +26,10 @@ public abstract class HoldInterface extends CommandBase {
   public void execute() {
     subsystem.leftPID(new TrapezoidProfile.State(initialLeftPosition, 0));
     subsystem.rightPID(new TrapezoidProfile.State(initialRightPosition, 0));
-    // System.out.println(
-    //   subsystem.getName() + " Left Holding: " + initialLeftPosition + " Right Holding: " +
-    // initialRightPosition);
-    //        subsystem.leftPID(new State(initialLeftPosition, leftDirection.getAsDouble()));
-    //        subsystem.rightPID(new State(initialRightPosition, rightDirection.getAsDouble()));
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    subsystem.stop();
   }
 }
