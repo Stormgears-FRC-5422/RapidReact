@@ -15,30 +15,38 @@ public class CoordinatingClimber extends CommandBase {
     ClimbingSubsystem pivot;
     StormXboxController joystick;
     double leftClimberPosition;
+    TrapezoidProfile.State climberState;
+    TrapezoidProfile.State pivotState;
 
     public CoordinatingClimber(ClimbingSubsystem climber, ClimbingSubsystem pivot, StormXboxController joystick) {
         this.climber = climber;
         this.pivot = pivot;
         this.joystick = joystick;
+
+        addRequirements(climber, pivot);
+        climberState = new TrapezoidProfile.State(0,0);
+        pivotState = new TrapezoidProfile.State(0,0);
     }
 
     @Override
     public void initialize() {
         System.out.println("CoordinatingClimber.initialize()");
+
     }
 
     @Override
     public void execute() {
         leftClimberPosition = climber.leftPosition();
-
-        double joyVal =-joystick.getLeftJoystickY();
-
+        double joyVal = -joystick.getLeftJoystickY();
         double climbTarget = leftClimberPosition + ( joyVal == 0.0 ? 0.0 : 10 * copySign(1.0, joyVal) );
-        double pivotTarget = HangerConstraints.getPivotPosition(climbTarget);
 
-        System.out.println("joyVal: " + joyVal + " climbTarget: " + climbTarget + " pivotTarget: " + pivotTarget);
-        climber.simpleMotion(climbTarget);
-        //pivot.simpleMotion(pivotTarget);
+        climberState.position = climbTarget;
+        pivotState.position = HangerConstraints.getPivotPosition(climbTarget);
+
+        climber.leftPID(climberState);
+        climber.rightPID(climberState);
+        pivot.leftPID(pivotState);
+        pivot.rightPID(pivotState);
     }
 
     @Override
