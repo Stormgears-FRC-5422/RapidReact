@@ -263,16 +263,6 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     rightMotor.setVoltage(-(pid + feed));
   }
 
-  public void simpleMotion(double position) {
-    double l, r;
-
-    l = abs(leftPosition() - position) < 30 ? 0 : leftPosition() - position;
-    r = abs(rightPosition() - position) < 30 ? 0 : rightPosition() - position;
-
-    setSpeed(new LRSpeeds(copySign(homeSpeed, l),
-                          copySign(homeSpeed, r)));
-  }
-
   public abstract double feedForward(double velocity);
 
 
