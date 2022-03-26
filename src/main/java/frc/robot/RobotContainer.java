@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.autonomous.DoubleBallAuto;
@@ -26,6 +25,7 @@ import frc.utils.joysticks.StormXboxController;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
+import static edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import static frc.robot.Constants.*;
 
 /**
@@ -49,8 +49,9 @@ public class RobotContainer {
   private final SequentialCommandGroup firstpivot;
   @Config.Command(tabName = "Driver", name = "Level 2 pivot")
   private final SequentialCommandGroup secondPivot;
+
   @Config.Command(tabName = "Driver", name = "back Pivot")
-  private final SequentialCommandGroup mostBack;
+  private final SequentialCommandGroup furthest;
   /** Declare subsystems - initialize below */
   private StormDrive drive;
 
@@ -102,17 +103,18 @@ public class RobotContainer {
             new HoldTargetPosition(climber, ClimbingGoal.HIGHEST.getState().position));
     lowestClimber =
         new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new PositionClimber(climber, new TrapezoidProfile.State(55, 0)),
-                        new PositionPivot(pivot, PivotGoal.MOST_BACK.getState())),
-                new PositionClimber(climber, ClimbingGoal.LOWEST.getState()),
-                new ParallelRaceGroup(
-                        new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position),
-                        new PositionPivot(pivot, PivotGoal.FIRST.getState())).withName("Hold Climb"),
-                new ParallelRaceGroup(
-                        new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position ),
-                        new PositionClimber(climber, ClimbingGoal.FIRST.getState())).withName("Hold Pivot")
-        );
+            new ParallelCommandGroup(
+                new PositionClimber(climber, new State(65, 0)),
+                new PositionPivot(pivot, PivotGoal.MOST_BACK.getState())),
+            new PositionClimber(climber, ClimbingGoal.LOWEST.getState()),
+            new ParallelRaceGroup(
+                    new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position),
+                    new PositionPivot(pivot, PivotGoal.FIRST.getState()))
+                .withName("Hold Climb"),
+            new ParallelRaceGroup(
+                    new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position),
+                    new PositionClimber(climber, new State(65, 0)))
+                .withName("Hold Pivot"));
     firstpivot =
         new SequentialCommandGroup(
             new PositionPivot(pivot, PivotGoal.FIRST.getState()),
@@ -121,10 +123,10 @@ public class RobotContainer {
         new SequentialCommandGroup(
             new PositionPivot(pivot, PivotGoal.SECOND.getState()),
             new HoldTargetPosition(pivot, PivotGoal.SECOND.getState().position));
-    mostBack =
+    furthest =
         new SequentialCommandGroup(
-            new PositionPivot(pivot, PivotGoal.MOST_BACK.getState()),
-            new HoldTargetPosition(pivot, PivotGoal.MOST_BACK.getState().position));
+            new PositionPivot(pivot, PivotGoal.FURTHEST.getState()),
+            new HoldTargetPosition(pivot, PivotGoal.FURTHEST.getState().position));
     configureButtonBindings();
   }
 
@@ -225,6 +227,7 @@ public class RobotContainer {
         if (!kDiagnostic) {
           if (kUseIntake && kUseFeeder) {
             buttonBoard.reverseButton.whileHeld(reverse);
+            buttonBoard.liftIntakeButton.whenPressed(new LiftIntake(feeder, secondaryJoystick));
             buttonBoard.loadButton.whileHeld(load);
           }
           if (kUseShooter && kUseFeeder) {
@@ -246,7 +249,7 @@ public class RobotContainer {
           buttonBoard.climberUP.whenPressed(highestClimber);
           buttonBoard.climberDown.whenPressed(lowestClimber);
           buttonBoard.pivotIN.whenPressed(firstpivot);
-          buttonBoard.pivotOut.whenPressed(mostBack);
+          buttonBoard.pivotOut.whenPressed(furthest);
         } else if (kUsePivot) buttonBoard.manualClimberButton.whenPressed(manualPivot);
         else if (kUseClimber) buttonBoard.manualClimberButton.whenPressed(manualClimber);
         if (kUseClimber) {
@@ -273,10 +276,15 @@ public class RobotContainer {
     return autonomous;
   }
 
-
-  public void setAutonomous(@Config.ToggleSwitch(name = "ON FOR TWO BALLS (pause)", tabName = "Autonomous", defaultValue = true) boolean twoBall){
-    if (twoBall) autonomous = new DoubleBallAuto(load, shoot, drive, navX);
-    else autonomous = new Autonomous(load, shoot, drive);
+  @Config(name = "ON FOR TWO BALLS (pause)", tabName = "Autonomous", defaultValueBoolean = true)
+  public void setAutonomous(boolean twoBall) {
+    if (twoBall) {
+      autonomous = new DoubleBallAuto(load, shoot, drive, navX);
+      System.out.println("Two Ball");
+    } else {
+      autonomous = new Autonomous(load, shoot, drive);
+      System.out.println("One ball");
+    }
   }
 
   public void setDrive() {

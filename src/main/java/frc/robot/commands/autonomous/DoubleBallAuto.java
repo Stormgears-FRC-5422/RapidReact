@@ -14,7 +14,6 @@ public class DoubleBallAuto extends SequentialCommandGroup {
 
     public DoubleBallAuto(Load load, Shoot shoot, StormDrive drive, NavX navX) {
         addCommands(
-                new DriveDistanceProfile(-0.5d,10d,5d, drive),
                 new ParallelCommandGroup(
                         new DriveDistanceProfile(1.5d, 2d,1d, drive),
                         new ProxyScheduleCommand(load).withTimeout(5)),

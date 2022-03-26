@@ -6,7 +6,7 @@ public enum ClimbingGoal {
   LOWEST(0),
   SECOND(80),
   FIRST(225),
-  HIGHEST(260),
+  HIGHEST(290),
   Custom(0);
 
   TrapezoidProfile.State state;

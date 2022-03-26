@@ -85,7 +85,7 @@ public class Feeder extends SubsystemBase implements Loggable {
 
   public void reverse() {
     forward = false;
-    motor.set(kFeederSpeed); //TODO switch to negative
+    motor.set(-kFeederSpeed);
   }
 
   public void initReverse() {

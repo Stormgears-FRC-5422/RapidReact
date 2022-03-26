@@ -21,10 +21,10 @@ public class ButtonBoard {
   //  public final JoystickButton trapezoidClimber;
 
   //  public final JoystickButton trapezoidPivot;
-  public final JoystickButton homeClimbing;
+  public final POVButton homeClimbing;
 
-  public final JoystickButton homeClimberButton;
-  public final JoystickButton homePivotButton;
+  public final POVButton homeClimberButton;
+  public final POVButton homePivotButton;
   public final JoystickButton manualClimberButton;
   public final POVButton coordinatingClimberButton;
   public final JoystickButton climberUP;
@@ -32,6 +32,7 @@ public class ButtonBoard {
   public final JoystickButton pivotIN;
   public final JoystickButton pivotOut;
   public final JoystickButton reverseButton;
+  public final POVButton liftIntakeButton;
 
   private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
     // ********************************
@@ -43,9 +44,6 @@ public class ButtonBoard {
     pivotIN = new JoystickButton(driveJoystick, BButton);
     pivotOut = new JoystickButton(driveJoystick, XButton);
     reverseButton = new JoystickButton(driveJoystick, littleLeftButton);
-    //    reverseButton = new JoystickButton(driveJoystick, rightBumper);
-    //    autoDriveTestButton = new JoystickButton(driveJoystick, littleLeftButton);
-    //    autoDriveTestReverseButton = new JoystickButton(driveJoystick, littleRightButton);
 
     shootButton = new JoystickButton(secondaryJoystick, rightBumper);
     loadButton = new JoystickButton(secondaryJoystick, leftBumper);
@@ -54,24 +52,14 @@ public class ButtonBoard {
     // ********************************
     // Put Secondary Joystick settings here
     // ********************************
-    homePivotButton = new JoystickButton(secondaryJoystick, stickLeftButton);
-    homeClimberButton = new JoystickButton(secondaryJoystick, stickLeftButton);
-    homeClimbing = new JoystickButton(secondaryJoystick, stickLeftButton);
-
-    //    trapezoidClimber = new JoystickButton(secondaryJoystick, littleLeftButton);
-    //    trapezoidPivot = new JoystickButton(secondaryJoystick, littleRightButton);
+    homePivotButton = new POVButton(secondaryJoystick, 180);
+    homeClimberButton = new POVButton(secondaryJoystick, 180);
+    homeClimbing = new POVButton(secondaryJoystick, 180);
 
     manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
     coordinatingClimberButton = new POVButton(secondaryJoystick,0);
-
+    liftIntakeButton = new POVButton(secondaryJoystick, 90);
   }
-  //    public final JoystickButton selectIntakeButton;
-  //    public final JoystickButton selectFeederButton;
-  //    public final JoystickButton selectShooterButton;
-  //    public final JoystickButton climbLeftUpButton;
-  //    public final JoystickButton climbLeftDownButton;
-  //    public final JoystickButton climbRightUpButton;
-  //    public final JoystickButton climbRightDownButton;
 
   public static ButtonBoard getInstance(GenericHID driveJoystick, GenericHID secondaryJoystick) {
     if (instance == null) instance = new ButtonBoard(driveJoystick, secondaryJoystick);

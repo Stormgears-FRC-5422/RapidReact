@@ -10,7 +10,7 @@ import static frc.robot.Constants.*;
 @Log.Exclude
 public class Climber extends ClimbingSubsystem {
 
-  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.24, 0, 0.0686, 0);
+  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.24, 0, 0.1372, 0);
 
   private final SparkMaxLimitSwitch leftReverseLimitSwitch;
   private final SparkMaxLimitSwitch leftForwardLimitSwitch;

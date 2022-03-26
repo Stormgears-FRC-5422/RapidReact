@@ -12,8 +12,6 @@ public class Autonomous extends SequentialCommandGroup {
     LoadOne loadOne = new LoadOne(load, load.feeder::getAbsoluteLimit);
     ShootOne shootOne = new ShootOne(shoot, load.feeder::getAbsoluteLimit);
     addCommands(
-        new DriveDistanceProfile(-0.5d, 5d, 10d, drive),
-        new DriveDistanceProfile(0.5d, 5d, 10d, drive),
         loadOne,
         new DriveDistanceProfile(-1.65d, 3d, 2d, drive),
         shootOne,

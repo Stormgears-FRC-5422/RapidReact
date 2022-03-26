@@ -20,7 +20,7 @@ public class Shooter extends SubsystemBase implements Loggable {
 
   public Height mode = Height.Custom;
 
-  private ExponentialAverage averageSpeed = new ExponentialAverage(this::getSpeed, 8);
+  private ExponentialAverage averageSpeed = new ExponentialAverage(this::getSpeed, 25);
 
   public Shooter() {
     motor.setInverted(false);
@@ -48,7 +48,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   //    @Log.Graph(name = "Exp Speed", visibleTime = 3)
 
   public void resetExponential() {
-    averageSpeed = new ExponentialAverage(this::getSpeed, 8);
+    averageSpeed = new ExponentialAverage(this::getSpeed, 25);
   }
 
   public void off() {
@@ -65,7 +65,7 @@ public class Shooter extends SubsystemBase implements Loggable {
       min = 10,
       max = 90,
       blockIncrement = 1,
-      defaultValue = 65)
+      defaultValue = 70)
   public void setSetpoint(double setpoint) {
     mode = Height.fromRPS(setpoint);
   }

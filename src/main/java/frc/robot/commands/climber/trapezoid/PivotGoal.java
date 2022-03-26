@@ -5,8 +5,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 public enum PivotGoal {
   MOST_BACK(0),
   FIRST(58),
-  SECOND(300),
-  FURTHEST(300),
+  SECOND(150),
+  FURTHEST(370),
   Custom(0);
 
   TrapezoidProfile.State state;
