@@ -65,7 +65,7 @@ public class Shooter extends SubsystemBase implements Loggable {
       min = 10,
       max = 90,
       blockIncrement = 1,
-      defaultValue = 70)
+      defaultValue = 68)
   public void setSetpoint(double setpoint) {
     mode = Height.fromRPS(setpoint);
   }

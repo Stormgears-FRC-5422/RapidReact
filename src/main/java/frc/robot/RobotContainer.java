@@ -11,6 +11,7 @@ import frc.robot.commands.climber.home.Home;
 import frc.robot.commands.climber.home.HomeClimbingSystem;
 import frc.robot.commands.climber.trapezoid.*;
 import frc.robot.commands.drive.SlewDrive;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
 import frc.robot.subsystems.ballHandler.Intake;
@@ -60,6 +61,7 @@ public class RobotContainer {
   @Log private Shooter shooter;
   private Feeder feeder;
   private Intake intake;
+  private Lights lights;
   private TestIntake testIntake;
   private LiftIntake liftIntake;
   private Load load;
@@ -154,6 +156,7 @@ public class RobotContainer {
       if (kUseShooter) shooter = new Shooter();
       if (kUseFeeder) feeder = new Feeder();
       if (kUseIntake) intake = new Intake();
+      if (kUseLights) lights = new Lights();
     }
   }
 

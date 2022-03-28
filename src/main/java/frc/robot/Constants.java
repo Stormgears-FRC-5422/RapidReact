@@ -181,6 +181,10 @@ public final class Constants {
   public static final double kPivotLeadBaseLength= StormProp.getNumber("pivotLeadBaseLength", 0.0);
   public static final double kPivotLeadOffset = StormProp.getNumber("pivotLeadOffset", 0.0);
 
+  public static final int kLightsID = StormProp.getInt("lightsID", 0);
+  public static final int kLEDLength = StormProp.getInt("LEDLength", 0);
+  public static final boolean kUseLights = StormProp.getBoolean("useLights", false);
+
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");
   }

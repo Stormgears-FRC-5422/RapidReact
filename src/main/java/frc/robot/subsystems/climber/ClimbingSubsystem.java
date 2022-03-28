@@ -2,7 +2,6 @@ package frc.robot.subsystems.climber;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -14,6 +13,7 @@ import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
+import static edu.wpi.first.math.MathUtil.clamp;
 import static java.lang.Math.abs;
 import static java.lang.Math.copySign;
 
@@ -250,17 +250,15 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
   public void leftPID(State state) {
     setSpeed = false;
-    this.pidOutput =
-        MathUtil.clamp(leftPIDController.calculate(leftPosition(), state.position), -12, 12);
-    this.feedForwardOutputs = feedForward(state.velocity);
+    this.pidOutput = leftPIDController.calculate(leftPosition(), state.position);
+    this.feedForwardOutputs = clamp(feedForward(state.velocity), -12, 12);
     leftMotor.setVoltage(-(pidOutput + feedForwardOutputs));
   }
 
   public void rightPID(State state) {
     setSpeed = false;
-    double pid =
-        MathUtil.clamp(rightPIDController.calculate(rightPosition(), state.position), -12, 12);
-    double feed = feedForward(state.velocity);
+    double pid = rightPIDController.calculate(rightPosition(), state.position);
+    double feed = clamp(feedForward(state.velocity), -12, 12);
     rightMotor.setVoltage(-(pid + feed));
   }
 
