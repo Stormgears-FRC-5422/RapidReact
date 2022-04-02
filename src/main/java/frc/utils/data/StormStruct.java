@@ -3,23 +3,22 @@ package frc.utils.data;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+import java.sql.Struct;
 import java.util.HashMap;
 import java.util.Vector;
 
 public class StormStruct {
-  // Describes a data structure that has been published and described in network tables
-  // Can unpack binary data once intialized
-  private final String[] m_fieldNames;
-  private final HashMap<String, Integer>
-      m_fields; // key is field name, data is position index in binary data
-  private final HashMap<String, Integer>
-      m_sizes; // key is field name, data is byte size in binary data
+    // Describes a data structure that has been published and described in network tables
+    // Can unpack binary data once intialized
+    private final String[] m_fieldNames;
+    private final HashMap<String, Integer> m_fields; // key is field name, data is position index in binary data
+    private final HashMap<String, Integer> m_sizes; // key is field name, data is byte size in binary data
     private int m_struct_size;
-  private final int m_typeid;
-  private final NetworkTableInstance m_ntinst;
+    private final int m_typeid;
+    private final NetworkTableInstance m_ntinst;
 
     /**  
-     * Populate HashMap fields and size
+    * Populate HashMap fields and size by reading definition of struct_name from network tables (populated by struct provider)
     * 
     * @param nt_inst Network Tables instance
     * @param base_table table name where struct data is stored
@@ -87,7 +86,7 @@ public class StormStruct {
     /**
      * Unpack an entire binary stream into a list of HashMaps
      * @param data_stream
-     * @return
+     * @return List (vector) of hashmaps.  each hashmap represents a data structure being transferred
      */
     public Vector<HashMap<String, Integer>> unpack(final byte[] data_stream) {
         Vector<HashMap<String, Integer>> list;
@@ -103,7 +102,7 @@ public class StormStruct {
             int offset = 3;
             for (int i=0; i< count; i++) {
                 list.add(decode_struct(data_stream,offset));
-                offset += get_size();
+                offset += get_size();  // Move pointer to next Struct
             }
             return(list);
         }
