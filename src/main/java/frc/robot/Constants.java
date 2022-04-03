@@ -28,6 +28,8 @@ public final class Constants {
   public static final boolean kUsePivot = StormProp.getBoolean("usePivot", false);
   public static final boolean kUseStatusLights = StormProp.getBoolean("useStatusLights", false);
 
+  public static final double kNeo550FreeSpeed = StormProp.getNumber("neo550FreeSpeed", 0.0);
+  public static final double kNeo550NominalVoltage = StormProp.getNumber("neo550NominalVoltage", 0.0);;
   public static final boolean kSquareDriveInputs = StormProp.getBoolean("squareDriveInputs", true);
   public static final String kDriveStyle = StormProp.getString("driveStyle", "arcade");
   // MOTOR CONSTANTS
@@ -152,7 +154,7 @@ public final class Constants {
   public static final double kDriveTurnProfileD = StormProp.getNumber("driveTurnProfileD", 0.0);
   public static final double kDriveTurnVFF = StormProp.getNumber("driveTurnVFF", 0.0);
   public static final double kDriveTurnSFF =
-      StormProp.getNumber("driveTurnSFF", 0.0); // minmum input for movement
+      StormProp.getNumber("driveTurnSFF", 0.0); // minimum input for movement
 
   public static final double kDriveProfileMaxOutput =
       StormProp.getNumber("driveProfileMaxOutput", 0.0);
@@ -172,14 +174,20 @@ public final class Constants {
   public static final double kPivotCushionFloor = StormProp.getNumber("pivotCushionFloor", 0.0);
 
   public static final double kClimberBaseLength = StormProp.getNumber("climberBaseLength", 0.0);
-  public static final double kClimberRotationsPerUnitLength = StormProp.getNumber("climberRotationsPerUnitLength", 0.0);
+  public static final double kClimberRawDistancePerRotation = StormProp.getNumber("climberRawDistancePerRotation", 0.0);
+  public static final double kClimberGearRatio = StormProp.getNumber("climberGearRatio", 0.0);
+  public static final double kClimberRotationsPerUnitLength = kClimberGearRatio /kClimberRawDistancePerRotation;
   public static final double kPivotLength = StormProp.getNumber("pivotLength", 0.0);
-  public static final double kPivotRotationsPerUnitLength = StormProp.getNumber("pivotRotationsPerUnitLength", 0.0);
+
+  public static final double kPivotRawDistancePerRotation = StormProp.getNumber("pivotRawDistancePerRotation", 0.0);
+  public static final double kPivotGearRatio = StormProp.getNumber("pivotGearRatio", 0.0);
+  public static final double kPivotRotationsPerUnitLength = kPivotGearRatio / kPivotRawDistancePerRotation;
+
   public static final double kBarDistance = StormProp.getNumber("barDistance", 0.0);
   public static final double kPivotSupportLength = StormProp.getNumber("pivotSupportLength", 0.0);
   public static final double kPivotMountLength= StormProp.getNumber("pivotMountLength", 0.0);
   public static final double kPivotLeadBaseLength= StormProp.getNumber("pivotLeadBaseLength", 0.0);
-  public static final double kPivotLeadOffset = StormProp.getNumber("pivotLeadOffset", 0.0);
+  public static final double kPivotLeadOffsetLength = StormProp.getNumber("pivotLeadOffsetLength", 0.0);
 
   public static final int kLightsID = StormProp.getInt("lightsID", 0);
   public static final int kLEDLength = StormProp.getInt("LEDLength", 0);

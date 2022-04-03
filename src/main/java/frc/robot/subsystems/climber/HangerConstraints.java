@@ -45,9 +45,9 @@ public class HangerConstraints {
 
         // c is the length along the lead screw of the base of the triangle. But we have to map this back to rotation
         // values.
-        // we need convert back to position
+        // we need convert back to position in rotations
 
-        return ( (c - kPivotLeadBaseLength) * kPivotRotationsPerUnitLength + kPivotLeadOffset);
+        return ( (c - kPivotLeadBaseLength + kPivotLeadOffsetLength) * kPivotRotationsPerUnitLength);
     }
 
 }

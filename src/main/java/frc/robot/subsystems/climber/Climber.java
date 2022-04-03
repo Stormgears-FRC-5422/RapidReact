@@ -10,7 +10,7 @@ import static frc.robot.Constants.*;
 @Log.Exclude
 public class Climber extends ClimbingSubsystem {
 
-  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.5, 0, 0.1372, 0);
+  private final ElevatorFeedforward feedforward;
 
   private final SparkMaxLimitSwitch leftReverseLimitSwitch;
   private final SparkMaxLimitSwitch leftForwardLimitSwitch;
@@ -23,12 +23,16 @@ public class Climber extends ClimbingSubsystem {
         kClimberRightId,
         kClimberLeftInverted,
         kClimberRightInverted,
+        kClimberRotationsPerUnitLength,
         new PIDController(kLeftClimberP, kLeftClimberI, kLeftClimberD),
         new PIDController(kRightClimberP, kRightClimberI, kRightClimberD),
         kClimberHomeCurrentLimit,
         kClimberHomeSetSpeed,
         kClimberCushion,
         kClimberCushionFloor);
+
+
+    feedforward = new ElevatorFeedforward(0.5, 0, kNeo550NominalVoltage * kClimberRotationsPerUnitLength / kNeo550FreeSpeed, 0);
 
     leftReverseLimitSwitch = leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
     leftForwardLimitSwitch = leftMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
@@ -84,7 +88,7 @@ public class Climber extends ClimbingSubsystem {
     boolean leftTriggered = leftReverseLimitSwitch.isPressed();
     boolean rightTriggered = rightReverseLimitSwitch.isPressed();
 
-    if (leftTriggered && rightTriggered) System.out.println("BOTH LIMITS ARE " + leftTriggered);
+    if (leftTriggered && rightTriggered) System.out.println("BOTH LIMITS ARE pressed");
 
     return (leftTriggered && rightTriggered) || super.isHome();
   }

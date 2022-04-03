@@ -14,8 +14,8 @@ import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 import static edu.wpi.first.math.MathUtil.clamp;
-import static java.lang.Math.abs;
-import static java.lang.Math.copySign;
+import static java.lang.Math.*;
+import static frc.robot.Constants.*;
 
 @Log.Exclude
 public abstract class ClimbingSubsystem extends SubsystemBase implements Loggable {
@@ -32,6 +32,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   @Config.PIDController protected final PIDController leftPIDController;
   @Config.PIDController protected final PIDController rightPIDController;
 
+  protected final double rotationsPerUnitLength;
   protected final double homeCurrentLimit;
   protected final double homeSpeed;
   protected final double cushion;
@@ -59,6 +60,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
       int rightMotorID,
       boolean leftInverted,
       boolean rightInverted,
+      double rotationsPerUnitLength,
       PIDController leftPIDController,
       PIDController rightPIDController,
       double homeCurrentLimit,
@@ -77,6 +79,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     //    leftPIDController.setTolerance(4);
     //    rightPIDController.setTolerance(4);
 
+    this.rotationsPerUnitLength = rotationsPerUnitLength;
     this.homeCurrentLimit = homeCurrentLimit;
     this.homeSpeed = homeSpeed;
     this.cushion = cushion;
@@ -240,26 +243,27 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
   @Log(name = "left position")
   public double leftPosition() {
-    return -leftMotor.getEncoder().getPosition();
+    return -leftMotor.getEncoder().getPosition() / rotationsPerUnitLength;
   }
 
   @Log(name = "right position")
   public double rightPosition() {
-    return -rightMotor.getEncoder().getPosition();
+    return -rightMotor.getEncoder().getPosition() / rotationsPerUnitLength;
   }
 
   public void leftPID(State state) {
     setSpeed = false;
     this.pidOutput = leftPIDController.calculate(leftPosition(), state.position);
-    this.feedForwardOutputs = clamp(feedForward(state.velocity), -12, 12);
-    leftMotor.setVoltage(-(pidOutput + feedForwardOutputs));
+    //this.feedForwardOutputs = clamp(feedForward(state.velocity), -12, 12);
+    this.feedForwardOutputs = feedForward(state.velocity);
+    leftMotor.setVoltage(-clamp((pidOutput + feedForwardOutputs),-kNeo550NominalVoltage,kNeo550NominalVoltage));
   }
 
   public void rightPID(State state) {
     setSpeed = false;
     double pid = rightPIDController.calculate(rightPosition(), state.position);
-    double feed = clamp(feedForward(state.velocity), -12, 12);
-    rightMotor.setVoltage(-(pid + feed));
+    double feed = feedForward(state.velocity);
+    rightMotor.setVoltage(-clamp((pid + feed),-12,12));
   }
 
   public abstract double feedForward(double velocity);

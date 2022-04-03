@@ -1,6 +1,6 @@
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -8,7 +8,8 @@ import static frc.robot.Constants.*;
 
 @Log.Exclude
 public class Pivot extends ClimbingSubsystem {
-  private final ArmFeedforward feedforward = new ArmFeedforward(0.05, 0, 0.0686, 0);
+  //private final ArmFeedforward feedforward = new ArmFeedforward(0.05, 0, 0.0686, 0);
+  private final ElevatorFeedforward feedforward;
 
   public Pivot() {
     super(
@@ -16,12 +17,15 @@ public class Pivot extends ClimbingSubsystem {
         kPivotRightId,
         kPivotLeftInverted,
         kPivotRightInverted,
+        kPivotRotationsPerUnitLength,
         new PIDController(kLeftPivotP, kLeftPivotI, kLeftPivotD),
         new PIDController(kRightPivotP, kRightPivotI, kRightPivotD),
         kPivotHomeCurrentLimit,
         kPivotHomeSetSpeed,
         kPivotCushion,
         kPivotCushionFloor);
+
+    feedforward = new ElevatorFeedforward(0.5, 0, kNeo550NominalVoltage * kPivotRotationsPerUnitLength / kNeo550FreeSpeed, 0);
 
   }
 
@@ -39,7 +43,7 @@ public class Pivot extends ClimbingSubsystem {
 
   @Override
   public double feedForward(double velocity) {
-    return feedforward.calculate(0, velocity);
+    return feedforward.calculate(velocity,0);
   }
 
   @Override
