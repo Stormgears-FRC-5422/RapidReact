@@ -44,6 +44,7 @@ public class SparkDrive extends StormDrive {
   private Filter slaveLeftTemp;
   private Filter masterRightVoltage;
 
+
   private double delta;
   private int tempWarningCount;
 
@@ -143,6 +144,11 @@ public class SparkDrive extends StormDrive {
         max(
             max(masterRight.getMotorTemperature(), masterLeft.getMotorTemperature()),
             max(slaveRight.getMotorTemperature(), slaveLeft.getMotorTemperature()));
+
+    masterRight.setGroupTemperature(temp);
+    masterLeft.setGroupTemperature(temp);
+    slaveRight.setGroupTemperature(temp);
+    slaveLeft.setGroupTemperature(temp);
 
     double multiplier = 1;
     if (temp > kTemperatureRampThreshold) {

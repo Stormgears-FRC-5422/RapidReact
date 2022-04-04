@@ -3,17 +3,20 @@ package frc.utils.motorcontrol;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants;
 import edu.wpi.first.math.MathUtil;
 
+import static frc.robot.Constants.*;
+import static java.lang.Math.*;
+
 public class StormSpark extends CANSparkMax {
-    private static final double temperatureRampThreshold = Constants.kTemperatureRampThreshold;
-    private static final double temperatureRampLimit = Constants.kTemperatureRampLimit;
+    private static final double temperatureRampThreshold = kTemperatureRampThreshold;
+    private static final double temperatureRampLimit = kTemperatureRampLimit;
     private MotorKind motorKind;
     private int currentLimit;
     private final double delta;
     private double scale = 1.0;
     private long count = 0;
+    private double groupTemperature;
 
     public enum MotorKind {
         kNeo,
@@ -27,17 +30,17 @@ public class StormSpark extends CANSparkMax {
 
         switch(motorKind) {
             case kNeo:
-                currentLimit = Constants.kSparkMaxCurrentLimit;
+                currentLimit = kSparkMaxCurrentLimit;
                 break;
             case k550:
-                currentLimit = Constants.kSparkMaxCurrentLimit550;
+                currentLimit = kSparkMaxCurrentLimit550;
                 break;
         }
 
         restoreFactoryDefaults();
         setSmartCurrentLimit(currentLimit);
 
-        delta = Math.min(temperatureRampLimit - temperatureRampThreshold, 1.0); // Safety margin - don't want divide by 0!
+        delta = min(temperatureRampLimit - temperatureRampThreshold, 1.0); // Safety margin - don't want divide by 0!
     }
 
     @Override
@@ -49,10 +52,10 @@ public class StormSpark extends CANSparkMax {
         // reduce speed to 0 at temperatureRampLimit
         // start ramping down at temperatureRampThreshold
 
-        double temp = getMotorTemperature();
+        double temp = max(getMotorTemperature(),groupTemperature);
 
         if (temp > temperatureRampThreshold) {
-            speed *= Math.max((temperatureRampLimit - temp) / delta, 0.0);
+            speed *= max((temperatureRampLimit - temp) / delta, 0.0);
             if (count++ % 100 == 0) System.out.println("Id " + this.getDeviceId() + " safety control - speed: " + speed + " temperature:" + temp);
         }
 
@@ -65,6 +68,8 @@ public class StormSpark extends CANSparkMax {
     public void setSpeedScale(double scale) {
         this.scale = MathUtil.clamp(scale, 0, 1.0);
     }
+
+    public void setGroupTemperature(double temperature) {groupTemperature = temperature;}
 
     public static void check(REVLibError command) {
         if (command != REVLibError.kOk) {
