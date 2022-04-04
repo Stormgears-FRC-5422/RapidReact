@@ -4,10 +4,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.climber.ClimbingSubsystem;
 import frc.robot.subsystems.climber.HangerConstraints;
-import frc.utils.LRSpeeds;
 import frc.utils.joysticks.StormXboxController;
 
-import static frc.robot.Constants.kClimberSpeed;
 import static java.lang.Math.copySign;
 
 public class CoordinatingClimber extends CommandBase {

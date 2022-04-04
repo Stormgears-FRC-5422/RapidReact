@@ -10,7 +10,7 @@ public class HoldCurrentPosition extends HoldInterface {
   public HoldCurrentPosition(ClimbingSubsystem subsystem) {
     super(subsystem);
     this.subsystem = subsystem;
-    holdCurrentPosition();
+    //holdCurrentPosition();
   }
 
   public void holdCurrentPosition() {

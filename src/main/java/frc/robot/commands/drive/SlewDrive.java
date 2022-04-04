@@ -51,14 +51,14 @@ public class SlewDrive extends CommandBase {
       limiter = new SlewRateLimiter(prevSlewRate);
     }
 
-    if (drive.getTurnSlewRate() != prevTurnSlewRate) {
-      System.out.println("updated turnSlewRate: " + prevSlewRate);
-      prevTurnSlewRate = drive.getTurnSlewRate();
-      turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
-    }
+//    if (drive.getTurnSlewRate() != prevTurnSlewRate) {
+//      System.out.println("updated turnSlewRate: " + prevSlewRate);
+//      prevTurnSlewRate = drive.getTurnSlewRate();
+//      turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
+//    }
 
     targetSpeed = limiter.calculate(targetSpeed);
-    targetZRotation = turnLimiter.calculate(targetZRotation);
+//    targetZRotation = turnLimiter.calculate(targetZRotation);
 
     if (kSquareDriveInputs) {
       targetSpeed = Math.copySign(targetSpeed * targetSpeed, targetSpeed);
@@ -68,16 +68,16 @@ public class SlewDrive extends CommandBase {
     // System.out.println("targetSpeed: " + targetSpeed + ", targetZRotation: " + targetZRotation);
     if (kDriveStyle.equalsIgnoreCase("curvature"))
       differentialDrive.curvatureDrive(
-          (drive.getReverse() ? -1 : 1) * (drive.getPrecision() ? kXPrecision : 0.75) * targetSpeed,
+          (drive.getReverse() ? -1 : 1) * (drive.getPrecision() ? kXPrecision : 1) * targetSpeed,
           (drive.getReverse() ? -1 : 1)
-              * (drive.getPrecision() ? kZPrecision : 0.6)
+              * (drive.getPrecision() ? kZPrecision : 1)
               * targetZRotation,
           true);
     else
       differentialDrive.arcadeDrive(
-          (drive.getReverse() ? -1 : 1) * (drive.getPrecision() ? kXPrecision : 0.85) * targetSpeed,
+          (drive.getReverse() ? -1 : 1) * (drive.getPrecision() ? kXPrecision : 1) * targetSpeed,
           (drive.getReverse() ? -1 : 1)
-              * (drive.getPrecision() ? kZPrecision : 0.85)
+              * (drive.getPrecision() ? kZPrecision : 1)
               * targetZRotation); // inputs already squared above
   }
 

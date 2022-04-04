@@ -43,16 +43,16 @@ public class RobotContainer {
   private final StormXboxController secondaryJoystick;
   private final ButtonBoard buttonBoard;
   @Config.Command(tabName = "Driver", name = "UP Climber TRAVERSE")
-  private final SequentialCommandGroup highestClimber;
+  private SequentialCommandGroup highestClimber;
   @Config.Command(tabName = "Driver", name = "Down Climber")
-  private final SequentialCommandGroup lowestClimber;
+  private SequentialCommandGroup lowestClimber;
   @Config.Command(tabName = "Driver", name = "Chin Up pivot")
-  private final SequentialCommandGroup firstpivot;
+  private SequentialCommandGroup firstpivot;
   @Config.Command(tabName = "Driver", name = "Level 2 pivot")
-  private final SequentialCommandGroup secondPivot;
+  private SequentialCommandGroup secondPivot;
 
   @Config.Command(tabName = "Driver", name = "back Pivot")
-  private final SequentialCommandGroup furthest;
+  private SequentialCommandGroup furthest;
   /** Declare subsystems - initialize below */
   private StormDrive drive;
 
@@ -99,36 +99,6 @@ public class RobotContainer {
     initSubsystems();
     initCommands();
     configureDefaultCommands();
-    highestClimber =
-        new SequentialCommandGroup(
-            new PositionClimber(climber, ClimbingGoal.HIGHEST.getState()),
-            new HoldTargetPosition(climber, ClimbingGoal.HIGHEST.getState().position));
-    lowestClimber =
-        new SequentialCommandGroup(
-            new ParallelCommandGroup(
-                new PositionClimber(climber, new State(65, 0)),
-                new PositionPivot(pivot, PivotGoal.MOST_BACK.getState())),
-            new PositionClimber(climber, ClimbingGoal.LOWEST.getState()),
-            new ParallelRaceGroup(
-                    new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position),
-                    new PositionPivot(pivot, PivotGoal.FIRST.getState()))
-                .withName("Hold Climb"),
-            new ParallelRaceGroup(
-                    new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position),
-                    new PositionClimber(climber, new State(65, 0)))
-                .withName("Hold Pivot"));
-    firstpivot =
-        new SequentialCommandGroup(
-            new PositionPivot(pivot, PivotGoal.FIRST.getState()),
-            new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position));
-    secondPivot =
-        new SequentialCommandGroup(
-            new PositionPivot(pivot, PivotGoal.SECOND.getState()),
-            new HoldTargetPosition(pivot, PivotGoal.SECOND.getState().position));
-    furthest =
-        new SequentialCommandGroup(
-            new PositionPivot(pivot, PivotGoal.FURTHEST.getState()),
-            new HoldTargetPosition(pivot, PivotGoal.FURTHEST.getState().position));
     configureButtonBindings();
   }
 
@@ -189,8 +159,39 @@ public class RobotContainer {
         liftIntake = new LiftIntake(feeder, secondaryJoystick);
       }
     }
-    if (kUsePivot && kUseClimber) homingSequence = new HomeClimbingSystem(climber, pivot);
-    else if (kUsePivot) homingSequence = new Home(pivot);
+    if (kUsePivot && kUseClimber) {
+      homingSequence = new HomeClimbingSystem(climber, pivot);
+      highestClimber =
+              new SequentialCommandGroup(
+                      new PositionClimber(climber, ClimbingGoal.HIGHEST.getState()),
+                      new HoldTargetPosition(climber, ClimbingGoal.HIGHEST.getState().position));
+      lowestClimber =
+              new SequentialCommandGroup(
+                      new ParallelCommandGroup(
+                              new PositionClimber(climber, new State(65, 0)),
+                              new PositionPivot(pivot, PivotGoal.MOST_BACK.getState())),
+                      new PositionClimber(climber, ClimbingGoal.LOWEST.getState()),
+                      new ParallelRaceGroup(
+                              new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position),
+                              new PositionPivot(pivot, PivotGoal.FIRST.getState()))
+                              .withName("Hold Climb"),
+                      new ParallelRaceGroup(
+                              new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position),
+                              new PositionClimber(climber, new State(65, 0)))
+                              .withName("Hold Pivot"));
+      firstpivot =
+              new SequentialCommandGroup(
+                      new PositionPivot(pivot, PivotGoal.FIRST.getState()),
+                      new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position));
+      secondPivot =
+              new SequentialCommandGroup(
+                      new PositionPivot(pivot, PivotGoal.SECOND.getState()),
+                      new HoldTargetPosition(pivot, PivotGoal.SECOND.getState().position));
+      furthest =
+              new SequentialCommandGroup(
+                      new PositionPivot(pivot, PivotGoal.FURTHEST.getState()),
+                      new HoldTargetPosition(pivot, PivotGoal.FURTHEST.getState().position));
+    } else if (kUsePivot) homingSequence = new Home(pivot);
     else if (kUseClimber) homingSequence = new Home(climber);
 
     if (kUsePivot) {

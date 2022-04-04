@@ -10,7 +10,7 @@ import io.github.oblarg.oblog.annotations.Log;
 
 import java.util.function.DoubleSupplier;
 
-import static frc.robot.Constants.kClimberSpeed;
+import static frc.robot.Constants.kClimberSpeedScale;
 
 @Log.Exclude
 public class ManualClimber extends CommandBase implements Loggable {
@@ -23,7 +23,7 @@ public class ManualClimber extends CommandBase implements Loggable {
 
   public ManualClimber(
       ClimbingSubsystem subsystem, StormXboxController joystick, DoubleSupplier joyStickInput) {
-    System.out.println("TestClimber()");
+    System.out.println("ManualClimber()");
     this.subsystem = subsystem;
     this.joystick = joystick;
     this.joystickInput = joyStickInput;
@@ -33,7 +33,7 @@ public class ManualClimber extends CommandBase implements Loggable {
 
   @Override
   public void initialize() {
-    System.out.println("TestClimber.initialize()");
+    System.out.println("ManualClimber.initialize()");
     leftPosition = subsystem.leftPosition();
     rightPosition = subsystem.rightPosition();
   }
@@ -56,7 +56,7 @@ public class ManualClimber extends CommandBase implements Loggable {
     }
 
     double joyVal = joystickInput.getAsDouble();
-    LRSpeeds speeds = new LRSpeeds(joyVal * kClimberSpeed, joyVal * kClimberSpeed);
+    LRSpeeds speeds = new LRSpeeds(joyVal * kClimberSpeedScale, joyVal * kClimberSpeedScale);
 
     // Move only the one on the side with the bumper held
     if (joystick.getLeftLittleButtonIsHeld()) {
@@ -68,12 +68,13 @@ public class ManualClimber extends CommandBase implements Loggable {
     // TODO - re-enable?
     //    if (joyVal == 0 && lastJoyVal > 0) setHoldPosition();
     if (joyVal == 0) {
-      if (!holding) {
-        holding = true;
-        leftPosition = subsystem.leftPosition();
-        rightPosition = subsystem.rightPosition();
-      }
-      hold(leftPosition, rightPosition);
+//      if (!holding) {
+//        holding = true;
+//        leftPosition = subsystem.leftPosition();
+//        rightPosition = subsystem.rightPosition();
+//      }
+//      hold(leftPosition, rightPosition);
+      subsystem.setSpeed(LRSpeeds.stop());
     } else {
       holding = false;
       subsystem.setSpeed(speeds);
@@ -82,7 +83,7 @@ public class ManualClimber extends CommandBase implements Loggable {
 
   @Override
   public void end(boolean interrupted) {
-    System.out.println("TestClimber.end( interrupted = " + interrupted + " )");
+    System.out.println("ManualClimber.end( interrupted = " + interrupted + " )");
     subsystem.stop();
   }
 

@@ -106,13 +106,15 @@ public final class Constants {
   public static final boolean kPivotRightInverted =
       StormProp.getBoolean("pivotRightInverted", false);
 
-  public static final double kClimberSpeed = StormProp.getNumber("climberSpeed", 0.0);
-  public static final double kPivotSpeed = StormProp.getNumber("pivotSpeed", 0.0);
+  public static final double kClimberSpeedScale = StormProp.getNumber("climberSpeedScale", 0.0);
+  public static final double kPivotSpeedScale = StormProp.getNumber("pivotSpeedScale", 0.0);
 
-  public static final double kClimberMaxVelocity = StormProp.getNumber("climberMaxVelocity", 0.0);
+//  Now calculated below
+//  public static final double kClimberMaxVelocity = StormProp.getNumber("climberMaxVelocity", 0.0);
   public static final double kClimberMaxAcceleration =
       StormProp.getNumber("climberMaxAcceleration", 0.0);
-  public static final double kPivotMaxVelocity = StormProp.getNumber("pivotMaxVelocity", 0.0);
+//  NOw calculated below
+//  public static final double kPivotMaxVelocity = StormProp.getNumber("pivotMaxVelocity", 0.0);
   public static final double kPivotMaxAcceleration =
       StormProp.getNumber("pivotMaxAcceleration", 0.0);
 
@@ -132,9 +134,9 @@ public final class Constants {
   public static final double kRightPivotI = StormProp.getNumber("rightPivotI", 0.0);
   public static final double kRightPivotD = StormProp.getNumber("rightPivotD", 0.0);
 
-  public static final double kCLimberForwardLimit =
+  public static final double kClimberForwardLimit =
       StormProp.getNumber("climberSoftLimitForward", 0.0);
-  public static final double kCLimberReverseLimit =
+  public static final double kClimberReverseLimit =
       StormProp.getNumber("climberSoftLimitReverse", 0.0);
   public static final double kPivotForwardLimit = StormProp.getNumber("pivotSoftLimitForward", 0.0);
   public static final double kPivotReverseLimit = StormProp.getNumber("pivotSoftLimitReverse", 0.0);
@@ -182,6 +184,9 @@ public final class Constants {
   public static final double kPivotRawDistancePerRotation = StormProp.getNumber("pivotRawDistancePerRotation", 0.0);
   public static final double kPivotGearRatio = StormProp.getNumber("pivotGearRatio", 0.0);
   public static final double kPivotRotationsPerUnitLength = kPivotGearRatio / kPivotRawDistancePerRotation;
+
+  public static final double kClimberMaxVelocity = kClimberSpeedScale * kNeo550FreeSpeed / kClimberRotationsPerUnitLength;
+  public static final double kPivotMaxVelocity = kClimberSpeedScale * kNeo550FreeSpeed / kPivotRotationsPerUnitLength;
 
   public static final double kBarDistance = StormProp.getNumber("barDistance", 0.0);
   public static final double kPivotSupportLength = StormProp.getNumber("pivotSupportLength", 0.0);

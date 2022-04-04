@@ -12,10 +12,10 @@ public class Climber extends ClimbingSubsystem {
 
   private final ElevatorFeedforward feedforward;
 
-  private final SparkMaxLimitSwitch leftReverseLimitSwitch;
-  private final SparkMaxLimitSwitch leftForwardLimitSwitch;
-  private final SparkMaxLimitSwitch rightReverseLimitSwitch;
-  private final SparkMaxLimitSwitch rightForwardLimitSwitch;
+  private final SparkMaxLimitSwitch leftReverseHardLimitSwitch;
+  private final SparkMaxLimitSwitch leftForwardHardLimitSwitch;
+  private final SparkMaxLimitSwitch rightReverseHardLimitSwitch;
+  private final SparkMaxLimitSwitch rightForwardHardLimitSwitch;
 
   public Climber() {
     super(
@@ -32,22 +32,21 @@ public class Climber extends ClimbingSubsystem {
         kClimberCushionFloor);
 
 
-    feedforward = new ElevatorFeedforward(0.5, 0, kNeo550NominalVoltage * kClimberRotationsPerUnitLength / kNeo550FreeSpeed, 0);
+    feedforward = new ElevatorFeedforward(0.5, 0, kNeo550NominalVoltage / kClimberMaxVelocity, 0);
 
-    leftReverseLimitSwitch = leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
-    leftForwardLimitSwitch = leftMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
-    rightReverseLimitSwitch = rightMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
-    rightForwardLimitSwitch = rightMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    leftReverseHardLimitSwitch = leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    leftForwardHardLimitSwitch = leftMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    rightReverseHardLimitSwitch = rightMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    rightForwardHardLimitSwitch = rightMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
   }
 
   @Override
   void setSoftLimits() {
-    setSoftLimits(-kCLimberForwardLimit, -kCLimberReverseLimit);
+    setSoftLimits(kClimberForwardLimit, kClimberReverseLimit);
   }
 
   public void onlyHardLimits() {
     disableSoftLimits();
-    System.out.println("Only Hard Limits");
   }
 
   @Override
@@ -61,32 +60,32 @@ public class Climber extends ClimbingSubsystem {
 
     if (hasBeenHomed && !overrideLimits) {
       if (leftPosition() < kClimberMidpoint) {
-        leftReverseLimitSwitch.enableLimitSwitch(false);
-        leftForwardLimitSwitch.enableLimitSwitch(true);
+        leftReverseHardLimitSwitch.enableLimitSwitch(false);
+        leftForwardHardLimitSwitch.enableLimitSwitch(true);
       } else {
-        leftReverseLimitSwitch.enableLimitSwitch(true);
-        leftForwardLimitSwitch.enableLimitSwitch(false);
+        leftReverseHardLimitSwitch.enableLimitSwitch(true);
+        leftForwardHardLimitSwitch.enableLimitSwitch(false);
       }
       if (rightPosition() < kClimberMidpoint) {
-        rightReverseLimitSwitch.enableLimitSwitch(false);
-        rightForwardLimitSwitch.enableLimitSwitch(true);
+        rightReverseHardLimitSwitch.enableLimitSwitch(false);
+        rightForwardHardLimitSwitch.enableLimitSwitch(true);
       } else {
-        rightReverseLimitSwitch.enableLimitSwitch(true);
-        rightForwardLimitSwitch.enableLimitSwitch(false);
+        rightReverseHardLimitSwitch.enableLimitSwitch(true);
+        rightForwardHardLimitSwitch.enableLimitSwitch(false);
       }
     }
 
     if (goingHome) {
-      leftHome = leftHome || leftReverseLimitSwitch.isPressed();
-      rightHome = rightHome || rightReverseLimitSwitch.isPressed();
+      leftHome = leftHome || leftReverseHardLimitSwitch.isPressed();
+      rightHome = rightHome || rightReverseHardLimitSwitch.isPressed();
     }
     super.periodic();
   }
 
   @Override
   public boolean isHome() {
-    boolean leftTriggered = leftReverseLimitSwitch.isPressed();
-    boolean rightTriggered = rightReverseLimitSwitch.isPressed();
+    boolean leftTriggered = leftReverseHardLimitSwitch.isPressed();
+    boolean rightTriggered = rightReverseHardLimitSwitch.isPressed();
 
     if (leftTriggered && rightTriggered) System.out.println("BOTH LIMITS ARE pressed");
 
@@ -117,10 +116,10 @@ public class Climber extends ClimbingSubsystem {
 
   public void disableAllHardLimits() {
     overrideLimits = true;
-    leftReverseLimitSwitch.enableLimitSwitch(false);
-    leftForwardLimitSwitch.enableLimitSwitch(false);
-    rightForwardLimitSwitch.enableLimitSwitch(false);
-    rightForwardLimitSwitch.enableLimitSwitch(false);
+    leftReverseHardLimitSwitch.enableLimitSwitch(false);
+    leftForwardHardLimitSwitch.enableLimitSwitch(false);
+    rightForwardHardLimitSwitch.enableLimitSwitch(false);
+    rightForwardHardLimitSwitch.enableLimitSwitch(false);
   }
 
 }

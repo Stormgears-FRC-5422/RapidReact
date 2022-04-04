@@ -88,35 +88,17 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
     leftMotor.setInverted(leftInverted);
     leftMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    leftMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
+//    leftMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
     leftMotor.setOpenLoopRampRate(0.25);
 
     rightMotor.setInverted(rightInverted);
     rightMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    rightMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
+//    rightMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
     rightMotor.setOpenLoopRampRate(0.25);
 
     // Optimistic - we need to zero if the robot has been off...
     setSoftLimits();
     enableSoftLimits();
-    shuffleBoard();
-  }
-
-  private void shuffleBoard() {
-    //    Shuffleboard.getTab(shuffleBoardTabName).add(this);
-    //    Shuffleboard.getTab(shuffleBoardTabName).add("leftPID", this.leftPIDController);
-    //    Shuffleboard.getTab(shuffleBoardTabName).add("rightPID", this.rightPIDController);
-    //    Shuffleboard.getTab(shuffleBoardTabName).addNumber("PIDOutput", () -> pidOutput);
-    //    Shuffleboard.getTab(shuffleBoardTabName).addNumber("FFOutput", () -> feedForwardOutputs);
-    //    Shuffleboard.getTab(shuffleBoardTabName)
-    //        .addNumber("CombinedOutput", () -> pidOutput + feedForwardOutputs);
-    //    Shuffleboard.getTab(shuffleBoardTabName).addBoolean("setSpeed", () -> setSpeed);
-    //    Shuffleboard.getTab(shuffleBoardTabName).addNumber("lC", leftCurrent::update);
-    //    Shuffleboard.getTab(shuffleBoardTabName).addNumber("rC", rightCurrent::update);
-    //    Shuffleboard.getTab(shuffleBoardTabName)
-    //        .addString(
-    //            "command running",
-    //            () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "none");
   }
 
   public void stop() {
@@ -170,6 +152,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   // Automatically ramp down if we are getting close to the soft limits
   // but bottom out at the cushionFloor so we don't stall.
   // further. preserve speeds that are already within these bounds as-is.
+  // TODO - we should build this into the motor control itself.
   double applyCushion(double speed, double position) {
     if (!hasBeenHomed) return speed;
     double delta;  // How close are we?
@@ -226,13 +209,13 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   }
 
   protected void setSoftLimits(double forward, double reverse) {
-    forwardSoftLimit = -forward;
-    reverseSoftLimit = -reverse;
-    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
-    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverse);
-    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forward);
-    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverse);
-    System.out.println("Climber.setLimits()");
+    forwardSoftLimit = -forward * rotationsPerUnitLength;
+    reverseSoftLimit = -reverse * rotationsPerUnitLength;
+    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forwardSoftLimit);
+    leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverseSoftLimit);
+    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forwardSoftLimit);
+    rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverseSoftLimit);
+    System.out.println(getName() + ".setSoftLimits(); forward: " + forwardSoftLimit + ", reverse: " + reverseSoftLimit);
   }
 
   @Override

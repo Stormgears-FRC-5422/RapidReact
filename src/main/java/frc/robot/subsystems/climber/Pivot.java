@@ -25,7 +25,7 @@ public class Pivot extends ClimbingSubsystem {
         kPivotCushion,
         kPivotCushionFloor);
 
-    feedforward = new ElevatorFeedforward(0.5, 0, kNeo550NominalVoltage * kPivotRotationsPerUnitLength / kNeo550FreeSpeed, 0);
+    feedforward = new ElevatorFeedforward(0.5, 0, kNeo550NominalVoltage / kPivotMaxVelocity, 0);
 
   }
 
@@ -48,6 +48,6 @@ public class Pivot extends ClimbingSubsystem {
 
   @Override
   void setSoftLimits() {
-    setSoftLimits(-kPivotForwardLimit, -kPivotReverseLimit);
+    setSoftLimits(kPivotForwardLimit, kPivotReverseLimit);
   }
 }
