@@ -26,8 +26,9 @@ import frc.utils.joysticks.StormXboxController;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
-import static edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import static frc.robot.Constants.*;
+import static frc.robot.commands.climber.trapezoid.ClimbingGoal.*;
+import static frc.robot.commands.climber.trapezoid.PivotGoal.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,8 +49,6 @@ public class RobotContainer {
   private SequentialCommandGroup lowestClimber;
   @Config.Command(tabName = "Driver", name = "Chin Up pivot")
   private SequentialCommandGroup firstpivot;
-  @Config.Command(tabName = "Driver", name = "Level 2 pivot")
-  private SequentialCommandGroup secondPivot;
 
   @Config.Command(tabName = "Driver", name = "back Pivot")
   private SequentialCommandGroup furthest;
@@ -163,34 +162,30 @@ public class RobotContainer {
       homingSequence = new HomeClimbingSystem(climber, pivot);
       highestClimber =
               new SequentialCommandGroup(
-                      new PositionClimber(climber, ClimbingGoal.HIGHEST.getState()),
-                      new HoldTargetPosition(climber, ClimbingGoal.HIGHEST.getState().position));
+                      new PositionClimber(climber, HIGHEST.getState()),
+                      new HoldTargetPosition(climber, HIGHEST.getState().position));
       lowestClimber =
               new SequentialCommandGroup(
                       new ParallelCommandGroup(
-                              new PositionClimber(climber, new State(65, 0)),
-                              new PositionPivot(pivot, PivotGoal.MOST_BACK.getState())),
-                      new PositionClimber(climber, ClimbingGoal.LOWEST.getState()),
+                              new PositionClimber(climber, CLEARANCE_HEIGHT.getState()),
+                              new PositionPivot(pivot, MOST_BACK.getState())),
+                      new PositionClimber(climber, LOWEST.getState()),
                       new ParallelRaceGroup(
-                              new HoldTargetPosition(climber, ClimbingGoal.LOWEST.getState().position),
-                              new PositionPivot(pivot, PivotGoal.FIRST.getState()))
+                              new HoldTargetPosition(climber, LOWEST.getState().position),
+                              new PositionPivot(pivot, FIRST.getState()))
                               .withName("Hold Climb"),
                       new ParallelRaceGroup(
-                              new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position),
-                              new PositionClimber(climber, new State(65, 0)))
+                              new HoldTargetPosition(pivot, FIRST.getState().position),
+                              new PositionClimber(climber, CLEARANCE_HEIGHT.getState()))
                               .withName("Hold Pivot"));
       firstpivot =
               new SequentialCommandGroup(
-                      new PositionPivot(pivot, PivotGoal.FIRST.getState()),
-                      new HoldTargetPosition(pivot, PivotGoal.FIRST.getState().position));
-      secondPivot =
-              new SequentialCommandGroup(
-                      new PositionPivot(pivot, PivotGoal.SECOND.getState()),
-                      new HoldTargetPosition(pivot, PivotGoal.SECOND.getState().position));
+                      new PositionPivot(pivot, MOST_BACK.getState()),
+                      new HoldTargetPosition(pivot, MOST_BACK.getState().position));
       furthest =
               new SequentialCommandGroup(
-                      new PositionPivot(pivot, PivotGoal.FURTHEST.getState()),
-                      new HoldTargetPosition(pivot, PivotGoal.FURTHEST.getState().position));
+                      new PositionPivot(pivot, FURTHEST.getState()),
+                      new HoldTargetPosition(pivot, FURTHEST.getState().position));
     } else if (kUsePivot) homingSequence = new Home(pivot);
     else if (kUseClimber) homingSequence = new Home(climber);
 
@@ -252,8 +247,8 @@ public class RobotContainer {
 
           buttonBoard.climberUP.whenPressed(highestClimber);
           buttonBoard.climberDown.whenPressed(lowestClimber);
-          buttonBoard.pivotIN.whenPressed(firstpivot);
-          buttonBoard.pivotOut.whenPressed(furthest);
+          buttonBoard.pivotMostBackButton.whenPressed(firstpivot);
+          buttonBoard.pivotFurthestButton.whenPressed(furthest);
         } else if (kUsePivot) buttonBoard.manualClimberButton.whenPressed(manualPivot);
         else if (kUseClimber) buttonBoard.manualClimberButton.whenPressed(manualClimber);
         if (kUseClimber) {

@@ -1,12 +1,13 @@
 package frc.robot.commands.climber.trapezoid;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import frc.robot.Constants;
 
 public enum PivotGoal {
   MOST_BACK(0),
-  FIRST(58),
+  FIRST(Constants.kPivotLeadOffsetLength),
   SECOND(150),
-  FURTHEST(370),
+  FURTHEST(0.3),
   Custom(0);
 
   TrapezoidProfile.State state;

@@ -29,8 +29,8 @@ public class ButtonBoard {
   public final POVButton coordinatingClimberButton;
   public final JoystickButton climberUP;
   public final JoystickButton climberDown;
-  public final JoystickButton pivotIN;
-  public final JoystickButton pivotOut;
+  public final JoystickButton pivotMostBackButton;
+  public final JoystickButton pivotFurthestButton;
   public final JoystickButton reverseButton;
   public final POVButton liftIntakeButton;
 
@@ -41,8 +41,8 @@ public class ButtonBoard {
     precisionButton = new JoystickButton(driveJoystick, leftBumper);
     climberUP = new JoystickButton(driveJoystick, YButton);
     climberDown = new JoystickButton(driveJoystick, AButton);
-    pivotIN = new JoystickButton(driveJoystick, BButton);
-    pivotOut = new JoystickButton(driveJoystick, XButton);
+    pivotMostBackButton = new JoystickButton(driveJoystick, BButton);
+    pivotFurthestButton = new JoystickButton(driveJoystick, XButton);
     reverseButton = new JoystickButton(driveJoystick, littleLeftButton);
 
     shootButton = new JoystickButton(secondaryJoystick, rightBumper);

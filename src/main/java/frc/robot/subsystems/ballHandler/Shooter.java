@@ -39,6 +39,8 @@ public class Shooter extends SubsystemBase implements Loggable {
     return motor.getEncoder().getVelocity();
   }
 
+  @Log(name = "Current")
+  public double getCurrent() { return motor.getOutputCurrent();}
   //    @Log.Graph(name = "Speed", visibleTime = 3)
 
   @Log(name = "Exp Speed #")
