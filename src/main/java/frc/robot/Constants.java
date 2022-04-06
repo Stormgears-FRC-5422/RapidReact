@@ -29,7 +29,8 @@ public final class Constants {
   public static final boolean kUseStatusLights = StormProp.getBoolean("useStatusLights", false);
 
   public static final double kNeo550FreeSpeed = StormProp.getNumber("neo550FreeSpeed", 0.0);
-  public static final double kNeo550NominalVoltage = StormProp.getNumber("neo550NominalVoltage", 0.0);;
+  public static final double kNeo550NominalVoltage =
+      StormProp.getNumber("neo550NominalVoltage", 0.0);
   public static final boolean kSquareDriveInputs = StormProp.getBoolean("squareDriveInputs", true);
   public static final String kDriveStyle = StormProp.getString("driveStyle", "arcade");
   // MOTOR CONSTANTS

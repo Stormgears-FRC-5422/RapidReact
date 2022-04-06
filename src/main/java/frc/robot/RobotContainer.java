@@ -9,7 +9,9 @@ import frc.robot.commands.climber.hold.HoldCurrentPosition;
 import frc.robot.commands.climber.hold.HoldTargetPosition;
 import frc.robot.commands.climber.home.Home;
 import frc.robot.commands.climber.home.HomeClimbingSystem;
-import frc.robot.commands.climber.trapezoid.*;
+import frc.robot.commands.climber.trapezoid.CoordinatingClimber;
+import frc.robot.commands.climber.trapezoid.PositionClimber;
+import frc.robot.commands.climber.trapezoid.PositionPivot;
 import frc.robot.commands.drive.SlewDrive;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
@@ -45,8 +47,10 @@ public class RobotContainer {
   private final ButtonBoard buttonBoard;
   @Config.Command(tabName = "Driver", name = "UP Climber TRAVERSE")
   private SequentialCommandGroup highestClimber;
+
   @Config.Command(tabName = "Driver", name = "Down Climber")
-  private SequentialCommandGroup lowestClimber;
+  private SequentialCommandGroup chinUp;
+
   @Config.Command(tabName = "Driver", name = "Chin Up pivot")
   private SequentialCommandGroup firstpivot;
 
@@ -164,20 +168,19 @@ public class RobotContainer {
               new SequentialCommandGroup(
                       new PositionClimber(climber, HIGHEST.getState()),
                       new HoldTargetPosition(climber, HIGHEST.getState().position));
-      lowestClimber =
-              new SequentialCommandGroup(
-                      new ParallelCommandGroup(
-                              new PositionClimber(climber, CLEARANCE_HEIGHT.getState()),
-                              new PositionPivot(pivot, MOST_BACK.getState())),
-                      new PositionClimber(climber, LOWEST.getState()),
-                      new ParallelRaceGroup(
-                              new HoldTargetPosition(climber, LOWEST.getState().position),
-                              new PositionPivot(pivot, FIRST.getState()))
-                              .withName("Hold Climb"),
-                      new ParallelRaceGroup(
-                              new HoldTargetPosition(pivot, FIRST.getState().position),
-                              new PositionClimber(climber, CLEARANCE_HEIGHT.getState()))
-                              .withName("Hold Pivot"));
+      chinUp =
+          new SequentialCommandGroup(
+              new PositionPivot(pivot, MOST_BACK.getState()),
+              new PositionClimber(climber, CLEARANCE_HEIGHT.getState()),
+              new PositionClimber(climber, LOWEST.getState()),
+              new ParallelRaceGroup(
+                      new HoldTargetPosition(climber, LOWEST.getState().position),
+                      new PositionPivot(pivot, FIRST.getState()))
+                  .withName("Hold Climb"),
+              new ParallelRaceGroup(
+                      new HoldTargetPosition(pivot, FIRST.getState().position),
+                      new PositionClimber(climber, CLEARANCE_HEIGHT.getState()))
+                  .withName("Hold Pivot"));
       firstpivot =
               new SequentialCommandGroup(
                       new PositionPivot(pivot, MOST_BACK.getState()),
@@ -246,7 +249,7 @@ public class RobotContainer {
           buttonBoard.coordinatingClimberButton.whenPressed(coordinatingClimber);
 
           buttonBoard.climberUP.whenPressed(highestClimber);
-          buttonBoard.climberDown.whenPressed(lowestClimber);
+          buttonBoard.climberDown.whenPressed(chinUp);
           buttonBoard.pivotMostBackButton.whenPressed(firstpivot);
           buttonBoard.pivotFurthestButton.whenPressed(furthest);
         } else if (kUsePivot) buttonBoard.manualClimberButton.whenPressed(manualPivot);

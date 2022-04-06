@@ -14,8 +14,9 @@ import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 import static edu.wpi.first.math.MathUtil.clamp;
-import static java.lang.Math.*;
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kNeo550NominalVoltage;
+import static java.lang.Math.abs;
+import static java.lang.Math.copySign;
 
 @Log.Exclude
 public abstract class ClimbingSubsystem extends SubsystemBase implements Loggable {
@@ -246,7 +247,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     setSpeed = false;
     double pid = rightPIDController.calculate(rightPosition(), state.position);
     double feed = feedForward(state.velocity);
-    rightMotor.setVoltage(-clamp((pid + feed),-12,12));
+    rightMotor.setVoltage(-clamp((pid + feed), -kNeo550NominalVoltage, kNeo550NominalVoltage));
   }
 
   public abstract double feedForward(double velocity);

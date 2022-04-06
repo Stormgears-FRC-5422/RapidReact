@@ -2,16 +2,17 @@ package frc.utils.motorcontrol;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import static frc.robot.Constants.*;
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class StormSpark extends CANSparkMax {
     private static final double temperatureRampThreshold = kTemperatureRampThreshold;
     private static final double temperatureRampLimit = kTemperatureRampLimit;
-    private MotorKind motorKind;
+  private final MotorKind motorKind;
     private int currentLimit;
     private final double delta;
     private double scale = 1.0;
@@ -20,8 +21,8 @@ public class StormSpark extends CANSparkMax {
 
     public enum MotorKind {
         kNeo,
-        k550;
-    }
+    k550
+  }
 
     public StormSpark(int deviceID, MotorType type, MotorKind kind) {
         super(deviceID, type);

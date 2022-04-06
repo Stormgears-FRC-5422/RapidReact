@@ -4,10 +4,10 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.Constants;
 
 public enum PivotGoal {
-  MOST_BACK(0),
+  MOST_BACK(Constants.kPivotForwardLimit),
   FIRST(Constants.kPivotLeadOffsetLength),
   SECOND(150),
-  FURTHEST(0.3),
+  FURTHEST(Constants.kPivotReverseLimit),
   Custom(0);
 
   TrapezoidProfile.State state;
