@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.utils.joysticks.StormXboxController;
 
 import static frc.utils.joysticks.StormXboxController.*;
 
@@ -33,6 +34,7 @@ public class ButtonBoard {
   public final JoystickButton pivotOut;
   public final JoystickButton reverseButton;
   public final POVButton liftIntakeButton;
+  public final JoystickButton HubAlignmentButton;
 
   private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
     // ********************************
@@ -44,6 +46,7 @@ public class ButtonBoard {
     pivotIN = new JoystickButton(driveJoystick, BButton);
     pivotOut = new JoystickButton(driveJoystick, XButton);
     reverseButton = new JoystickButton(driveJoystick, littleLeftButton);
+    HubAlignmentButton = new JoystickButton(driveJoystick, rightBumper);
 
     shootButton = new JoystickButton(secondaryJoystick, rightBumper);
     loadButton = new JoystickButton(secondaryJoystick, leftBumper);

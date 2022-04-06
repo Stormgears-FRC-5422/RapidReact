@@ -11,6 +11,8 @@ import frc.robot.commands.climber.home.Home;
 import frc.robot.commands.climber.home.HomeClimbingSystem;
 import frc.robot.commands.climber.trapezoid.*;
 import frc.robot.commands.drive.SlewDrive;
+import frc.robot.commands.vision.AlignStep;
+import frc.robot.commands.vision.AlignToHub;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
@@ -21,6 +23,7 @@ import frc.robot.subsystems.climber.Pivot;
 import frc.robot.subsystems.drive.SparkDrive;
 import frc.robot.subsystems.drive.TalonDrive;
 import frc.robot.subsystems.sensors.NavX;
+import frc.robot.subsystems.sensors.Vision;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
 import io.github.oblarg.oblog.annotations.Config;
@@ -54,8 +57,9 @@ public class RobotContainer {
   @Config.Command(tabName = "Driver", name = "back Pivot")
   private SequentialCommandGroup furthest;
   /** Declare subsystems - initialize below */
-  private StormDrive drive;
+  @Log private StormDrive drive;
 
+  @Log private Vision vision;
   @Log private NavX navX;
   private DiagnosticIntake diagnosticIntake;
   @Log private Shooter shooter;
@@ -74,6 +78,7 @@ public class RobotContainer {
   @Log private HoldCurrentPosition pivotHoldCurrentPosition;
   @Log private PositionClimber climberTrapezoid;
   @Log private PositionPivot pivotTrapezoid;
+  private AlignToHub alignToHub;
 
   private Reverse reverse;
 
@@ -128,6 +133,8 @@ public class RobotContainer {
       if (kUseIntake) intake = new Intake();
       if (kUseLights) lights = new Lights();
     }
+
+    if (kUseVision) vision = new Vision();
   }
 
   public StormDrive getDrive() {
@@ -209,6 +216,9 @@ public class RobotContainer {
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
       autonomous = new DoubleBallAuto(load, shoot, drive, navX);
+
+    if (kUseVision)
+      alignToHub = new AlignToHub(drive, vision::hasTarget, vision::getUpperHubYaw);
   }
 
   public void configureButtonBindings() {
@@ -220,6 +230,9 @@ public class RobotContainer {
         System.out.println("... drive");
         //        buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
         buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
+
+        buttonBoard.HubAlignmentButton.whileHeld(alignToHub);
+
         if (kUseNavX) {
           System.out.println("... navX");
           //          buttonBoard.autoDriveTestButton.whenPressed(new DriveDistanceProfile(2, 1, 1,

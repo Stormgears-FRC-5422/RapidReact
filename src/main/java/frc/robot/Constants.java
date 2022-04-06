@@ -198,6 +198,8 @@ public final class Constants {
   public static final int kLEDLength = StormProp.getInt("LEDLength", 0);
   public static final boolean kUseLights = StormProp.getBoolean("useLights", false);
 
+  public static final boolean kUseVision = StormProp.getBoolean("useVision", false);
+
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");
   }
