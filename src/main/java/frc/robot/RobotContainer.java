@@ -13,6 +13,7 @@ import frc.robot.commands.climber.trapezoid.*;
 import frc.robot.commands.drive.SlewDrive;
 import frc.robot.commands.vision.AlignStep;
 import frc.robot.commands.vision.AlignToHub;
+import frc.robot.commands.vision.FindStep;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
@@ -78,7 +79,6 @@ public class RobotContainer {
   @Log private HoldCurrentPosition pivotHoldCurrentPosition;
   @Log private PositionClimber climberTrapezoid;
   @Log private PositionPivot pivotTrapezoid;
-  private AlignToHub alignToHub;
 
   private Reverse reverse;
 
@@ -216,9 +216,6 @@ public class RobotContainer {
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
       autonomous = new DoubleBallAuto(load, shoot, drive, navX);
-
-    if (kUseVision)
-      alignToHub = new AlignToHub(drive, vision::hasTarget, vision::getUpperHubYaw);
   }
 
   public void configureButtonBindings() {
@@ -231,7 +228,13 @@ public class RobotContainer {
         //        buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
         buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
 
-        buttonBoard.HubAlignmentButton.whileHeld(alignToHub);
+        if (kUseVision)
+          buttonBoard.HubAlignmentButton.whileHeld(
+                new SequentialCommandGroup(
+                        new FindStep(vision::hasTarget, drive),
+                        new AlignStep(vision::getUpperHubYaw, drive)
+                )
+          );
 
         if (kUseNavX) {
           System.out.println("... navX");

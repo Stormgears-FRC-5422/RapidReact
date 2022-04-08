@@ -1,6 +1,5 @@
 package frc.robot.subsystems.sensors;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
@@ -8,17 +7,16 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Vision extends SubsystemBase implements Loggable {
-    //TODO: make this line of code work, I think this isn't pointing to the correct name
-    private final PhotonCamera UpperHubCamera = new PhotonCamera("UpperHubCamera-output");
+    private final PhotonCamera UpperHubCam = new PhotonCamera("UpperHubCam");
     private PhotonTrackedTarget UpperHubTarget;
 
     public Vision() {
-        UpperHubTarget = UpperHubCamera.getLatestResult().getBestTarget();
+        System.out.println("Vision... ");
     }
 
     @Override
     public void periodic() {
-        UpperHubTarget = UpperHubCamera.getLatestResult().getBestTarget();
+        UpperHubTarget = UpperHubCam.getLatestResult().getBestTarget();
     }
 
     @Log(name="Upper Hub Relative Yaw")
@@ -28,7 +26,7 @@ public class Vision extends SubsystemBase implements Loggable {
 
     @Log(name="hasTarget()")
     public boolean hasTarget() {
-        return UpperHubCamera.getLatestResult().hasTargets();
+        return UpperHubCam.getLatestResult().hasTargets();
     }
 
     @Log(name="Upper Hub Area")
