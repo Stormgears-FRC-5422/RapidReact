@@ -11,9 +11,9 @@ import frc.robot.commands.climber.home.Home;
 import frc.robot.commands.climber.home.HomeClimbingSystem;
 import frc.robot.commands.climber.trapezoid.*;
 import frc.robot.commands.drive.SlewDrive;
-import frc.robot.commands.vision.AlignStep;
-import frc.robot.commands.vision.AlignToHub;
-import frc.robot.commands.vision.FindStep;
+import frc.robot.commands.drive.vision.AlignStep;
+import frc.robot.commands.drive.vision.AlignToHub;
+import frc.robot.commands.drive.vision.FindStep;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
@@ -79,6 +79,7 @@ public class RobotContainer {
   @Log private HoldCurrentPosition pivotHoldCurrentPosition;
   @Log private PositionClimber climberTrapezoid;
   @Log private PositionPivot pivotTrapezoid;
+  private AlignToHub alignToHub;
 
   private Reverse reverse;
 
@@ -216,6 +217,9 @@ public class RobotContainer {
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
       autonomous = new DoubleBallAuto(load, shoot, drive, navX);
+
+    if (kUseVision)
+      alignToHub = new AlignToHub(drive, vision::hasTarget, vision::getYaw);
   }
 
   public void configureButtonBindings() {
@@ -232,7 +236,7 @@ public class RobotContainer {
           buttonBoard.HubAlignmentButton.whileHeld(
                 new SequentialCommandGroup(
                         new FindStep(vision::hasTarget, drive),
-                        new AlignStep(vision::getUpperHubYaw, drive)
+                        new AlignStep(vision::getYaw, drive)
                 )
           );
 

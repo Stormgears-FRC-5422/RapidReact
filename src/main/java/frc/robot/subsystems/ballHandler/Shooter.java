@@ -12,7 +12,7 @@ import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.*;
 
-public class Shooter extends SubsystemBase implements Loggable {
+public class Shooter extends SubsystemBase implements Loggable, visionShooter {
   private final StormSpark motor =
       new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
   private final SimpleMotorFeedforward feedforward =
@@ -72,6 +72,13 @@ public class Shooter extends SubsystemBase implements Loggable {
 
   public void runToSpeed(double pidOutput) {
     motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), 0));
+  }
+
+  @Override
+  public void setDistance(double meters) {
+    //TODO: figure this bit out (function to do meters->rps)
+    double out = meters;
+    runToSpeed(out);
   }
 
   public enum Height {
