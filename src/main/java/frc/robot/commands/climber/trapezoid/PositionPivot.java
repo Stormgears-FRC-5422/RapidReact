@@ -12,6 +12,9 @@ public class PositionPivot extends TrapezoidalClimbingCommand {
   @Log.Exclude Pivot pivot;
 
   public PositionPivot(Pivot pivot, State goal) {
-    super(pivot, new Constraints(kPivotMaxVelocity, kPivotMaxVelocity * kPivotMaxAccelerationSeconds), goal);
+    super(
+        pivot,
+        new Constraints(kPivotMaxVelocity / 3d, kPivotMaxVelocity * kPivotMaxAccelerationSeconds),
+        goal);
   }
 }

@@ -6,7 +6,7 @@ import frc.robot.Constants;
 public enum PivotGoal {
   MOST_BACK(Constants.kPivotForwardLimit),
   FIRST(Constants.kPivotLeadOffsetLength),
-  SECOND(150),
+  SECOND(.245),
   FURTHEST(Constants.kPivotReverseLimit),
   Custom(0);
 

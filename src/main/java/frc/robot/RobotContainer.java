@@ -170,15 +170,18 @@ public class RobotContainer {
                       new HoldTargetPosition(climber, HIGHEST.getState().position));
       chinUp =
           new SequentialCommandGroup(
-              new PositionPivot(pivot, MOST_BACK.getState()),
+              //                  new PositionClimber(climber, CLEARANCE_HEIGHT.getState()),
               new PositionClimber(climber, CLEARANCE_HEIGHT.getState()),
+              new PositionPivot(pivot, MOST_BACK.getState()),
               new PositionClimber(climber, LOWEST.getState()),
               new ParallelRaceGroup(
-                      new HoldTargetPosition(climber, LOWEST.getState().position),
+                      //                      new HoldTargetPosition(climber,
+                      // LOWEST.getState().position),
                       new PositionPivot(pivot, FIRST.getState()))
                   .withName("Hold Climb"),
               new ParallelRaceGroup(
-                      new HoldTargetPosition(pivot, FIRST.getState().position),
+                      //                      new HoldTargetPosition(pivot,
+                      // FIRST.getState().position),
                       new PositionClimber(climber, CLEARANCE_HEIGHT.getState()))
                   .withName("Hold Pivot"));
       firstpivot =
@@ -186,9 +189,9 @@ public class RobotContainer {
                       new PositionPivot(pivot, MOST_BACK.getState()),
                       new HoldTargetPosition(pivot, MOST_BACK.getState().position));
       furthest =
-              new SequentialCommandGroup(
-                      new PositionPivot(pivot, FURTHEST.getState()),
-                      new HoldTargetPosition(pivot, FURTHEST.getState().position));
+          new SequentialCommandGroup(
+              new PositionPivot(pivot, SECOND.getState()),
+              new HoldTargetPosition(pivot, SECOND.getState().position));
     } else if (kUsePivot) homingSequence = new Home(pivot);
     else if (kUseClimber) homingSequence = new Home(climber);
 

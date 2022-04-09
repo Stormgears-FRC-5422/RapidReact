@@ -16,13 +16,19 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   //  protected TrapezoidProfileCommand leftTrapezoidProfileCommand;
   //  protected TrapezoidProfileCommand rightTrapezoidProfileCommand;
 
-  private final State goal;
+  protected final State goal;
+
+  private final State leftGoal;
+  private final State rightGoal;
 
   protected TrapezoidalClimbingCommand(
       ClimbingSubsystem subsystem, Constraints constraints, State goal) {
     this.subsystem = subsystem;
     this.constraints = constraints;
     this.goal = goal;
+
+    leftGoal = new State(goal.position, 0);
+    rightGoal = new State(goal.position, 0);
 
     addRequirements(subsystem);
   }
@@ -42,15 +48,24 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
     //    leftTrapezoidProfileCommand.initialize();
     //    rightTrapezoidProfileCommand.initialize();
     System.out.println("TRYING TO MOVE " + subsystem.getName() + " TO " + goal);
+    subsystem.resetPID();
   }
 
   @Override
   public void execute() {
     //    leftTrapezoidProfileCommand.execute();
     //    rightTrapezoidProfileCommand.execute();
-    goal.velocity = constraints.maxVelocity * (goal.position > subsystem.leftPosition() ? 1 : -1);
-    subsystem.leftPID(goal);
-    subsystem.rightPID(goal);
+    leftGoal.velocity =
+        (Math.abs(subsystem.leftPosition() - goal.position) > 0.05 ? 1 : 0)
+            * constraints.maxVelocity
+            * (goal.position > subsystem.leftPosition() ? 1 : -1);
+    rightGoal.velocity =
+        (Math.abs(subsystem.rightPosition() - goal.position) > 0.05 ? 1 : 0)
+            * constraints.maxVelocity
+            * (goal.position > subsystem.rightPosition() ? 1 : -1);
+
+    subsystem.leftPID(leftGoal);
+    subsystem.rightPID(rightGoal);
   }
 
   @Override
@@ -64,17 +79,17 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   public boolean isFinished() {
     //    return leftTrapezoidProfileCommand.isFinished() &&
     // rightTrapezoidProfileCommand.isFinished();
-    return Math.abs(goal.position - subsystem.leftPosition()) <= 0.005
-        && Math.abs(goal.position - subsystem.rightPosition()) <= 0.005;
+    return Math.abs(goal.position - subsystem.leftPosition()) <= 0.003
+        && Math.abs(goal.position - subsystem.rightPosition()) <= 0.003;
   }
 
-  //  protected void leftPID(State state) {
-  //    subsystem.leftPID(state);
-  //  }
-  //
-  //  protected void rightPID(State state) {
-  //    subsystem.rightPID(state);
-  //  }
+  protected void leftPID(double unused, State state) {
+    subsystem.leftPID(state);
+  }
+
+  protected void rightPID(double unused, State state) {
+    subsystem.rightPID(state);
+  }
 
   @Log(name = "Current Goal")
   double goalPosition() {

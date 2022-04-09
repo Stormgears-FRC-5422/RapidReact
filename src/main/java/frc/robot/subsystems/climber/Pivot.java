@@ -24,9 +24,9 @@ public class Pivot extends ClimbingSubsystem {
         kPivotHomeSetSpeed,
         kPivotCushion,
         kPivotCushionFloor);
-
+    leftMotor.setSmartCurrentLimit(20);
+    rightMotor.setSmartCurrentLimit(20);
     feedforward = new ElevatorFeedforward(0.5, 0, kNeo550NominalVoltage / kPivotMaxVelocity, 0);
-
   }
 
   @Override
