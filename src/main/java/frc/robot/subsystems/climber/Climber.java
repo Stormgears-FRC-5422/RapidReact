@@ -31,13 +31,16 @@ public class Climber extends ClimbingSubsystem {
         kClimberCushion,
         kClimberCushionFloor);
 
-
     feedforward = new ElevatorFeedforward(0.5, 0, kNeo550NominalVoltage / kClimberMaxVelocity, 0);
 
-    leftReverseHardLimitSwitch = leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
-    leftForwardHardLimitSwitch = leftMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
-    rightReverseHardLimitSwitch = rightMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
-    rightForwardHardLimitSwitch = rightMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    leftReverseHardLimitSwitch =
+        leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    leftForwardHardLimitSwitch =
+        leftMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    rightReverseHardLimitSwitch =
+        rightMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    rightForwardHardLimitSwitch =
+        rightMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
   }
 
   @Override
@@ -122,4 +125,17 @@ public class Climber extends ClimbingSubsystem {
     rightForwardHardLimitSwitch.enableLimitSwitch(false);
   }
 
+  public boolean isReverseLimitTripped() {
+    return leftReverseHardLimitSwitch.isPressed()
+        && rightReverseHardLimitSwitch.isPressed()
+        && leftReverseHardLimitSwitch.isLimitSwitchEnabled()
+        && rightReverseHardLimitSwitch.isLimitSwitchEnabled();
+  }
+
+  public boolean isForwardLimitTripped() {
+    return leftForwardHardLimitSwitch.isPressed()
+        && rightForwardHardLimitSwitch.isPressed()
+        && leftForwardHardLimitSwitch.isLimitSwitchEnabled()
+        && rightForwardHardLimitSwitch.isLimitSwitchEnabled();
+  }
 }

@@ -14,7 +14,7 @@ public class HangerConstraints {
     // kPivotLeadOffset = the number of rotations between home and the point where the pivot is exactly vertical
 
     public static double getPivotPosition(double climberPosition) {
-        double currentClimberLength = climberPosition/kClimberRotationsPerUnitLength + kClimberBaseLength;
+    double currentClimberLength = climberPosition + kClimberBaseLength;
 
         // Use the law of cosines to calculate the idealPivotAngle
         // a is the length of the pivot arm.
@@ -43,11 +43,9 @@ public class HangerConstraints {
         double D = q * q - 4.0 * (kPivotMountLength * kPivotMountLength - kPivotSupportLength * kPivotSupportLength);
         double c = (-q + sqrt(D))/2.0; // the other solution isn't relevant
 
-        // c is the length along the lead screw of the base of the triangle. But we have to map this back to rotation
-        // values.
-        // we need convert back to position in rotations
+    // c is the length along the lead screw of the base of the triangle.
 
-        return ( (c - kPivotLeadBaseLength + kPivotLeadOffsetLength) * kPivotRotationsPerUnitLength);
+    return (c - kPivotLeadBaseLength + kPivotLeadOffsetLength);
     }
 
 }

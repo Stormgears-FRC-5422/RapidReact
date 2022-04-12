@@ -2,11 +2,12 @@ package frc.robot.commands.climber.trapezoid;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
+import static frc.robot.Constants.kClimberRotationsPerUnitLength;
+
 public enum ClimbingGoal {
-  LOWEST(-15),
-  SECOND(80),
-  FIRST(225),
-  HIGHEST(290),
+  LOWEST(-.1),
+  CLEARANCE_HEIGHT(75d / kClimberRotationsPerUnitLength),
+  HIGHEST(.66),
   Custom(0);
 
   TrapezoidProfile.State state;

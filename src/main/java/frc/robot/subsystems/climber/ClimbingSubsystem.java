@@ -14,8 +14,9 @@ import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 import static edu.wpi.first.math.MathUtil.clamp;
-import static java.lang.Math.*;
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.kNeo550NominalVoltage;
+import static java.lang.Math.abs;
+import static java.lang.Math.copySign;
 
 @Log.Exclude
 public abstract class ClimbingSubsystem extends SubsystemBase implements Loggable {
@@ -236,7 +237,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
   public void leftPID(State state) {
     setSpeed = false;
-    this.pidOutput = leftPIDController.calculate(leftPosition(), state.position);
+    this.pidOutput =
+        state.velocity != 0 ? 0 : leftPIDController.calculate(leftPosition(), state.position);
     //this.feedForwardOutputs = clamp(feedForward(state.velocity), -12, 12);
     this.feedForwardOutputs = feedForward(state.velocity);
     leftMotor.setVoltage(-clamp((pidOutput + feedForwardOutputs),-kNeo550NominalVoltage,kNeo550NominalVoltage));
@@ -244,9 +246,15 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
 
   public void rightPID(State state) {
     setSpeed = false;
-    double pid = rightPIDController.calculate(rightPosition(), state.position);
+    double pid =
+        state.velocity != 0 ? 0 : rightPIDController.calculate(rightPosition(), state.position);
     double feed = feedForward(state.velocity);
-    rightMotor.setVoltage(-clamp((pid + feed),-12,12));
+    rightMotor.setVoltage(-clamp((pid + feed), -kNeo550NominalVoltage, kNeo550NominalVoltage));
+  }
+
+  public void resetPID() {
+    leftPIDController.reset();
+    rightPIDController.reset();
   }
 
   public abstract double feedForward(double velocity);

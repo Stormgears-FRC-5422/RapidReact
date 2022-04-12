@@ -4,6 +4,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.climber.ClimbingSubsystem;
 import frc.robot.subsystems.climber.HangerConstraints;
+import frc.utils.LRSpeeds;
 import frc.utils.joysticks.StormXboxController;
 
 import static java.lang.Math.copySign;
@@ -30,6 +31,7 @@ public class CoordinatingClimber extends CommandBase {
     public void initialize() {
         System.out.println("CoordinatingClimber.initialize()");
         leftClimberPosition = climber.leftPosition();
+    pivot.resetPID();
     }
 
     @Override
@@ -40,16 +42,17 @@ public class CoordinatingClimber extends CommandBase {
         // We don't want the position to drift if there is no joystick input -
         // in that case just use the previous value (rather than the current one)
         if (joyVal != 0) {
-            leftClimberPosition = climber.leftPosition() + 40 * copySign(1.0, joyVal);
-        }
+      //            leftClimberPosition = climber.leftPosition() + 40 * copySign(1.0, joyVal);
+      climber.setSpeed(new LRSpeeds(0.42 * copySign(1d, -joyVal), 0.42 * copySign(1d, -joyVal)));
+    } else climber.stop();
 
-        climbTarget = leftClimberPosition;
-        climberState.position = climbTarget;
-        pivotState.position = HangerConstraints.getPivotPosition(climbTarget);
+    //        climbTarget = leftClimberPosition;
+    //        climberState.position = climbTarget;
+    pivotState.position = HangerConstraints.getPivotPosition(climber.leftPosition());
 
-        climber.leftPID(climberState);
-        climber.rightPID(climberState);
-        pivot.leftPID(pivotState);
+    //        climber.leftPID(climberState);
+    //        climber.rightPID(climberState);
+    pivot.leftPID(pivotState);
         pivot.rightPID(pivotState);
     }
 

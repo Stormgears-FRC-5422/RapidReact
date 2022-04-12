@@ -29,7 +29,8 @@ public final class Constants {
   public static final boolean kUseStatusLights = StormProp.getBoolean("useStatusLights", false);
 
   public static final double kNeo550FreeSpeed = StormProp.getNumber("neo550FreeSpeed", 0.0);
-  public static final double kNeo550NominalVoltage = StormProp.getNumber("neo550NominalVoltage", 0.0);;
+  public static final double kNeo550NominalVoltage =
+      StormProp.getNumber("neo550NominalVoltage", 0.0);
   public static final boolean kSquareDriveInputs = StormProp.getBoolean("squareDriveInputs", true);
   public static final String kDriveStyle = StormProp.getString("driveStyle", "arcade");
   // MOTOR CONSTANTS
@@ -111,12 +112,12 @@ public final class Constants {
 
 //  Now calculated below
 //  public static final double kClimberMaxVelocity = StormProp.getNumber("climberMaxVelocity", 0.0);
-  public static final double kClimberMaxAcceleration =
-      StormProp.getNumber("climberMaxAcceleration", 0.0);
+  public static final double kClimberMaxAccelerationSeconds =
+      StormProp.getNumber("climberMaxAccelerationSeconds", 0.0);
 //  NOw calculated below
 //  public static final double kPivotMaxVelocity = StormProp.getNumber("pivotMaxVelocity", 0.0);
-  public static final double kPivotMaxAcceleration =
-      StormProp.getNumber("pivotMaxAcceleration", 0.0);
+  public static final double kPivotMaxAccelerationSeconds =
+      StormProp.getNumber("pivotMaxAccelerationSeconds", 0.0);
 
   public static final double kLeftClimberP = StormProp.getNumber("leftClimberP", 0.0);
   public static final double kLeftClimberI = StormProp.getNumber("leftClimberI", 0.0);
