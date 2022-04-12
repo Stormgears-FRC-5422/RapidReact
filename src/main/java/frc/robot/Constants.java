@@ -186,7 +186,7 @@ public final class Constants {
   public static final double kPivotRotationsPerUnitLength = kPivotGearRatio / kPivotRawDistancePerRotation;
 
   public static final double kClimberMaxVelocity = kClimberSpeedScale * kNeo550FreeSpeed / kClimberRotationsPerUnitLength;
-  public static final double kPivotMaxVelocity = kClimberSpeedScale * kNeo550FreeSpeed / kPivotRotationsPerUnitLength;
+  public static final double kPivotMaxVelocity = kPivotSpeedScale * kNeo550FreeSpeed / kPivotRotationsPerUnitLength;
 
   public static final double kBarDistance = StormProp.getNumber("barDistance", 0.0);
   public static final double kPivotSupportLength = StormProp.getNumber("pivotSupportLength", 0.0);
