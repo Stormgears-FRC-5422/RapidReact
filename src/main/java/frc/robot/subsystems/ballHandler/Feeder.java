@@ -35,11 +35,6 @@ public class Feeder extends SubsystemBase implements Loggable {
   }
 
   @Override
-  public String configureLogName() {
-    return "BallHandler";
-  }
-
-  @Override
   public void periodic() {
     if (forward) motor.set(speed);
     else motor.setVoltage(liftVoltage);

@@ -12,7 +12,7 @@ import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.*;
 
-public class Shooter extends SubsystemBase implements Loggable, visionShooter {
+public class Shooter extends SubsystemBase implements Loggable {
   private final StormSpark motor =
       new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
   private final SimpleMotorFeedforward feedforward =
@@ -27,11 +27,6 @@ public class Shooter extends SubsystemBase implements Loggable, visionShooter {
     motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     motor.getEncoder().setVelocityConversionFactor(1 / 60d); // from rpm to rps
     //        Shuffleboard.getTab("Shoot Command").add(this);
-  }
-
-  @Override
-  public String configureLogName() {
-    return "BallHandler";
   }
 
   @Log(name = "Speed")
@@ -60,25 +55,15 @@ public class Shooter extends SubsystemBase implements Loggable, visionShooter {
     return mode.rps;
   }
 
-  @Config.NumberSlider(
+  @Config(
       name = "New Setpoint",
-      min = 10,
-      max = 90,
-      blockIncrement = 1,
-      defaultValue = 68)
+      defaultValueNumeric = 68)
   public void setSetpoint(double setpoint) {
     mode = Height.fromRPS(setpoint);
   }
 
   public void runToSpeed(double pidOutput) {
     motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), 0));
-  }
-
-  @Override
-  public void setDistance(double meters) {
-    //TODO: figure this bit out (function to do meters->rps)
-    double out = meters;
-    runToSpeed(out);
   }
 
   public enum Height {

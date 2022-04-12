@@ -11,9 +11,9 @@ import io.github.oblarg.oblog.annotations.Log;
 import static frc.robot.Constants.*;
 import static frc.robot.subsystems.ballHandler.Shooter.Height;
 
-public class Shoot extends PIDCommand implements Loggable {
-  @Log.Exclude private final Feeder feeder;
-  @Log.Exclude private final Shooter shooter;
+public class Shoot extends PIDCommand {
+  private final Feeder feeder;
+  private final Shooter shooter;
   //  @Config private final InstantCommand toggleShooter = new InstantCommand(this::toggleMode);
   @Config.PIDController(name = "Shooter Controller")
   private final PIDController pidController = getController();
@@ -31,11 +31,6 @@ public class Shoot extends PIDCommand implements Loggable {
     this.feeder = feeder;
     this.shooter = shooter;
     //        Shuffleboard.getTab("Shoot Command").add(this);
-  }
-
-  @Override
-  public String configureLogName() {
-    return "BallHandler";
   }
 
   @Override

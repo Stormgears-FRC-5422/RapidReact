@@ -6,23 +6,29 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.utils.drive.StormDrive;
 import frc.utils.joysticks.StormXboxController;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import static frc.robot.Constants.*;
 
 public class SlewDrive extends CommandBase {
   private final StormDrive drive;
-  private final StormXboxController joystick;
+  private final DoubleSupplier X;
+  private DoubleSupplier Z;
   private final DifferentialDrive differentialDrive;
   protected SlewRateLimiter limiter;
   protected SlewRateLimiter turnLimiter;
   private double prevSlewRate;
   private double prevTurnSlewRate;
+  private boolean ignoreZSquaring = false;
 
-  public SlewDrive(StormDrive drive, StormXboxController joystick) {
+  public SlewDrive(StormDrive drive, DoubleSupplier X, DoubleSupplier Z) {
     System.out.println("Just created the SlewDrive command");
     addRequirements(drive);
 
     this.drive = drive;
-    this.joystick = joystick;
+    this.X = X;
+    this.Z = Z;
     differentialDrive = drive.getDifferentialDrive();
 
     prevSlewRate = drive.getSlewRate();
@@ -42,8 +48,8 @@ public class SlewDrive extends CommandBase {
 
   @Override
   public void execute() {
-    double targetSpeed = joystick.getTriggerSpeed();
-    double targetZRotation = joystick.getLeftJoystickX();
+    double targetSpeed = X.getAsDouble();
+    double targetZRotation = Z.getAsDouble();
 
     if (drive.getSlewRate() != prevSlewRate) {
       System.out.println("updated slewRate: " + prevSlewRate);
@@ -62,10 +68,9 @@ public class SlewDrive extends CommandBase {
 
     if (kSquareDriveInputs) {
       targetSpeed = Math.copySign(targetSpeed * targetSpeed, targetSpeed);
-      targetZRotation = Math.copySign(targetZRotation * targetZRotation, targetZRotation);
+      targetZRotation = !ignoreZSquaring? Math.copySign(targetZRotation * targetZRotation, targetZRotation):targetZRotation;
     }
 
-    // System.out.println("targetSpeed: " + targetSpeed + ", targetZRotation: " + targetZRotation);
     if (kDriveStyle.equalsIgnoreCase("curvature"))
       differentialDrive.curvatureDrive(
           (drive.getReverse() ? -1 : 1) * (drive.getPrecision() ? kXPrecision : 1) * targetSpeed,
@@ -79,6 +84,17 @@ public class SlewDrive extends CommandBase {
           (drive.getReverse() ? -1 : 1)
               * (drive.getPrecision() ? kZPrecision : 1)
               * targetZRotation); // inputs already squared above
+  }
+
+  public void setZ(DoubleSupplier newZ, boolean ignoreZSquaring) {
+    Z = newZ;
+    this.ignoreZSquaring = ignoreZSquaring;
+  }
+  public void setZ(DoubleSupplier newZ) {
+    setZ(newZ, false);
+  }
+  public DoubleSupplier getZ() {
+    return Z;
   }
 
   @Override

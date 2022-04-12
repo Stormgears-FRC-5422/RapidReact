@@ -3,13 +3,12 @@ package frc.utils.drive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.drive.VisionDrive;
 
 import static frc.robot.Constants.kSlewRate;
 import static frc.robot.Constants.kTurnSlewRate;
 import static java.lang.Math.abs;
 
-public abstract class StormDrive extends SubsystemBase implements VisionDrive {
+public abstract class StormDrive extends SubsystemBase {
   protected boolean reverse = false;
   protected boolean precision = false;
   protected double slewRateValue;
@@ -117,16 +116,5 @@ public abstract class StormDrive extends SubsystemBase implements VisionDrive {
     //
     //    mShuffleTurnSlewRate.addListener(event -> turnSlewRateValue = event.value.getDouble(),
     //            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-  }
-
-  @Override
-  public void setError(double yaw) {
-    double pidOut = getController().calculate(yaw);
-    rotate(pidOut);
-  }
-
-  @Override
-  public void findTarget() {
-    rotate(0.8);
   }
 }

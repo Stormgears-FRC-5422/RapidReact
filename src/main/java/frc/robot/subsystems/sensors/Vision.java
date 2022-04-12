@@ -11,14 +11,12 @@ import static frc.robot.Constants.*;
 
 public class Vision extends SubsystemBase implements Loggable {
     private final PhotonCamera UPPER_HUB_CAM = new PhotonCamera("UpperHubCam");
-    private final double CAMERA_HEIGHT_METERS = kCameraHeightMeters;
-    private final double TARGET_HEIGHT_METERS = kTaretHeightMeters;
+    private final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(kCameraHeightInches);
+    private final double TARGET_HEIGHT_METERS = Units.inchesToMeters(kTaretHeightInches);
     private final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(kCameraPitchDeg);
 
-    private PhotonTrackedTarget upperHubTarget;
-
     public Vision() {
-        System.out.println("Vision... ");
+        System.out.println("... Vision");
     }
 
     private PhotonTrackedTarget getTarget() {
@@ -32,12 +30,13 @@ public class Vision extends SubsystemBase implements Loggable {
 
     @Log(name = "Distance To Hub")
     public double getDistance() {
-        return PhotonUtils.calculateDistanceToTargetMeters(
+        //Todo: make sure this is actually turning into actual meters: can use a map and find the line of best fit
+        return hasTarget()? PhotonUtils.calculateDistanceToTargetMeters(
                 CAMERA_HEIGHT_METERS,
                 TARGET_HEIGHT_METERS,
                 CAMERA_PITCH_RADIANS,
                 Units.degreesToRadians(getTarget().getPitch())
-        );
+        ) : 0;
     }
 
     @Log(name = "hasTarget()")

@@ -29,7 +29,7 @@ public final class Constants {
   public static final boolean kUseStatusLights = StormProp.getBoolean("useStatusLights", false);
 
   public static final double kNeo550FreeSpeed = StormProp.getNumber("neo550FreeSpeed", 0.0);
-  public static final double kNeo550NominalVoltage = StormProp.getNumber("neo550NominalVoltage", 0.0);;
+  public static final double kNeo550NominalVoltage = StormProp.getNumber("neo550NominalVoltage", 0.0);
   public static final boolean kSquareDriveInputs = StormProp.getBoolean("squareDriveInputs", true);
   public static final String kDriveStyle = StormProp.getString("driveStyle", "arcade");
   // MOTOR CONSTANTS
@@ -199,9 +199,10 @@ public final class Constants {
   public static final boolean kUseLights = StormProp.getBoolean("useLights", false);
 
   //VISION CONSTANTS----------------------------------------------------------------------------
+  public static final String kCameraName = StormProp.getString("cameraName", "UpperHubCam");
   public static final boolean kUseVision = StormProp.getBoolean("useVision", false);
-  public static final double kCameraHeightMeters = StormProp.getNumber("cameraHeightMeters", 1d);
-  public static final double kTaretHeightMeters = StormProp.getNumber("targetHeightMeters", 2d);
+  public static final double kCameraHeightInches = StormProp.getNumber("cameraHeightInches", 1d);
+  public static final double kTaretHeightInches = StormProp.getNumber("targetHeightInches", 2d);
   public static final double kCameraPitchDeg = StormProp.getNumber("cameraPitchDeg", 0d);
   public static final double kVisionDriveP = StormProp.getNumber("visionDriveP", 0.1);
   public static final double kVisionDriveI = StormProp.getNumber("visionDriveI", 0d);

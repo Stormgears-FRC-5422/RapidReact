@@ -10,10 +10,8 @@ import frc.robot.commands.climber.hold.HoldTargetPosition;
 import frc.robot.commands.climber.home.Home;
 import frc.robot.commands.climber.home.HomeClimbingSystem;
 import frc.robot.commands.climber.trapezoid.*;
+import frc.robot.commands.drive.DriveWithVision;
 import frc.robot.commands.drive.SlewDrive;
-import frc.robot.commands.drive.vision.AlignStep;
-import frc.robot.commands.drive.vision.AlignToHub;
-import frc.robot.commands.drive.vision.FindStep;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.ballHandler.DiagnosticIntake;
 import frc.robot.subsystems.ballHandler.Feeder;
@@ -79,7 +77,8 @@ public class RobotContainer {
   @Log private HoldCurrentPosition pivotHoldCurrentPosition;
   @Log private PositionClimber climberTrapezoid;
   @Log private PositionPivot pivotTrapezoid;
-  private AlignToHub alignToHub;
+  private DriveWithVision driveWithVision;
+  private ShootWithVision shootWithVision;
 
   private Reverse reverse;
 
@@ -134,7 +133,6 @@ public class RobotContainer {
       if (kUseIntake) intake = new Intake();
       if (kUseLights) lights = new Lights();
     }
-
     if (kUseVision) vision = new Vision();
   }
 
@@ -155,6 +153,8 @@ public class RobotContainer {
   }
 
   private void initCommands() {
+    if (kUseDrive)
+      slewDrive = new SlewDrive(drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX);
     if (!kDiagnostic) {
       if (kUseIntake && kUseFeeder) {
         reverse = new Reverse(intake, feeder);
@@ -218,8 +218,11 @@ public class RobotContainer {
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
       autonomous = new DoubleBallAuto(load, shoot, drive, navX);
 
-    if (kUseVision)
-      alignToHub = new AlignToHub(drive, vision::hasTarget, vision::getYaw);
+    if (kUseVision) {
+      driveWithVision = new DriveWithVision(drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX, vision);
+      if (kUseFeeder && kUseShooter)
+        shootWithVision = new ShootWithVision(shooter, feeder, vision::getDistance);
+    }
   }
 
   public void configureButtonBindings() {
@@ -231,14 +234,11 @@ public class RobotContainer {
         System.out.println("... drive");
         //        buttonBoard.reverseButton.whenPressed(drive::toggleReverse);
         buttonBoard.precisionButton.whenPressed(drive::togglePrecision);
-
-        if (kUseVision)
-          buttonBoard.HubAlignmentButton.whileHeld(
-                new SequentialCommandGroup(
-                        new FindStep(vision::hasTarget, drive),
-                        new AlignStep(vision::getYaw, drive)
-                )
-          );
+        if (kUseVision) {
+          buttonBoard.driveWithVisionButton.whileHeld(driveWithVision);
+          if (kUseFeeder && kUseShooter)
+            buttonBoard.shootWithVisionButton.whileHeld(shootWithVision);
+        }
 
         if (kUseNavX) {
           System.out.println("... navX");
@@ -313,9 +313,8 @@ public class RobotContainer {
 
   public void setDrive() {
     if (kUseDrive) {
-      slewDrive = new SlewDrive(drive, driveJoystick);
       drive.setDefaultCommand(slewDrive);
-      slewDrive.schedule(false);
+      slewDrive.schedule(true);
     }
   }
 
