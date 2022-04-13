@@ -85,6 +85,8 @@ public class RobotContainer {
   private CommandBase autonomous;
   private SlewDrive slewDrive;
 
+  private boolean isShooting = false;
+
   public RobotContainer() {
     driveJoystick = new StormXboxController(0);
     secondaryJoystick = new StormXboxController(1);
@@ -126,7 +128,7 @@ public class RobotContainer {
       // diagnosticIntake = new DiagnosticIntake();
       if (kUseFeeder) feeder = new Feeder();
     } else {
-      if (kUseShooter) shooter = new Shooter();
+      if (kUseShooter) shooter = new Shooter(this);
       if (kUseFeeder) feeder = new Feeder();
       if (kUseIntake) intake = new Intake();
       if (kUseLights) lights = new Lights();
@@ -296,6 +298,11 @@ public class RobotContainer {
       drive.setDefaultCommand(slewDrive);
       slewDrive.schedule(false);
     }
+  }
+
+  public void setShooting(boolean isShooting) {
+    this.isShooting = isShooting;
+    if (kUseLights) lights.setShooting(isShooting);
   }
 
 }

@@ -28,10 +28,24 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 
 public class AddressableLEDBufferRGBW extends AddressableLEDBuffer {
   int ledLength;
+  int start;
+  int substringLength;
 
   public AddressableLEDBufferRGBW(int length) {
     super((length * 4 + 2) / 3);
     ledLength = length;
+    start = 0;
+    substringLength = length;
+  }
+
+  public void useSubstring(int start, int length) {
+    this.start = start;
+    this.substringLength = length;
+  }
+
+  public void stopSubstring() {
+    start = 0;
+    substringLength = ledLength;
   }
 
   public void setRGBW(int index, int r, int g, int b, int w) {
@@ -46,14 +60,15 @@ public class AddressableLEDBufferRGBW extends AddressableLEDBuffer {
     //       G    R    B |  G    R    B |  G    R    B |  G    R    B
     // RGBW  0    0    0    0 |  1    1    1    1 |  2    2    2    2
     //       G    R    B    W |  G    R    B    W |  G    R    B    W
-    //      %0    g    r    b |  w  c1.r c1.b|
-    //      %1                |c0.g   g    r |  b    w  c1.b|
-    //      %2                                c0.g c0.r   g |  r    b    w
+    // %0    g    r    b |  w  c1.r c1.b|
+    // %1                |c0.g   g    r |  b    w  c1.b|
+    // %2                                c0.g c0.r   g |  r    b    w
 
     Color8Bit c0;
     Color8Bit c1;
 
-    int aG = index * 4;
+    // allow for substrings using an arbitrary start position
+    int aG = (start + index) * 4;
     int j = aG / 3;
 
     // Stash the current color, if any. We need to merge our new colors into these slots
@@ -85,7 +100,7 @@ public class AddressableLEDBufferRGBW extends AddressableLEDBuffer {
 
   @Override
   public int getLength() {
-    return ledLength;
+    return substringLength;
   }
 
   public int getEffectiveLength() {

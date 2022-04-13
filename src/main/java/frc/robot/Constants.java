@@ -187,7 +187,7 @@ public final class Constants {
   public static final double kPivotRotationsPerUnitLength = kPivotGearRatio / kPivotRawDistancePerRotation;
 
   public static final double kClimberMaxVelocity = kClimberSpeedScale * kNeo550FreeSpeed / kClimberRotationsPerUnitLength;
-  public static final double kPivotMaxVelocity = kClimberSpeedScale * kNeo550FreeSpeed / kPivotRotationsPerUnitLength;
+  public static final double kPivotMaxVelocity = kPivotSpeedScale * kNeo550FreeSpeed / kPivotRotationsPerUnitLength;
 
   public static final double kBarDistance = StormProp.getNumber("barDistance", 0.0);
   public static final double kPivotSupportLength = StormProp.getNumber("pivotSupportLength", 0.0);
@@ -195,9 +195,13 @@ public final class Constants {
   public static final double kPivotLeadBaseLength= StormProp.getNumber("pivotLeadBaseLength", 0.0);
   public static final double kPivotLeadOffsetLength = StormProp.getNumber("pivotLeadOffsetLength", 0.0);
 
+  public static final boolean kUseLights = StormProp.getBoolean("useLights", false);
   public static final int kLightsID = StormProp.getInt("lightsID", 0);
   public static final int kLEDLength = StormProp.getInt("LEDLength", 0);
-  public static final boolean kUseLights = StormProp.getBoolean("useLights", false);
+  public static final int kBackLEDStart = StormProp.getInt("backLEDStart", 0);
+  public static final int kBackLEDLength = StormProp.getInt("backLEDLength", 0);
+  public static final int kRunwayLEDStart = StormProp.getInt("runwayLEDStart", 0);
+  public static final int kRunwayLEDLength = StormProp.getInt("runwayLEDLength", 0);
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");
