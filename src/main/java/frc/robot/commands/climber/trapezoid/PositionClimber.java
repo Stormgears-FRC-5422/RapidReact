@@ -29,6 +29,9 @@ public class PositionClimber extends TrapezoidalClimbingCommand {
   @Override
   public boolean isFinished() {
     if (super.isFinished()) return true;
+    if (goal == ClimbingGoal.CLEARANCE_HEIGHT.getState()
+        && climber.leftPosition() > goal.position
+        && climber.rightPosition() > goal.position) return true;
     System.out.println(climber.isForwardLimitTripped() + "FORWARDLIMIT TRIP");
     System.out.println(climber.isReverseLimitTripped() + "FORWARDLIMIT TRIP");
     return isMovingForward ? climber.isForwardLimitTripped() : climber.isReverseLimitTripped();

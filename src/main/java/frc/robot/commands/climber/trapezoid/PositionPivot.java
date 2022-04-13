@@ -14,7 +14,9 @@ public class PositionPivot extends TrapezoidalClimbingCommand {
   public PositionPivot(Pivot pivot, State goal) {
     super(
         pivot,
-        new Constraints(kPivotMaxVelocity / 3d, kPivotMaxVelocity * kPivotMaxAccelerationSeconds),
+        new Constraints(kPivotMaxVelocity, kPivotMaxVelocity * kPivotMaxAccelerationSeconds),
         goal);
+    if (goal == PivotGoal.SECOND.getState())
+      constraints = new Constraints(constraints.maxVelocity / 3d, constraints.maxAcceleration);
   }
 }

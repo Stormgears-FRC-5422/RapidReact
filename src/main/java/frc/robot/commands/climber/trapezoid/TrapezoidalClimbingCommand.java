@@ -11,7 +11,7 @@ import static edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 public abstract class TrapezoidalClimbingCommand extends CommandBase implements Loggable {
 
   @Log.Exclude protected final ClimbingSubsystem subsystem;
-  protected final Constraints constraints;
+  protected Constraints constraints;
 
   //  protected TrapezoidProfileCommand leftTrapezoidProfileCommand;
   //  protected TrapezoidProfileCommand rightTrapezoidProfileCommand;
