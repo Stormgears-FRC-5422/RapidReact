@@ -33,6 +33,8 @@ public class ButtonBoard {
   public final JoystickButton pivotFurthestButton;
   public final JoystickButton reverseButton;
   public final POVButton liftIntakeButton;
+  public final JoystickButton driveWithVisionButton;
+  public final JoystickButton shootWithVisionButton;
 
   private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
     // ********************************
@@ -44,18 +46,17 @@ public class ButtonBoard {
     pivotMostBackButton = new JoystickButton(driveJoystick, BButton);
     pivotFurthestButton = new JoystickButton(driveJoystick, XButton);
     reverseButton = new JoystickButton(driveJoystick, littleLeftButton);
-
-    shootButton = new JoystickButton(secondaryJoystick, rightBumper);
-    loadButton = new JoystickButton(secondaryJoystick, leftBumper);
-    toggleShootingHeightButton = new JoystickButton(secondaryJoystick, stickRightButton);
-
+    driveWithVisionButton = new JoystickButton(driveJoystick, stickRightButton);
     // ********************************
     // Put Secondary Joystick settings here
     // ********************************
+    shootWithVisionButton = new JoystickButton(secondaryJoystick, YButton);
+    shootButton = new JoystickButton(secondaryJoystick, rightBumper);
+    loadButton = new JoystickButton(secondaryJoystick, leftBumper);
+    toggleShootingHeightButton = new JoystickButton(secondaryJoystick, stickRightButton);
     homePivotButton = new POVButton(secondaryJoystick, 180);
     homeClimberButton = new POVButton(secondaryJoystick, 180);
     homeClimbing = new POVButton(secondaryJoystick, 180);
-
     manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
     coordinatingClimberButton = new POVButton(secondaryJoystick,0);
     liftIntakeButton = new POVButton(secondaryJoystick, 90);

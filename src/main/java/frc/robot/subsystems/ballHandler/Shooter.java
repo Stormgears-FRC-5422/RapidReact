@@ -32,11 +32,6 @@ public class Shooter extends SubsystemBase implements Loggable {
     //        Shuffleboard.getTab("Shoot Command").add(this);
   }
 
-  @Override
-  public String configureLogName() {
-    return "BallHandler";
-  }
-
   @Log(name = "Speed")
   public double getSpeed() {
     return motor.getEncoder().getVelocity();
@@ -66,12 +61,9 @@ public class Shooter extends SubsystemBase implements Loggable {
     return mode.rps;
   }
 
-  @Config.NumberSlider(
+  @Config(
       name = "New Setpoint",
-      min = 10,
-      max = 90,
-      blockIncrement = 1,
-      defaultValue = 68)
+      defaultValueNumeric = 68)
   public void setSetpoint(double setpoint) {
     mode = Height.fromRPS(setpoint);
   }

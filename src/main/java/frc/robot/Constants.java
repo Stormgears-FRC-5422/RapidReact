@@ -203,6 +203,16 @@ public final class Constants {
   public static final int kRunwayLEDStart = StormProp.getInt("runwayLEDStart", 0);
   public static final int kRunwayLEDLength = StormProp.getInt("runwayLEDLength", 0);
 
+  //VISION CONSTANTS----------------------------------------------------------------------------
+  public static final String kCameraName = StormProp.getString("cameraName", "UpperHubCam");
+  public static final boolean kUseVision = StormProp.getBoolean("useVision", false);
+  public static final double kCameraHeightInches = StormProp.getNumber("cameraHeightInches", 1d);
+  public static final double kTaretHeightInches = StormProp.getNumber("targetHeightInches", 2d);
+  public static final double kCameraPitchDeg = StormProp.getNumber("cameraPitchDeg", 0d);
+  public static final double kVisionDriveP = StormProp.getNumber("visionDriveP", 0.1);
+  public static final double kVisionDriveI = StormProp.getNumber("visionDriveI", 0d);
+  public static final double kVisionDriveD = StormProp.getNumber("visionDriveD", 0d);
+
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");
   }
