@@ -175,13 +175,11 @@ public class RobotContainer {
               new PositionPivot(pivot, MOST_BACK.getState()),
               new PositionClimber(climber, LOWEST.getState()),
               new ParallelRaceGroup(
-                      //                      new HoldTargetPosition(climber,
-                      // LOWEST.getState().position),
+                      new HoldTargetPosition(climber, LOWEST.getState().position),
                       new PositionPivot(pivot, FIRST.getState()))
                   .withName("Hold Climb"),
               new ParallelRaceGroup(
-                      //                      new HoldTargetPosition(pivot,
-                      // FIRST.getState().position),
+                      new HoldTargetPosition(pivot, FIRST.getState().position),
                       new PositionClimber(climber, CLEARANCE_HEIGHT.getState()))
                   .withName("Hold Pivot"));
       firstpivot =
