@@ -195,9 +195,13 @@ public final class Constants {
   public static final double kPivotLeadBaseLength= StormProp.getNumber("pivotLeadBaseLength", 0.0);
   public static final double kPivotLeadOffsetLength = StormProp.getNumber("pivotLeadOffsetLength", 0.0);
 
+  public static final boolean kUseLights = StormProp.getBoolean("useLights", false);
   public static final int kLightsID = StormProp.getInt("lightsID", 0);
   public static final int kLEDLength = StormProp.getInt("LEDLength", 0);
-  public static final boolean kUseLights = StormProp.getBoolean("useLights", false);
+  public static final int kBackLEDStart = StormProp.getInt("backLEDStart", 0);
+  public static final int kBackLEDLength = StormProp.getInt("backLEDLength", 0);
+  public static final int kRunwayLEDStart = StormProp.getInt("runwayLEDStart", 0);
+  public static final int kRunwayLEDLength = StormProp.getInt("runwayLEDLength", 0);
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");
