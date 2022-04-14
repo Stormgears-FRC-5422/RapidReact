@@ -21,13 +21,17 @@ import static java.lang.Math.max;
 
 public class SparkDrive extends StormDrive {
   private final StormSpark masterLeft =
-      new StormSpark(kMasterLeftId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
+      new StormSpark(
+          kMasterLeftId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
   private final StormSpark masterRight =
-      new StormSpark(kMasterRightId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
+      new StormSpark(
+          kMasterRightId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
   private final StormSpark slaveLeft =
-      new StormSpark(kSlaveLeftId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
+      new StormSpark(
+          kSlaveLeftId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
   private final StormSpark slaveRight =
-      new StormSpark(kSlaveRightId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
+      new StormSpark(
+          kSlaveRightId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
 
   private final DifferentialDrive differentialDrive;
   private final double[] conversionFactor = {
@@ -43,7 +47,6 @@ public class SparkDrive extends StormDrive {
   private Filter masterLeftTemp;
   private Filter slaveLeftTemp;
   private Filter masterRightVoltage;
-
 
   private double delta;
   private int tempWarningCount;

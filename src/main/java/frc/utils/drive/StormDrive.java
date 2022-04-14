@@ -55,7 +55,7 @@ public abstract class StormDrive extends SubsystemBase {
   }
 
   public void setBrakeMode() {
-    
+
   }
 
   // Set the PID reference

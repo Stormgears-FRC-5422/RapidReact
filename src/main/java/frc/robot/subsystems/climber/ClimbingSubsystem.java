@@ -40,8 +40,7 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   protected final double cushionFloor;
 
   @Log public boolean allLimitsOn;
-  @Log.Exclude // TODO
-  protected LRSpeeds speeds = new LRSpeeds();
+  @Log.Exclude protected LRSpeeds speeds = new LRSpeeds();
   @Log protected boolean setSpeed = true;
   @Log protected boolean goingHome = false;
   @Log protected boolean leftHome = false;
@@ -68,8 +67,12 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
       double homeSpeed,
       double cushion,
       double cushionFloor) {
-    leftMotor = new StormSpark(leftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
-    rightMotor = new StormSpark(rightMotorID, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
+    leftMotor =
+        new StormSpark(
+            leftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
+    rightMotor =
+        new StormSpark(
+            rightMotorID, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
 
     this.leftCurrent = new ExponentialAverage(leftMotor::getOutputCurrent, 4);
     this.rightCurrent = new ExponentialAverage(rightMotor::getOutputCurrent, 4);
@@ -86,15 +89,14 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     this.cushion = cushion;
     this.cushionFloor = cushionFloor;
 
-
     leftMotor.setInverted(leftInverted);
     leftMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-//    leftMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
+    //    leftMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
     leftMotor.setOpenLoopRampRate(0.25);
 
     rightMotor.setInverted(rightInverted);
     rightMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-//    rightMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
+    //    rightMotor.getEncoder().setVelocityConversionFactor(1 / 60d);
     rightMotor.setOpenLoopRampRate(0.25);
 
     // Optimistic - we need to zero if the robot has been off...
@@ -114,7 +116,8 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   public void setSpeed(LRSpeeds lrSpeed) {
     setSpeed = true;
 
-    // Consider whether this should only be allowed if we have homed already. That may be a bit too conservative
+    // Consider whether this should only be allowed if we have homed already. That may be a bit too
+    // conservative
     this.speeds = lrSpeed;
 
     if (speeds.left() != 0) leftHome = false;
@@ -156,13 +159,13 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   // TODO - we should build this into the motor control itself.
   double applyCushion(double speed, double position) {
     if (!hasBeenHomed) return speed;
-    double delta;  // How close are we?
+    double delta; // How close are we?
     double limit;
 
     if (abs(position - forwardSoftLimit) < cushion) {
-       delta = abs(position - forwardSoftLimit);
+      delta = abs(position - forwardSoftLimit);
     } else if (abs(position - reverseSoftLimit) < cushion) {
-       delta = abs(position - reverseSoftLimit);
+      delta = abs(position - reverseSoftLimit);
     } else return speed;
 
     limit = cushionFloor + (delta / cushion) * (1 - cushionFloor);
@@ -216,7 +219,12 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     leftMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverseSoftLimit);
     rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) forwardSoftLimit);
     rightMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) reverseSoftLimit);
-    System.out.println(getName() + ".setSoftLimits(); forward: " + forwardSoftLimit + ", reverse: " + reverseSoftLimit);
+    System.out.println(
+        getName()
+            + ".setSoftLimits(); forward: "
+            + forwardSoftLimit
+            + ", reverse: "
+            + reverseSoftLimit);
   }
 
   @Override
@@ -239,9 +247,10 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
     setSpeed = false;
     this.pidOutput =
         state.velocity != 0 ? 0 : leftPIDController.calculate(leftPosition(), state.position);
-    //this.feedForwardOutputs = clamp(feedForward(state.velocity), -12, 12);
+    // this.feedForwardOutputs = clamp(feedForward(state.velocity), -12, 12);
     this.feedForwardOutputs = feedForward(state.velocity);
-    leftMotor.setVoltage(-clamp((pidOutput + feedForwardOutputs),-kNeo550NominalVoltage,kNeo550NominalVoltage));
+    leftMotor.setVoltage(
+        -clamp((pidOutput + feedForwardOutputs), -kNeo550NominalVoltage, kNeo550NominalVoltage));
   }
 
   public void rightPID(State state) {
@@ -258,6 +267,4 @@ public abstract class ClimbingSubsystem extends SubsystemBase implements Loggabl
   }
 
   public abstract double feedForward(double velocity);
-
-
 }

@@ -5,10 +5,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import static frc.robot.Constants.kClimberRotationsPerUnitLength;
 
 public enum ClimbingGoal {
-  LOWEST(-.15),
+  LOWEST(-.03),
   CLEARANCE_HEIGHT(75d / kClimberRotationsPerUnitLength),
-  HIGHEST(.68),
-  Custom(0);
+  HIGHEST(.75);
 
   TrapezoidProfile.State state;
 
@@ -18,10 +17,5 @@ public enum ClimbingGoal {
 
   public TrapezoidProfile.State getState() {
     return state;
-  }
-
-  public static ClimbingGoal setCustom(double position) {
-    Custom.state.position = position;
-    return Custom;
   }
 }

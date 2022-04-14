@@ -15,42 +15,43 @@ import java.util.function.DoubleSupplier;
 import static frc.robot.Constants.*;
 
 public class DriveWithVision extends CommandBase implements Loggable {
-    @Log.Exclude
-    private final Vision vision;
-    @Config.PIDController(tabName = "Vision")
-    private final PIDController turnController = new PIDController(kVisionDriveP, kVisionDriveI, kVisionDriveD);
-    private final DoubleSupplier joystickZ;
-    private final SlewDrive slewDrive;
+  @Log.Exclude private final Vision vision;
 
-    public DriveWithVision(StormDrive drive, DoubleSupplier X, DoubleSupplier Z, Vision vision) {
-        this.slewDrive = new SlewDrive(drive, X, Z);
-        this.joystickZ = slewDrive.getZ();
-        this.vision = vision;
-        addRequirements(slewDrive.getRequirements().toArray(new Subsystem[0]));
-    }
+  @Config.PIDController(tabName = "Vision")
+  private final PIDController turnController =
+      new PIDController(kVisionDriveP, kVisionDriveI, kVisionDriveD);
 
-    @Override
-    public void initialize() {
-        slewDrive.initialize();
-    }
+  private final DoubleSupplier joystickZ;
+  private final SlewDrive slewDrive;
 
-    @Override
-    public void execute() {
-        if (!vision.hasTarget()) {
-            slewDrive.setZ(joystickZ);
-        }
-        else {
-            slewDrive.setZ(this::pidOut, true);
-        }
-        slewDrive.execute();
-    }
+  public DriveWithVision(StormDrive drive, DoubleSupplier X, DoubleSupplier Z, Vision vision) {
+    this.slewDrive = new SlewDrive(drive, X, Z);
+    this.joystickZ = slewDrive.getZ();
+    this.vision = vision;
+    addRequirements(slewDrive.getRequirements().toArray(new Subsystem[0]));
+  }
 
-    @Override
-    public void end(boolean interrupted) {
-        slewDrive.end(interrupted);
-    }
+  @Override
+  public void initialize() {
+    slewDrive.initialize();
+  }
 
-    private double pidOut() {
-        return MathUtil.clamp(turnController.calculate(0, vision.getYaw()), -.5, .5);
+  @Override
+  public void execute() {
+    if (!vision.hasTarget()) {
+      slewDrive.setZ(joystickZ);
+    } else {
+      slewDrive.setZ(this::pidOut, true);
     }
+    slewDrive.execute();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    slewDrive.end(interrupted);
+  }
+
+  private double pidOut() {
+    return MathUtil.clamp(turnController.calculate(0, vision.getYaw()), -.5, .5);
+  }
 }

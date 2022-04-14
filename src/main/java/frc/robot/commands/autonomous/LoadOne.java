@@ -16,7 +16,6 @@ public class LoadOne extends CommandBase {
     for (Subsystem requirement : load.getRequirements()) {
       addRequirements(requirement);
     }
-
   }
 
   @Override

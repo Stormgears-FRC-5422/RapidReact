@@ -50,7 +50,7 @@ public class ButtonBoard {
     // ********************************
     // Put Secondary Joystick settings here
     // ********************************
-    shootWithVisionButton = new JoystickButton(secondaryJoystick, YButton);
+    shootWithVisionButton = new JoystickButton(secondaryJoystick, stickLeftButton);
     shootButton = new JoystickButton(secondaryJoystick, rightBumper);
     loadButton = new JoystickButton(secondaryJoystick, leftBumper);
     toggleShootingHeightButton = new JoystickButton(secondaryJoystick, stickRightButton);

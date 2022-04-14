@@ -14,7 +14,10 @@ public class PositionClimber extends TrapezoidalClimbingCommand {
   boolean isMovingForward = false;
 
   public PositionClimber(Climber climber, State goal) {
-    super(climber, new Constraints(kClimberMaxVelocity, kClimberMaxVelocity * kClimberMaxAccelerationSeconds), goal);
+    super(
+        climber,
+        new Constraints(kClimberMaxVelocity, kClimberMaxVelocity * kClimberMaxAccelerationSeconds),
+        goal);
     this.climber = climber;
   }
 

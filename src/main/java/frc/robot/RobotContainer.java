@@ -1,6 +1,9 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.autonomous.DoubleBallAuto;
 import frc.robot.commands.ballHandler.*;
@@ -12,7 +15,6 @@ import frc.robot.commands.climber.home.HomeClimbingSystem;
 import frc.robot.commands.climber.trapezoid.CoordinatingClimber;
 import frc.robot.commands.climber.trapezoid.PositionClimber;
 import frc.robot.commands.climber.trapezoid.PositionPivot;
-import frc.robot.commands.climber.trapezoid.*;
 import frc.robot.commands.drive.DriveWithVision;
 import frc.robot.commands.drive.SlewDrive;
 import frc.robot.subsystems.Lights;
@@ -48,6 +50,7 @@ public class RobotContainer {
   private final StormXboxController driveJoystick;
   private final StormXboxController secondaryJoystick;
   private final ButtonBoard buttonBoard;
+
   @Config.Command(tabName = "Driver", name = "UP Climber TRAVERSE")
   private SequentialCommandGroup highestClimber;
 
@@ -79,8 +82,6 @@ public class RobotContainer {
   private ManualClimber manualPivot;
   @Log private HoldCurrentPosition climberHoldCurrentPosition;
   @Log private HoldCurrentPosition pivotHoldCurrentPosition;
-  @Log private PositionClimber climberTrapezoid;
-  @Log private PositionPivot pivotTrapezoid;
   private DriveWithVision driveWithVision;
   private ShootWithVision shootWithVision;
 
@@ -90,8 +91,6 @@ public class RobotContainer {
   @Log.Include private Pivot pivot;
   private CommandBase autonomous;
   private SlewDrive slewDrive;
-
-  private boolean isShooting = false;
 
   public RobotContainer() {
     driveJoystick = new StormXboxController(0);
@@ -134,7 +133,7 @@ public class RobotContainer {
       // diagnosticIntake = new DiagnosticIntake();
       if (kUseFeeder) feeder = new Feeder();
     } else {
-      if (kUseShooter) shooter = new Shooter(this);
+      if (kUseShooter) shooter = new Shooter();
       if (kUseFeeder) feeder = new Feeder();
       if (kUseIntake) intake = new Intake();
       if (kUseLights) lights = new Lights();
@@ -160,13 +159,17 @@ public class RobotContainer {
 
   private void initCommands() {
     if (kUseDrive)
-      slewDrive = new SlewDrive(drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX);
+      slewDrive =
+          new SlewDrive(drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX);
     if (!kDiagnostic) {
       if (kUseIntake && kUseFeeder) {
         reverse = new Reverse(intake, feeder);
         load = new Load(intake, feeder);
       }
-      if (kUseShooter && kUseFeeder) shoot = new Shoot(feeder, shooter);
+      if (kUseShooter && kUseFeeder && kUseLights)
+        shoot = new Shoot(feeder, shooter, secondaryJoystick::getAButtonIsHeld, lights);
+      else if (kUseShooter && kUseFeeder)
+        shoot = new Shoot(feeder, shooter, secondaryJoystick::getAButtonIsHeld, null);
     } else {
       // testIntake = new TestIntake(diagnosticIntake, secondaryJoystick);
       if (kUseFeeder) {
@@ -176,27 +179,21 @@ public class RobotContainer {
     if (kUsePivot && kUseClimber) {
       homingSequence = new HomeClimbingSystem(climber, pivot);
       highestClimber =
-              new SequentialCommandGroup(
-                      new PositionClimber(climber, HIGHEST.getState()),
-                      new HoldTargetPosition(climber, HIGHEST.getState().position));
+          new SequentialCommandGroup(
+              new PositionClimber(climber, HIGHEST.getState()),
+              new HoldTargetPosition(climber, HIGHEST.getState().position));
       chinUp =
           new SequentialCommandGroup(
               //                  new PositionClimber(climber, CLEARANCE_HEIGHT.getState()),
               new PositionClimber(climber, CLEARANCE_HEIGHT.getState()),
               new PositionPivot(pivot, MOST_BACK.getState()),
               new PositionClimber(climber, LOWEST.getState()),
-              new ParallelRaceGroup(
-                      new HoldTargetPosition(climber, LOWEST.getState().position),
-                      new PositionPivot(pivot, FIRST.getState()))
-                  .withName("Hold Climb"),
-              new ParallelRaceGroup(
-                      new HoldTargetPosition(pivot, FIRST.getState().position),
-                      new PositionClimber(climber, CLEARANCE_HEIGHT.getState()))
-                  .withName("Hold Pivot"));
+              new PositionPivot(pivot, FIRST.getState()),
+              new PositionClimber(climber, CLEARANCE_HEIGHT.getState()));
       firstpivot =
-              new SequentialCommandGroup(
-                      new PositionPivot(pivot, MOST_BACK.getState()),
-                      new HoldTargetPosition(pivot, MOST_BACK.getState().position));
+          new SequentialCommandGroup(
+              new PositionPivot(pivot, MOST_BACK.getState()),
+              new HoldTargetPosition(pivot, MOST_BACK.getState().position));
       furthest =
           new SequentialCommandGroup(
               new PositionPivot(pivot, SECOND.getState()),
@@ -212,8 +209,7 @@ public class RobotContainer {
     if (kUseClimber) {
       manualClimber =
           new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
-      coordinatingClimber =
-              new CoordinatingClimber(climber,pivot,secondaryJoystick);
+      coordinatingClimber = new CoordinatingClimber(climber, pivot, secondaryJoystick);
 
       climberHoldCurrentPosition = new HoldCurrentPosition(climber);
     }
@@ -221,9 +217,12 @@ public class RobotContainer {
       autonomous = new DoubleBallAuto(load, shoot, drive, navX);
 
     if (kUseVision) {
-      driveWithVision = new DriveWithVision(drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX, vision);
+      driveWithVision =
+          new DriveWithVision(
+              drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX, vision);
       if (kUseFeeder && kUseShooter)
-        shootWithVision = new ShootWithVision(shooter, feeder, vision::getDistance);
+        shootWithVision =
+            new ShootWithVision(shooter, shoot, vision::hasTarget, vision::getDistance);
     }
   }
 
@@ -319,10 +318,4 @@ public class RobotContainer {
       slewDrive.schedule(true);
     }
   }
-
-  public void setShooting(boolean isShooting) {
-    this.isShooting = isShooting;
-    if (kUseLights) lights.setShooting(isShooting);
-  }
-
 }

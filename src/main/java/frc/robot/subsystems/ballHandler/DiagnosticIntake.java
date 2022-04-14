@@ -17,17 +17,23 @@ public class DiagnosticIntake extends SubsystemBase {
   public DiagnosticIntake() {
 
     if (kUseIntake) {
-      intakeMotor = new StormSpark(kIntakeId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
+      intakeMotor =
+          new StormSpark(
+              kIntakeId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
       intakeMotor.setInverted(true);
     }
 
     if (kUseFeeder) {
-      feederMotor = new StormSpark(kFeederId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
+      feederMotor =
+          new StormSpark(
+              kFeederId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
       feederMotor.setInverted(false);
     }
 
     if (kUseShooter) {
-      shooterMotor = new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
+      shooterMotor =
+          new StormSpark(
+              kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
       shooterMotor.setInverted(false);
     }
 

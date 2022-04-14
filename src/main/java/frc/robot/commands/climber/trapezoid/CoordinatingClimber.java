@@ -10,40 +10,42 @@ import frc.utils.joysticks.StormXboxController;
 import static java.lang.Math.copySign;
 
 public class CoordinatingClimber extends CommandBase {
-    ClimbingSubsystem climber;
-    ClimbingSubsystem pivot;
-    StormXboxController joystick;
-    double leftClimberPosition;
-    TrapezoidProfile.State climberState;
-    TrapezoidProfile.State pivotState;
+  ClimbingSubsystem climber;
+  ClimbingSubsystem pivot;
+  StormXboxController joystick;
+  double leftClimberPosition;
+  TrapezoidProfile.State climberState;
+  TrapezoidProfile.State pivotState;
 
-    public CoordinatingClimber(ClimbingSubsystem climber, ClimbingSubsystem pivot, StormXboxController joystick) {
-        this.climber = climber;
-        this.pivot = pivot;
-        this.joystick = joystick;
+  public CoordinatingClimber(
+      ClimbingSubsystem climber, ClimbingSubsystem pivot, StormXboxController joystick) {
+    this.climber = climber;
+    this.pivot = pivot;
+    this.joystick = joystick;
 
-        addRequirements(climber, pivot);
-        climberState = new TrapezoidProfile.State(0,0);
-        pivotState = new TrapezoidProfile.State(0,0);
-    }
+    addRequirements(climber, pivot);
+    climberState = new TrapezoidProfile.State(0, 0);
+    pivotState = new TrapezoidProfile.State(0, 0);
+  }
 
-    @Override
-    public void initialize() {
-        System.out.println("CoordinatingClimber.initialize()");
-        leftClimberPosition = climber.leftPosition();
+  @Override
+  public void initialize() {
+    System.out.println("CoordinatingClimber.initialize()");
+    leftClimberPosition = climber.leftPosition();
     pivot.resetPID();
-    }
+  }
 
-    @Override
-    public void execute() {
-        double joyVal = -joystick.getLeftJoystickY();
-        double climbTarget;
+  @Override
+  public void execute() {
+    double joyVal = -joystick.getLeftJoystickY();
+    double climbTarget;
 
-        // We don't want the position to drift if there is no joystick input -
-        // in that case just use the previous value (rather than the current one)
-        if (joyVal != 0) {
+    // We don't want the position to drift if there is no joystick input -
+    // in that case just use the previous value (rather than the current one)
+    // TODO Make as fast as possible
+    if (joyVal != 0) {
       //            leftClimberPosition = climber.leftPosition() + 40 * copySign(1.0, joyVal);
-      climber.setSpeed(new LRSpeeds(0.42 * copySign(1d, -joyVal), 0.42 * copySign(1d, -joyVal)));
+      climber.setSpeed(new LRSpeeds(0.8 * copySign(1d, -joyVal), 0.8 * copySign(1d, -joyVal)));
     } else climber.stop();
 
     //        climbTarget = leftClimberPosition;
@@ -53,14 +55,13 @@ public class CoordinatingClimber extends CommandBase {
     //        climber.leftPID(climberState);
     //        climber.rightPID(climberState);
     pivot.leftPID(pivotState);
-        pivot.rightPID(pivotState);
-    }
+    pivot.rightPID(pivotState);
+  }
 
-    @Override
-    public void end(boolean interrupted) {
-        System.out.println("TestClimber.end( interrupted = " + interrupted + " )");
-        climber.stop();
-        pivot.stop();
-    }
-
+  @Override
+  public void end(boolean interrupted) {
+    System.out.println("TestClimber.end( interrupted = " + interrupted + " )");
+    climber.stop();
+    pivot.stop();
+  }
 }

@@ -15,8 +15,6 @@ public abstract class HoldInterface extends CommandBase {
   @Log(name = "Holding Right Position")
   double initialRightPosition;
 
-
-
   HoldInterface(ClimbingSubsystem subsystem) {
     this.subsystem = subsystem;
     addRequirements(subsystem);

@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.utils.filters.ExponentialAverage;
 import frc.utils.motorcontrol.StormSpark;
 import io.github.oblarg.oblog.Loggable;
@@ -14,9 +13,9 @@ import io.github.oblarg.oblog.annotations.Log;
 import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase implements Loggable {
-  RobotContainer robotContainer;
   private final StormSpark motor =
-      new StormSpark(kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
+      new StormSpark(
+          kShooterId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.kNeo);
   private final SimpleMotorFeedforward feedforward =
       new SimpleMotorFeedforward(kShooterS, kShooterV, kShooterA);
 
@@ -24,8 +23,7 @@ public class Shooter extends SubsystemBase implements Loggable {
 
   private ExponentialAverage averageSpeed = new ExponentialAverage(this::getSpeed, 25);
 
-  public Shooter(RobotContainer robotContainer) {
-    this.robotContainer = robotContainer;
+  public Shooter() {
     motor.setInverted(false);
     motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     motor.getEncoder().setVelocityConversionFactor(1 / 60d); // from rpm to rps
@@ -38,14 +36,14 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   @Log(name = "Current")
-  public double getCurrent() { return motor.getOutputCurrent();}
-  //    @Log.Graph(name = "Speed", visibleTime = 3)
+  public double getCurrent() {
+    return motor.getOutputCurrent();
+  }
 
   @Log(name = "Exp Speed #")
   public double getExponentialSpeed() {
     return averageSpeed.update();
   }
-  //    @Log.Graph(name = "Exp Speed", visibleTime = 3)
 
   public void resetExponential() {
     averageSpeed = new ExponentialAverage(this::getSpeed, 25);
@@ -53,7 +51,6 @@ public class Shooter extends SubsystemBase implements Loggable {
 
   public void off() {
     motor.set(0);
-    robotContainer.setShooting(false);
   }
 
   @Log(name = "Setpoint")
@@ -61,15 +58,12 @@ public class Shooter extends SubsystemBase implements Loggable {
     return mode.rps;
   }
 
-  @Config(
-      name = "New Setpoint",
-      defaultValueNumeric = 68)
+  @Config(name = "New Setpoint", defaultValueNumeric = 68)
   public void setSetpoint(double setpoint) {
     mode = Height.fromRPS(setpoint);
   }
 
   public void runToSpeed(double pidOutput) {
-    robotContainer.setShooting(true);
     motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), 0));
   }
 
@@ -89,9 +83,4 @@ public class Shooter extends SubsystemBase implements Loggable {
       return Custom;
     }
   }
-
-  //    @Override
-  //    public void initSendable(SendableBuilder builder) {
-  //        builder.addDoubleProperty("speed", motor.getEncoder()::getVelocity, null);
-  //    }
 }

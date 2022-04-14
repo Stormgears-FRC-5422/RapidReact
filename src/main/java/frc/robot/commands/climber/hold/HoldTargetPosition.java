@@ -6,8 +6,8 @@ import io.github.oblarg.oblog.annotations.Log;
 
 @Log.Exclude
 public class HoldTargetPosition extends HoldInterface {
-  @Log.Exclude ClimbingSubsystem subsystem;
   private final double position;
+  @Log.Exclude ClimbingSubsystem subsystem;
 
   public HoldTargetPosition(ClimbingSubsystem subsystem, double position) {
     super(subsystem);

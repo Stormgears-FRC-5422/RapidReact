@@ -11,15 +11,13 @@ import static edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 public abstract class TrapezoidalClimbingCommand extends CommandBase implements Loggable {
 
   @Log.Exclude protected final ClimbingSubsystem subsystem;
-  protected Constraints constraints;
+  protected final State goal;
 
   //  protected TrapezoidProfileCommand leftTrapezoidProfileCommand;
   //  protected TrapezoidProfileCommand rightTrapezoidProfileCommand;
-
-  protected final State goal;
-
   private final State leftGoal;
   private final State rightGoal;
+  protected Constraints constraints;
 
   protected TrapezoidalClimbingCommand(
       ClimbingSubsystem subsystem, Constraints constraints, State goal) {
@@ -79,8 +77,8 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
   public boolean isFinished() {
     //    return leftTrapezoidProfileCommand.isFinished() &&
     // rightTrapezoidProfileCommand.isFinished();
-    return Math.abs(goal.position - subsystem.leftPosition()) <= 0.003
-        && Math.abs(goal.position - subsystem.rightPosition()) <= 0.003;
+    return Math.abs(goal.position - subsystem.leftPosition()) <= 0.008
+        && Math.abs(goal.position - subsystem.rightPosition()) <= 0.008;
   }
 
   protected void leftPID(double unused, State state) {

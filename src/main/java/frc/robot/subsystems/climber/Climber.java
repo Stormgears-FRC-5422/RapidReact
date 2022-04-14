@@ -126,15 +126,13 @@ public class Climber extends ClimbingSubsystem {
   }
 
   public boolean isReverseLimitTripped() {
-    return leftReverseHardLimitSwitch.isPressed()
-        && rightReverseHardLimitSwitch.isPressed()
+    return (leftReverseHardLimitSwitch.isPressed() || rightReverseHardLimitSwitch.isPressed())
         && leftReverseHardLimitSwitch.isLimitSwitchEnabled()
         && rightReverseHardLimitSwitch.isLimitSwitchEnabled();
   }
 
   public boolean isForwardLimitTripped() {
-    return leftForwardHardLimitSwitch.isPressed()
-        && rightForwardHardLimitSwitch.isPressed()
+    return (leftForwardHardLimitSwitch.isPressed() || rightForwardHardLimitSwitch.isPressed())
         && leftForwardHardLimitSwitch.isLimitSwitchEnabled()
         && rightForwardHardLimitSwitch.isLimitSwitchEnabled();
   }

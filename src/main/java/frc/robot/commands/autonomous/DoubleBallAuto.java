@@ -12,20 +12,29 @@ import frc.utils.drive.StormDrive;
 
 public class DoubleBallAuto extends SequentialCommandGroup {
 
-    public DoubleBallAuto(Load load, Shoot shoot, StormDrive drive, NavX navX) {
-        addCommands(
-                new ParallelCommandGroup(
-                        new DriveDistanceProfile(1.5d, 2d,1d, drive),
-                        new ProxyScheduleCommand(load).withTimeout(5)),
-                new DriveTurnProfile(180, 180d, 180d, drive, navX),
-                new ProxyScheduleCommand(shoot)
-        );
-    }
+  private final Shoot shoot;
 
-    @Override
-    public void end(boolean interrupted) {
-        super.end(interrupted);
-        System.out.println(
-                "AUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISH");
-    }
+  public DoubleBallAuto(Load load, Shoot shoot, StormDrive drive, NavX navX) {
+    this.shoot = shoot;
+    addCommands(
+        new ParallelCommandGroup(
+            new DriveDistanceProfile(1.5d, 2d, 1d, drive),
+            new ProxyScheduleCommand(load).withTimeout(5)),
+        new DriveTurnProfile(180, 180d, 180d, drive, navX),
+        new ProxyScheduleCommand(shoot));
+  }
+
+  @Override
+  public void initialize() {
+    shoot.autonomous();
+    super.initialize();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    shoot.teleop();
+    super.end(interrupted);
+    System.out.println(
+        "AUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISH");
+  }
 }

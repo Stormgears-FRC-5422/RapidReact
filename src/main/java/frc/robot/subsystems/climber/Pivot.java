@@ -8,7 +8,7 @@ import static frc.robot.Constants.*;
 
 @Log.Exclude
 public class Pivot extends ClimbingSubsystem {
-  //private final ArmFeedforward feedforward = new ArmFeedforward(0.05, 0, 0.0686, 0);
+  // private final ArmFeedforward feedforward = new ArmFeedforward(0.05, 0, 0.0686, 0);
   private final ElevatorFeedforward feedforward;
 
   public Pivot() {
@@ -43,7 +43,7 @@ public class Pivot extends ClimbingSubsystem {
 
   @Override
   public double feedForward(double velocity) {
-    return feedforward.calculate(velocity,0);
+    return feedforward.calculate(velocity, 0);
   }
 
   @Override

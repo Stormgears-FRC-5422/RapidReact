@@ -18,14 +18,15 @@ public class StormStruct {
   private final int m_typeid;
   private final NetworkTableInstance m_ntinst;
 
-    /**  
-     * Populate HashMap fields and size
-    * 
-    * @param nt_inst Network Tables instance
-    * @param base_table table name where struct data is stored
-    * @param struct_name name of struct being used
-    */
-    public StormStruct(final NetworkTableInstance nt_inst,final String base_table,final String struct_name) {
+  /**
+   * Populate HashMap fields and size
+   *
+   * @param nt_inst Network Tables instance
+   * @param base_table table name where struct data is stored
+   * @param struct_name name of struct being used
+   */
+  public StormStruct(
+      final NetworkTableInstance nt_inst, final String base_table, final String struct_name) {
         this.m_ntinst = nt_inst;
         m_fields = new HashMap<String,Integer>();
         m_sizes = new HashMap<String,Integer>();
@@ -35,7 +36,7 @@ public class StormStruct {
         NetworkTableEntry sizes_entry = nt_inst.getTable(base_table + "/structs/" + struct_name).getEntry("size");
         NetworkTableEntry type_entry = nt_inst.getTable(base_table + "/structs/" + struct_name).getEntry("type");
         m_typeid = type_entry.getNumber(-1).intValue();
-        
+
         String[] names = names_entry.getStringArray(new String[0]);
         Number[] sizes = sizes_entry.getNumberArray(new Number[0]);
 
@@ -57,13 +58,13 @@ public class StormStruct {
         return(m_struct_size);
     }
 
-        /**
-         * Get the field name given the index
-         * 
-         * @param index of data item
-         * @return Name of field
-         */
-    public String get_name_by_index(final int index) {
+  /**
+   * Get the field name given the index
+   *
+   * @param index of data item
+   * @return Name of field
+   */
+  public String get_name_by_index(final int index) {
         for (final String field : m_fields.keySet()) {
             if (m_fields.get(field) == index) {
                 return(field);
@@ -72,14 +73,13 @@ public class StormStruct {
         return("");
     }
 
-    /**
-         * Unpack a binary byte stream using this structure definition
-         * 
-         * @param data_stream The binary data
-         * @return Returns a HashMap of field,value pairs
-         * 
-    */
-    public HashMap<String, Integer> decode_struct(final byte[] data_stream) {
+  /**
+   * Unpack a binary byte stream using this structure definition
+   *
+   * @param data_stream The binary data
+   * @return Returns a HashMap of field,value pairs
+   */
+  public HashMap<String, Integer> decode_struct(final byte[] data_stream) {
 
         return(decode_struct(data_stream,0));
     }
@@ -109,15 +109,14 @@ public class StormStruct {
         }
     }
 
-    /**
-         * Unpack a binary byte stream using this structure definition starting at a given offset
-         * 
-         * @param data_stream The binary data
-         * @param _offset The offset in the binary data stream to extract from
-         * @return Returns a HashMap of field,value pairs
-         * 
-    */
-    private HashMap<String, Integer> decode_struct(final byte[] data_stream,final int _offset) {
+  /**
+   * Unpack a binary byte stream using this structure definition starting at a given offset
+   *
+   * @param data_stream The binary data
+   * @param _offset The offset in the binary data stream to extract from
+   * @return Returns a HashMap of field,value pairs
+   */
+  private HashMap<String, Integer> decode_struct(final byte[] data_stream, final int _offset) {
         HashMap<String,Integer> ret_map = new HashMap<String,Integer>();
         // Data is big endian
         int offset = _offset;
@@ -132,7 +131,7 @@ public class StormStruct {
             boolean signed = (m_sizes.get(field) < 0);
             //System.out.println("unpack " + field + "; size=" + size);
             for (int i = 0; i < size; i++) {
-                data = data << 8;           
+        data = data << 8;
                 data |= data_stream[offset + i] & 0xFF;
             }
 

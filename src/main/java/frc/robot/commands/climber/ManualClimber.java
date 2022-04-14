@@ -65,15 +65,13 @@ public class ManualClimber extends CommandBase implements Loggable {
       speeds.disableLeft();
     }
 
-    // TODO - re-enable?
-    //    if (joyVal == 0 && lastJoyVal > 0) setHoldPosition();
     if (joyVal == 0) {
-//      if (!holding) {
-//        holding = true;
-//        leftPosition = subsystem.leftPosition();
-//        rightPosition = subsystem.rightPosition();
-//      }
-//      hold(leftPosition, rightPosition);
+      //      if (!holding) {
+      //        holding = true;
+      //        leftPosition = subsystem.leftPosition();
+      //        rightPosition = subsystem.rightPosition();
+      //      }
+      //      hold(leftPosition, rightPosition);
       subsystem.setSpeed(LRSpeeds.stop());
     } else {
       holding = false;
