@@ -8,14 +8,13 @@ import frc.robot.subsystems.sensors.Vision;
 import frc.utils.drive.StormDrive;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
-import io.github.oblarg.oblog.annotations.Log;
 
 import java.util.function.DoubleSupplier;
 
 import static frc.robot.Constants.*;
 
 public class DriveWithVision extends CommandBase implements Loggable {
-  @Log.Exclude private final Vision vision;
+  private final Vision vision;
 
   @Config.PIDController(tabName = "Vision")
   private final PIDController turnController =
@@ -52,6 +51,7 @@ public class DriveWithVision extends CommandBase implements Loggable {
   }
 
   private double pidOut() {
-    return MathUtil.clamp(turnController.calculate(0, vision.getYaw()), -.5, .5);
+    double pidOut = MathUtil.clamp(turnController.calculate(0, vision.getYaw()), -.5, .5);
+    return Math.abs(pidOut) > 0.06 ? pidOut : 0;
   }
 }

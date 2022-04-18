@@ -1,9 +1,6 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.autonomous.DoubleBallAuto;
 import frc.robot.commands.ballHandler.*;
@@ -57,19 +54,20 @@ public class RobotContainer {
   @Config.Command(tabName = "Driver", name = "Down Climber")
   private SequentialCommandGroup chinUp;
 
-  @Config.Command(tabName = "Driver", name = "Chin Up pivot")
-  private SequentialCommandGroup firstpivot;
+  public Feeder feeder;
 
-  @Config.Command(tabName = "Driver", name = "back Pivot")
-  private SequentialCommandGroup furthest;
+  @Config.Command(tabName = "Driver", name = "Chin Up pivot")
+  private SequentialCommandGroup backbendAndChinUp;
   /** Declare subsystems - initialize below */
   @Log private StormDrive drive;
 
-  @Log private Vision vision;
+  @Config.Command(tabName = "Driver", name = "back Pivot")
+  private SequentialCommandGroup backbend;
+
   @Log private NavX navX;
   private DiagnosticIntake diagnosticIntake;
   @Log private Shooter shooter;
-  private Feeder feeder;
+  private Vision vision;
   private Intake intake;
   private Lights lights;
   private TestIntake testIntake;
@@ -178,6 +176,18 @@ public class RobotContainer {
     }
     if (kUsePivot && kUseClimber) {
       homingSequence = new HomeClimbingSystem(climber, pivot);
+    } else if (kUsePivot) homingSequence = new Home(pivot);
+    else if (kUseClimber) homingSequence = new Home(climber);
+
+    if (kUsePivot) {
+      manualPivot =
+          new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getRightJoystickY);
+      pivotHoldCurrentPosition = new HoldCurrentPosition(pivot);
+    }
+    if (kUseClimber && kUsePivot) {
+      manualClimber =
+          new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
+      coordinatingClimber = new CoordinatingClimber(climber, pivot, secondaryJoystick);
       highestClimber =
           new SequentialCommandGroup(
               new PositionClimber(climber, HIGHEST.getState()),
@@ -190,31 +200,23 @@ public class RobotContainer {
               new PositionClimber(climber, LOWEST.getState()),
               new PositionPivot(pivot, FIRST.getState()),
               new PositionClimber(climber, CLEARANCE_HEIGHT.getState()));
-      firstpivot =
-          new SequentialCommandGroup(
-              new PositionPivot(pivot, MOST_BACK.getState()),
-              new HoldTargetPosition(pivot, MOST_BACK.getState().position));
-      furthest =
+      backbend =
           new SequentialCommandGroup(
               new PositionPivot(pivot, SECOND.getState()),
-              new HoldTargetPosition(pivot, SECOND.getState().position));
-    } else if (kUsePivot) homingSequence = new Home(pivot);
-    else if (kUseClimber) homingSequence = new Home(climber);
-
-    if (kUsePivot) {
-      manualPivot =
-          new ManualClimber(pivot, secondaryJoystick, secondaryJoystick::getRightJoystickY);
-      pivotHoldCurrentPosition = new HoldCurrentPosition(pivot);
-    }
-    if (kUseClimber) {
-      manualClimber =
-          new ManualClimber(climber, secondaryJoystick, secondaryJoystick::getLeftJoystickY);
-      coordinatingClimber = new CoordinatingClimber(climber, pivot, secondaryJoystick);
-
+              new PositionClimber(climber, HIGHEST.getState()));
+      backbendAndChinUp =
+          new SequentialCommandGroup(
+              new ProxyScheduleCommand(chinUp),
+              new ProxyScheduleCommand(backbend),
+              new ProxyScheduleCommand(coordinatingClimber),
+              new ProxyScheduleCommand(chinUp),
+              new ProxyScheduleCommand(backbend),
+              new ProxyScheduleCommand(coordinatingClimber),
+              new ProxyScheduleCommand(chinUp));
       climberHoldCurrentPosition = new HoldCurrentPosition(climber);
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive)
-      autonomous = new DoubleBallAuto(load, shoot, drive, navX);
+      autonomous = new DoubleBallAuto(load, drive, feeder, shooter, lights, navX, vision);
 
     if (kUseVision) {
       driveWithVision =
@@ -273,8 +275,8 @@ public class RobotContainer {
 
           buttonBoard.climberUP.whenPressed(highestClimber);
           buttonBoard.climberDown.whenPressed(chinUp);
-          buttonBoard.pivotMostBackButton.whenPressed(firstpivot);
-          buttonBoard.pivotFurthestButton.whenPressed(furthest);
+          buttonBoard.pivotMostBackButton.whenPressed(backbendAndChinUp);
+          buttonBoard.pivotFurthestButton.whenPressed(backbend);
         } else if (kUsePivot) buttonBoard.manualClimberButton.whenPressed(manualPivot);
         else if (kUseClimber) buttonBoard.manualClimberButton.whenPressed(manualClimber);
         if (kUseClimber) {
@@ -304,10 +306,10 @@ public class RobotContainer {
   @Config(name = "ON FOR TWO BALLS (pause)", tabName = "Autonomous", defaultValueBoolean = true)
   public void setAutonomous(boolean twoBall) {
     if (twoBall) {
-      autonomous = new DoubleBallAuto(load, shoot, drive, navX);
+      autonomous = new DoubleBallAuto(load, drive, feeder, shooter, lights, navX, vision);
       System.out.println("Two Ball");
     } else {
-      autonomous = new Autonomous(load, shoot, drive);
+      autonomous = new Autonomous(load, shoot, drive, feeder, shooter, lights);
       System.out.println("One ball");
     }
   }

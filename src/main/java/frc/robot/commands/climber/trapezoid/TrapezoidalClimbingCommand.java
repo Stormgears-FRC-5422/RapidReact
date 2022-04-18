@@ -54,11 +54,11 @@ public abstract class TrapezoidalClimbingCommand extends CommandBase implements 
     //    leftTrapezoidProfileCommand.execute();
     //    rightTrapezoidProfileCommand.execute();
     leftGoal.velocity =
-        (Math.abs(subsystem.leftPosition() - goal.position) > 0.05 ? 1 : 0)
+        (Math.abs(subsystem.leftPosition() - goal.position) > 0.03 ? 1 : 0)
             * constraints.maxVelocity
             * (goal.position > subsystem.leftPosition() ? 1 : -1);
     rightGoal.velocity =
-        (Math.abs(subsystem.rightPosition() - goal.position) > 0.05 ? 1 : 0)
+        (Math.abs(subsystem.rightPosition() - goal.position) > 0.03 ? 1 : 0)
             * constraints.maxVelocity
             * (goal.position > subsystem.rightPosition() ? 1 : -1);
 

@@ -6,7 +6,7 @@ import frc.robot.Constants;
 public enum PivotGoal {
   MOST_BACK(Constants.kPivotForwardLimit),
   FIRST(0.044),
-  SECOND(.245),
+  SECOND(.25),
   FURTHEST(Constants.kPivotReverseLimit);
 
   TrapezoidProfile.State state;

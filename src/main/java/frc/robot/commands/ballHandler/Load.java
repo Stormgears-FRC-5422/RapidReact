@@ -23,7 +23,7 @@ public class Load extends CommandBase {
   @Override
   public void execute() {
     intake.on();
-    feeder.on();
+    feeder.intakeOn();
   }
 
   @Override

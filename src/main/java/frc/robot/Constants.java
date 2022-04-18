@@ -77,7 +77,8 @@ public final class Constants {
       StormProp.getNumber("pivotHomeCurrentLimit", 0.0);
   public static final double kPivotHomeSetSpeed = StormProp.getNumber("pivotHomeSetSpeed", 0.0);
 
-  public static final double kFeederSpeed = StormProp.getNumber("feederSpeed", 0.0);
+  public static final double kFeederIntakeSpeed = StormProp.getNumber("feederSpeed", 0.0);
+  public static final double kFeederShootingSpeed = StormProp.getNumber("feederShootingSpeed", 0d);
   public static final double kIntakeSpeed = StormProp.getNumber("intakeSpeed", 0.0);
 
   public static final double kShooterP = StormProp.getNumber("shooterP", 0.0);
@@ -216,6 +217,8 @@ public final class Constants {
   public static final double kVisionDriveP = StormProp.getNumber("visionDriveP", 0.1);
   public static final double kVisionDriveI = StormProp.getNumber("visionDriveI", 0d);
   public static final double kVisionDriveD = StormProp.getNumber("visionDriveD", 0d);
+  public static final double kCameraToBumperInches =
+      StormProp.getNumber("cameraToBumperInches", 0d);
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");

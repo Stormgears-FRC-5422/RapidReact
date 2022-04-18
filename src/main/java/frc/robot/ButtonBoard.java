@@ -46,12 +46,12 @@ public class ButtonBoard {
     pivotMostBackButton = new JoystickButton(driveJoystick, BButton);
     pivotFurthestButton = new JoystickButton(driveJoystick, XButton);
     reverseButton = new JoystickButton(driveJoystick, littleLeftButton);
-    driveWithVisionButton = new JoystickButton(driveJoystick, stickRightButton);
+    driveWithVisionButton = new JoystickButton(driveJoystick, rightBumper);
     // ********************************
     // Put Secondary Joystick settings here
     // ********************************
-    shootWithVisionButton = new JoystickButton(secondaryJoystick, stickLeftButton);
-    shootButton = new JoystickButton(secondaryJoystick, rightBumper);
+    shootWithVisionButton = new JoystickButton(secondaryJoystick, rightBumper);
+    shootButton = new JoystickButton(secondaryJoystick, stickLeftButton);
     loadButton = new JoystickButton(secondaryJoystick, leftBumper);
     toggleShootingHeightButton = new JoystickButton(secondaryJoystick, stickRightButton);
     homePivotButton = new POVButton(secondaryJoystick, 180);

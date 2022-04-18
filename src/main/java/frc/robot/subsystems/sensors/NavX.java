@@ -29,6 +29,10 @@ public class NavX extends SubsystemBase implements Loggable {
     return (ahrs.getYaw() * Constants.kNavXGyroScaleFactor);
   }
 
+  @Log
+  public float getCompassHeading() {
+    return ahrs.getCompassHeading();
+  }
   //    @Override
   //    public void periodic() {
   //      SmartDashboard.putNumber("angle radians", getAngle());

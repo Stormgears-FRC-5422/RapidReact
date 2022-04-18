@@ -9,8 +9,7 @@ import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
 import static edu.wpi.first.math.MathUtil.clamp;
-import static frc.robot.Constants.kFeederId;
-import static frc.robot.Constants.kFeederSpeed;
+import static frc.robot.Constants.*;
 import static java.lang.Math.*;
 
 public class Feeder extends SubsystemBase implements Loggable {
@@ -28,11 +27,6 @@ public class Feeder extends SubsystemBase implements Loggable {
     motor.setInverted(false);
     motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     motor.getEncoder().setPosition(0.0);
-
-    //    Shuffleboard.getTab(shuffleboardTabName).addNumber("FeederSpeed", this::getSpeed);
-    //    Shuffleboard.getTab(shuffleboardTabName).addBoolean("LimitTripped", this::getLimit);
-    //    Shuffleboard.getTab(shuffleboardTabName).addNumber("FeederTics", this::getMotorPosition);
-    //    Shuffleboard.getTab(shuffleboardTabName).addNumber("LiftVoltage", this::getLiftVoltage);
   }
 
   @Override
@@ -47,6 +41,7 @@ public class Feeder extends SubsystemBase implements Loggable {
   }
 
   private void setSpeed(double speed) {
+    if (limitSwitch.getAbsoluteLimit()) motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     if (getLimit()) this.speed = 0;
     else this.speed = copySign(min(abs(speed), 1), speed);
   }
@@ -74,14 +69,19 @@ public class Feeder extends SubsystemBase implements Loggable {
     forward = true;
   }
 
-  public void on() {
+  public void intakeOn() {
     forward = true;
-    setSpeed(kFeederSpeed);
+    setSpeed(kFeederIntakeSpeed);
+  }
+
+  public void shootOn() {
+    forward = true;
+    setSpeed(kFeederShootingSpeed);
   }
 
   public void reverse() {
     forward = false;
-    motor.set(-kFeederSpeed);
+    motor.set(-kFeederIntakeSpeed);
   }
 
   public void initReverse() {
@@ -90,11 +90,11 @@ public class Feeder extends SubsystemBase implements Loggable {
     forward = false;
     speed = 0;
     motor.set(0);
-
-    motor.getEncoder().setPosition(14); // this is fully down
-    motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
-    motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 1.75f);
-    System.out.println("Set motor position to " + getMotorPosition());
+    //
+    //    motor.getEncoder().setPosition(14); // this is fully down
+    //    motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    //    motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 1.75f);
+    //    System.out.println("Set motor position to " + getMotorPosition());
   }
 
   public double getLiftVoltage() {
@@ -111,5 +111,9 @@ public class Feeder extends SubsystemBase implements Loggable {
     liftVoltage = clamp(-scale * v * maxVoltage, -maxVoltage, 0);
 
     System.out.println("setLift " + liftVoltage);
+  }
+
+  public void setCoast() {
+    motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
   }
 }

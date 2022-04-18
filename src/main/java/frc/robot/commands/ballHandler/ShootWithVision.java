@@ -9,6 +9,8 @@ import io.github.oblarg.oblog.annotations.Log;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import static frc.robot.Constants.kCameraToBumperInches;
+
 @Log.Exclude
 public class ShootWithVision extends CommandBase {
   private final BooleanSupplier hasTarget;
@@ -31,7 +33,7 @@ public class ShootWithVision extends CommandBase {
   public void initialize() {
     shoot.initialize();
     // TODO log distance to file w/ Timestamp
-    double distanceToHub = distance.getAsDouble();
+    double distanceToHub = distance.getAsDouble() - Units.inchesToMeters(kCameraToBumperInches);
     double visionRPS = metersToRPS(distanceToHub);
     if (hasTarget.getAsBoolean()) shooter.setSetpoint(visionRPS);
     System.out.println(distanceToHub + " meters @ shooting at " + visionRPS + " rps");

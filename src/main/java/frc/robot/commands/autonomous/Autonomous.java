@@ -1,20 +1,29 @@
 package frc.robot.commands.autonomous;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.ballHandler.Load;
 import frc.robot.commands.ballHandler.Shoot;
 import frc.robot.commands.drive.DriveDistanceProfile;
+import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.ballHandler.Feeder;
+import frc.robot.subsystems.ballHandler.Shooter;
 import frc.utils.drive.StormDrive;
 
 public class Autonomous extends SequentialCommandGroup {
 
-  public Autonomous(Load load, Shoot shoot, StormDrive drive) {
+  private final Load load;
+
+  public Autonomous(
+      Load load, Shoot shoot, StormDrive drive, Feeder feeder, Shooter shooter, Lights lights) {
+    this.load = load;
     LoadOne loadOne = new LoadOne(load, load.feeder::getAbsoluteLimit);
+    CommandBase shoot1 = new Shoot(feeder, shooter, () -> true, lights).until(this::limit);
     ShootOne shootOne = new ShootOne(shoot, load.feeder::getAbsoluteLimit);
     addCommands(
         loadOne,
         new DriveDistanceProfile(-1.65d, 3d, 2d, drive),
-        shootOne,
+        shoot1,
         new DriveDistanceProfile(-2d, 3d, 2d, drive));
   }
 
@@ -23,5 +32,9 @@ public class Autonomous extends SequentialCommandGroup {
     super.end(interrupted);
     System.out.println(
         "AUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISHAUTONOMOUSFINISH");
+  }
+
+  public boolean limit() {
+    return !load.feeder.getAbsoluteLimit();
   }
 }

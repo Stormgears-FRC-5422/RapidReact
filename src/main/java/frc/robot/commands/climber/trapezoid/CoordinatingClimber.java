@@ -1,13 +1,13 @@
 package frc.robot.commands.climber.trapezoid;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.climber.ClimbingSubsystem;
 import frc.robot.subsystems.climber.HangerConstraints;
 import frc.utils.LRSpeeds;
 import frc.utils.joysticks.StormXboxController;
-
-import static java.lang.Math.copySign;
 
 public class CoordinatingClimber extends CommandBase {
   ClimbingSubsystem climber;
@@ -16,6 +16,8 @@ public class CoordinatingClimber extends CommandBase {
   double leftClimberPosition;
   TrapezoidProfile.State climberState;
   TrapezoidProfile.State pivotState;
+  LRSpeeds moveDown = new LRSpeeds(1, 1);
+  Timer timer = new Timer();
 
   public CoordinatingClimber(
       ClimbingSubsystem climber, ClimbingSubsystem pivot, StormXboxController joystick) {
@@ -33,27 +35,26 @@ public class CoordinatingClimber extends CommandBase {
     System.out.println("CoordinatingClimber.initialize()");
     leftClimberPosition = climber.leftPosition();
     pivot.resetPID();
+    timer.reset();
+    timer.start();
   }
 
   @Override
   public void execute() {
-    double joyVal = -joystick.getLeftJoystickY();
-    double climbTarget;
 
     // We don't want the position to drift if there is no joystick input -
     // in that case just use the previous value (rather than the current one)
-    // TODO Make as fast as possible
-    if (joyVal != 0) {
-      //            leftClimberPosition = climber.leftPosition() + 40 * copySign(1.0, joyVal);
-      climber.setSpeed(new LRSpeeds(0.8 * copySign(1d, -joyVal), 0.8 * copySign(1d, -joyVal)));
-    } else climber.stop();
-
-    //        climbTarget = leftClimberPosition;
-    //        climberState.position = climbTarget;
-    pivotState.position = HangerConstraints.getPivotPosition(climber.leftPosition());
-
-    //        climber.leftPID(climberState);
-    //        climber.rightPID(climberState);
+    //    if (joyVal != 0) {
+    //      //            leftClimberPosition = climber.leftPosition() + 40 * copySign(1.0, joyVal);
+    //      climber.setSpeed(new LRSpeeds(1 * copySign(1d, -joyVal), 1 * copySign(1d, -joyVal)));
+    //    } else climber.stop();
+    if (timer.hasElapsed(0.5)) {
+      climber.setSpeed(moveDown);
+      pivotState.position = HangerConstraints.getPivotPosition(climber.leftPosition());
+    } else {
+      climber.setSpeed(new LRSpeeds(0, 0));
+      pivotState.position = HangerConstraints.getPivotPosition(leftClimberPosition);
+    }
     pivot.leftPID(pivotState);
     pivot.rightPID(pivotState);
   }
@@ -63,5 +64,11 @@ public class CoordinatingClimber extends CommandBase {
     System.out.println("TestClimber.end( interrupted = " + interrupted + " )");
     climber.stop();
     pivot.stop();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return climber.leftPosition() < Constants.kClimberMidpoint
+        && climber.rightPosition() < Constants.kClimberMidpoint;
   }
 }

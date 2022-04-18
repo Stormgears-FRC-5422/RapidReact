@@ -70,6 +70,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.getAutonomous().schedule();
+    robotContainer.feeder.setCoast(); // sets to coast
   }
 
   /** This function is called periodically during autonomous. */

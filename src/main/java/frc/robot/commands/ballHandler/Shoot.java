@@ -18,7 +18,6 @@ public class Shoot extends PIDCommand implements Loggable {
   private final Feeder feeder;
   private final Shooter shooter;
   private final BooleanSupplier buttonPressed;
-  private BooleanSupplier teleOpButton;
   //  @Config private final InstantCommand toggleShooter = new InstantCommand(this::toggleMode);
   @Config.PIDController(name = "Shooter Controller")
   private final PIDController pidController = getController();
@@ -26,7 +25,7 @@ public class Shoot extends PIDCommand implements Loggable {
   private Lights lights;
   @Log private boolean isReady;
 
-  public Shoot(Feeder feeder, Shooter shooter, BooleanSupplier teleOpButton, Lights lights) {
+  public Shoot(Feeder feeder, Shooter shooter, BooleanSupplier buttonPressed, Lights lights) {
     super(
         new PIDController(kShooterP, kShooterI, kShooterD),
         shooter::getSpeed,
@@ -36,8 +35,7 @@ public class Shoot extends PIDCommand implements Loggable {
         feeder);
     this.feeder = feeder;
     this.shooter = shooter;
-    this.teleOpButton = teleOpButton;
-    this.buttonPressed = teleOpButton;
+    this.buttonPressed = buttonPressed;
     if (lights != null) this.lights = lights;
   }
 
@@ -52,9 +50,9 @@ public class Shoot extends PIDCommand implements Loggable {
   public void execute() {
     super.execute();
     this.isReady = isReady(kShooterTolerance);
-    feeder.setLimit(!(isReady && teleOpButton.getAsBoolean()));
+    feeder.setLimit(!(isReady && buttonPressed.getAsBoolean()));
     if (!resetIntegral(kShooterkITolerance)) getController().reset();
-    feeder.on();
+    feeder.shootOn();
   }
 
   @Override
@@ -78,20 +76,4 @@ public class Shoot extends PIDCommand implements Loggable {
     if (shooter.mode == Height.LOW) shooter.mode = Height.HIGH;
     else shooter.mode = Height.LOW;
   }
-
-  public void autonomous() {
-    teleOpButton = () -> true;
-  }
-
-  public void teleop() {
-    teleOpButton = buttonPressed;
-  }
-
-  //    @Override
-  //    public void initSendable(SendableBuilder builder) {
-  //        builder.addDoubleProperty("I Value", getController()::getI, getController()::setI);
-  //        builder.addDoubleProperty("P Value", getController()::getP, getController()::setP);
-  //        builder.addDoubleProperty("D Value", getController()::getD, getController()::setD);
-  //    builder.addBooleanProperty("limit", () -> resetIntegral(kShooterTolerance), null);
-  //    }
 }
