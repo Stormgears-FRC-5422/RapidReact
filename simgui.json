@@ -71,6 +71,12 @@
     "LiveWindow": {
       "open": true
     },
+    "Shuffleboard": {
+      "RobotContainer": {
+        "open": true
+      },
+      "open": true
+    },
     "SmartDashboard": {
       "open": true
     }

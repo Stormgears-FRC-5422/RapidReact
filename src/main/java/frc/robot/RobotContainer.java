@@ -219,9 +219,10 @@ public class RobotContainer {
       autonomous = new DoubleBallAuto(load, drive, feeder, shooter, lights, navX, vision);
 
     if (kUseVision) {
-      driveWithVision =
-          new DriveWithVision(
-              drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX, vision);
+      if (kUseDrive)
+        driveWithVision =
+                new DriveWithVision(
+                        drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX, vision);
       if (kUseFeeder && kUseShooter)
         shootWithVision =
             new ShootWithVision(shooter, shoot, vision::hasTarget, vision::getDistance);

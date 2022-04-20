@@ -32,7 +32,7 @@ public class Home extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     System.out.println("Home.end( interrupted = " + interrupted + " )");
-    System.out.println(subsystem.getName() + " is " + "homed");
+    System.out.println(subsystem.getName() + " is homed");
     subsystem.enableAllLimits();
     if (!interrupted) subsystem.zero();
   }

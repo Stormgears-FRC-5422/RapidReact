@@ -17,6 +17,7 @@ public class ShootWithVision extends CommandBase {
   private final DoubleSupplier distance;
   @Log.Exclude private final Shooter shooter;
   @Log.Exclude private final Shoot shoot;
+  private boolean hasPressedButton;
 
   public ShootWithVision(
       Shooter shooter, Shoot shoot, BooleanSupplier hasTarget, DoubleSupplier distance) {
@@ -32,15 +33,17 @@ public class ShootWithVision extends CommandBase {
   @Override
   public void initialize() {
     shoot.initialize();
+    hasPressedButton = false;
     // TODO log distance to file w/ Timestamp
-    double distanceToHub = distance.getAsDouble() - Units.inchesToMeters(kCameraToBumperInches);
-    double visionRPS = metersToRPS(distanceToHub);
-    if (hasTarget.getAsBoolean()) shooter.setSetpoint(visionRPS);
-    System.out.println(distanceToHub + " meters @ shooting at " + visionRPS + " rps");
+//    double distanceToHub = distance.getAsDouble() - Units.inchesToMeters(kCameraToBumperInches);
+//    double visionRPS = metersToRPS(distanceToHub);
+//    if (hasTarget.getAsBoolean()) shooter.setSetpoint(visionRPS);
+//    System.out.println(distanceToHub + " meters @ shooting at " + visionRPS + " rps");
   }
 
   @Override
   public void execute() {
+    if (shoot.getButtonPressed()) updateSetPoint();
     shoot.execute();
   }
 
@@ -54,5 +57,17 @@ public class ShootWithVision extends CommandBase {
     double feet = Units.metersToFeet(meters);
     // 41.1x^0.247
     return 41.1 * Math.pow(feet, 0.247);
+  }
+
+  private void updateSetPoint() {
+    if (hasPressedButton) return;
+    if (hasTarget.getAsBoolean()) {
+      double distanceMeters = distance.getAsDouble();
+      double rps = metersToRPS(distanceMeters);
+      shooter.setSetpoint(rps);
+      System.out.println("Distance: " + distanceMeters + " and shooting @ " + rps + " rps");
+    }
+    System.out.println("No recorded distance and shooting @ " + shooter.getSpeed() + " rps");
+    hasPressedButton = true;
   }
 }

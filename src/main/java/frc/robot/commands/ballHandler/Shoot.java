@@ -76,4 +76,8 @@ public class Shoot extends PIDCommand implements Loggable {
     if (shooter.mode == Height.LOW) shooter.mode = Height.HIGH;
     else shooter.mode = Height.LOW;
   }
+
+  public boolean getButtonPressed() {
+    return buttonPressed.getAsBoolean();
+  }
 }
