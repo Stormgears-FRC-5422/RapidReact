@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import io.github.oblarg.oblog.Logger;
@@ -18,7 +21,17 @@ import java.time.format.DateTimeFormatter;
  * project.
  */
 public class Robot extends TimedRobot {
+  private static DoubleArrayLogEntry shooterDistanceRPSLog;
   private RobotContainer robotContainer;
+
+  public static DoubleArrayLogEntry getShooterDistanceRPSLog() {
+    try {
+      return shooterDistanceRPSLog;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -32,7 +45,20 @@ public class Robot extends TimedRobot {
     System.out.println(
         "Robot starting at "
             + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
+
+    // WPIlib logging
+    try {
+      DataLogManager.start();
+      DataLog log = DataLogManager.getLog();
+      shooterDistanceRPSLog = new DoubleArrayLogEntry(log, "/shooter/vision");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    // Make Robot Container
     robotContainer = new RobotContainer();
+
+    // Oblog logging
     Logger.configureLoggingAndConfig(robotContainer, false);
   }
 

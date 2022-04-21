@@ -27,8 +27,6 @@ public class Vision extends SubsystemBase {
   }
 
   public double getDistance() {
-    // Todo: make sure this is actually turning into actual meters: can use a map and find the line
-    // of best fit
     if (hasTarget()) {
       double pitch = getTarget().getPitch();
       return PhotonUtils.calculateDistanceToTargetMeters(

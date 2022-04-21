@@ -58,7 +58,7 @@ public class ButtonBoard {
     homeClimberButton = new POVButton(secondaryJoystick, 180);
     homeClimbing = new POVButton(secondaryJoystick, 180);
     manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
-    coordinatingClimberButton = new POVButton(secondaryJoystick,0);
+    coordinatingClimberButton = new POVButton(secondaryJoystick, 0);
     liftIntakeButton = new POVButton(secondaryJoystick, 90);
   }
 

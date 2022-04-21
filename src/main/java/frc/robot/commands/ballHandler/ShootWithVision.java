@@ -3,6 +3,7 @@ package frc.robot.commands.ballHandler;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Robot;
 import frc.robot.subsystems.ballHandler.Shooter;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -46,7 +47,6 @@ public class ShootWithVision extends CommandBase {
     shoot.end(interrupted);
   }
 
-  // TODO: INSERT FUNCTION HERE
   private double metersToRPS(double meters) {
     double feet = Units.metersToFeet(meters);
     // 41.1x^0.247
@@ -64,8 +64,18 @@ public class ShootWithVision extends CommandBase {
       double distanceMeters = distance.getAsDouble() / 1.5;
       double rps = metersToRPS(distanceMeters);
       shooter.setSetpoint(rps);
-      System.out.println("Distance: " + distanceMeters + " and shooting @ " + rps + " rps");
-    }
-    System.out.println("No recorded distance and shooting @ " + shooter.getSpeed() + " rps");
+      try {
+        System.out.println("Distance: " + distanceMeters + " and shooting @ " + rps + " rps");
+        Robot.getShooterDistanceRPSLog().append(new double[] {distanceMeters, rps});
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else
+      try {
+        System.out.println("No recorded distance and shooting @ " + shooter.getSpeed() + " rps");
+        Robot.getShooterDistanceRPSLog().append(new double[] {0, shooter.getSpeed()});
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
   }
 }

@@ -13,7 +13,6 @@ public class CoordinatingClimber extends CommandBase {
   ClimbingSubsystem climber;
   ClimbingSubsystem pivot;
   StormXboxController joystick;
-  double leftClimberPosition;
   TrapezoidProfile.State climberState;
   TrapezoidProfile.State pivotState;
   LRSpeeds moveDown = new LRSpeeds(1, 1);
@@ -33,7 +32,6 @@ public class CoordinatingClimber extends CommandBase {
   @Override
   public void initialize() {
     System.out.println("CoordinatingClimber.initialize()");
-    leftClimberPosition = climber.leftPosition();
     pivot.resetPID();
     timer.reset();
     timer.start();
@@ -41,20 +39,9 @@ public class CoordinatingClimber extends CommandBase {
 
   @Override
   public void execute() {
-
-    // We don't want the position to drift if there is no joystick input -
-    // in that case just use the previous value (rather than the current one)
-    //    if (joyVal != 0) {
-    //      //            leftClimberPosition = climber.leftPosition() + 40 * copySign(1.0, joyVal);
-    //      climber.setSpeed(new LRSpeeds(1 * copySign(1d, -joyVal), 1 * copySign(1d, -joyVal)));
-    //    } else climber.stop();
-    if (timer.hasElapsed(0.5)) {
-      climber.setSpeed(moveDown);
-      pivotState.position = HangerConstraints.getPivotPosition(climber.leftPosition());
-    } else {
-      climber.setSpeed(new LRSpeeds(0, 0));
-      pivotState.position = HangerConstraints.getPivotPosition(leftClimberPosition);
-    }
+    if (timer.hasElapsed(0.5)) climber.setSpeed(moveDown);
+    else climber.setSpeed(new LRSpeeds(0, 0));
+    pivotState.position = HangerConstraints.getPivotPosition(climber.leftPosition());
     pivot.leftPID(pivotState);
     pivot.rightPID(pivotState);
   }
@@ -62,6 +49,7 @@ public class CoordinatingClimber extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     System.out.println("TestClimber.end( interrupted = " + interrupted + " )");
+    timer.stop();
     climber.stop();
     pivot.stop();
   }

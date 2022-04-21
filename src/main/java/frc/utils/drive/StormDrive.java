@@ -16,7 +16,6 @@ public abstract class StormDrive extends SubsystemBase implements Loggable {
   protected double slewRateValue;
   protected double turnSlewRateValue;
 
-
   public abstract DifferentialDrive getDifferentialDrive();
 
   public void rotate(double zRotation) {
@@ -52,13 +51,9 @@ public abstract class StormDrive extends SubsystemBase implements Loggable {
     precision = !precision;
   }
 
-  public void setCoastMode() {
+  public void setCoastMode() {}
 
-  }
-
-  public void setBrakeMode() {
-
-  }
+  public void setBrakeMode() {}
 
   // Set the PID reference
   public void setPositionReference(double setPoint) {}
@@ -80,21 +75,21 @@ public abstract class StormDrive extends SubsystemBase implements Loggable {
 
   // provide method to access encoder distance
   public double getDistance() {
-    return(0);
+    return (0);
   }
   // provide method to access encoder velocity
   public double getVelocity() {
-    return(0);
+    return (0);
   }
 
   protected abstract MotorController[] getMotors();
 
   public double getSlewRate() {
-    return(slewRateValue);
+    return (slewRateValue);
   }
 
   public double getTurnSlewRate() {
-    return(turnSlewRateValue);
+    return (turnSlewRateValue);
   }
 
   protected void setupSlewFactors() {

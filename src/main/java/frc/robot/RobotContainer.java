@@ -47,15 +47,12 @@ public class RobotContainer {
   private final StormXboxController driveJoystick;
   private final StormXboxController secondaryJoystick;
   private final ButtonBoard buttonBoard;
+  public Feeder feeder;
 
   @Config.Command(tabName = "Driver", name = "UP Climber TRAVERSE")
   private SequentialCommandGroup highestClimber;
-
   @Config.Command(tabName = "Driver", name = "Down Climber")
   private SequentialCommandGroup chinUp;
-
-  public Feeder feeder;
-
   @Config.Command(tabName = "Driver", name = "Chin Up pivot")
   private SequentialCommandGroup backbendAndChinUp;
   /** Declare subsystems - initialize below */
@@ -221,8 +218,8 @@ public class RobotContainer {
     if (kUseVision) {
       if (kUseDrive)
         driveWithVision =
-                new DriveWithVision(
-                        drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX, vision);
+            new DriveWithVision(
+                drive, driveJoystick::getTriggerSpeed, driveJoystick::getLeftJoystickX, vision);
       if (kUseFeeder && kUseShooter)
         shootWithVision =
             new ShootWithVision(shooter, shoot, vision::hasTarget, vision::getDistance);

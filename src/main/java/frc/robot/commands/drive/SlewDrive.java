@@ -13,9 +13,9 @@ public class SlewDrive extends CommandBase {
   private final StormDrive drive;
   private final DoubleSupplier X;
   private final DifferentialDrive differentialDrive;
+  private final double prevTurnSlewRate;
   protected SlewRateLimiter limiter;
   protected SlewRateLimiter turnLimiter;
-  private final double prevTurnSlewRate;
   private double prevSlewRate;
   private DoubleSupplier Z;
   private boolean ignoreZSquaring = false;

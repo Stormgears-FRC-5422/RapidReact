@@ -45,7 +45,7 @@ public class Shoot extends PIDCommand implements Loggable {
   @Override
   public void initialize() {
     feeder.setLimit(true);
-//    shooter.resetExponential();
+    //    shooter.resetExponential();
     lastSpeed = shooter.getSpeed();
     if (lights != null) lights.setShooting(true);
   }
@@ -74,8 +74,10 @@ public class Shoot extends PIDCommand implements Loggable {
   }
 
   private boolean isReady(double percentTolerance) {
-//    return shooter.getExponentialSpeed() >= ((1 - (percentTolerance / 100)) * shooter.setpoint())
-//        && shooter.getExponentialSpeed() <= ((1 + (percentTolerance / 100)) * shooter.setpoint());
+    //    return shooter.getExponentialSpeed() >= ((1 - (percentTolerance / 100)) *
+    // shooter.setpoint())
+    //        && shooter.getExponentialSpeed() <= ((1 + (percentTolerance / 100)) *
+    // shooter.setpoint());
     return speedWithin(percentTolerance) && speedDif < 0.2;
   }
 

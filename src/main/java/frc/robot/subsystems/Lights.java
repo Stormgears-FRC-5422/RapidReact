@@ -12,11 +12,10 @@ public class Lights extends SubsystemBase {
   private final AddressableLED lightStrip = new AddressableLED(kLightsID);
   private final AddressableLEDBufferRGBW buffer = new AddressableLEDBufferRGBW(kLEDLength);
   private final DriverStation.Alliance alliance;
+  private final Color8Bit blackColor = new Color8Bit(0, 0, 0);
   private Color8Bit fullColor;
   private Color8Bit halfColor;
   private Color8Bit quarterColor;
-  private final Color8Bit blackColor = new Color8Bit(0, 0, 0);
-
   private boolean isShooting;
   private int rainbowHue = 0;
   private int runwayIndex = 0;
