@@ -25,6 +25,9 @@ public class Shoot extends PIDCommand implements Loggable {
   private Lights lights;
   @Log private boolean isReady;
 
+  private double lastSpeed = 0;
+  @Log private double speedDif = 0;
+
   public Shoot(Feeder feeder, Shooter shooter, BooleanSupplier buttonPressed, Lights lights) {
     super(
         new PIDController(kShooterP, kShooterI, kShooterD),
@@ -42,17 +45,20 @@ public class Shoot extends PIDCommand implements Loggable {
   @Override
   public void initialize() {
     feeder.setLimit(true);
-    shooter.resetExponential();
+//    shooter.resetExponential();
+    lastSpeed = shooter.getSpeed();
     if (lights != null) lights.setShooting(true);
   }
 
   @Override
   public void execute() {
     super.execute();
+    speedDif = Math.abs(lastSpeed - shooter.getSpeed());
     this.isReady = isReady(kShooterTolerance);
     feeder.setLimit(!(isReady && buttonPressed.getAsBoolean()));
-    if (!resetIntegral(kShooterkITolerance)) getController().reset();
+    if (!speedWithin(kShooterkITolerance)) getController().reset();
     feeder.shootOn();
+    lastSpeed = shooter.getSpeed();
   }
 
   @Override
@@ -62,14 +68,15 @@ public class Shoot extends PIDCommand implements Loggable {
     if (lights != null) lights.setShooting(false);
   }
 
-  private boolean resetIntegral(double percentTolerance) {
+  private boolean speedWithin(double percentTolerance) {
     return shooter.getSpeed() >= ((1 - (percentTolerance / 100)) * shooter.setpoint())
         && shooter.getSpeed() <= ((1 + (percentTolerance / 100)) * shooter.setpoint());
   }
 
   private boolean isReady(double percentTolerance) {
-    return shooter.getExponentialSpeed() >= ((1 - (percentTolerance / 100)) * shooter.setpoint())
-        && shooter.getExponentialSpeed() <= ((1 + (percentTolerance / 100)) * shooter.setpoint());
+//    return shooter.getExponentialSpeed() >= ((1 - (percentTolerance / 100)) * shooter.setpoint())
+//        && shooter.getExponentialSpeed() <= ((1 + (percentTolerance / 100)) * shooter.setpoint());
+    return speedWithin(percentTolerance) && speedDif < 0.2;
   }
 
   public void toggleMode() {

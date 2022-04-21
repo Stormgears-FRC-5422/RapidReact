@@ -9,8 +9,6 @@ import io.github.oblarg.oblog.annotations.Log;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import static frc.robot.Constants.kCameraToBumperInches;
-
 @Log.Exclude
 public class ShootWithVision extends CommandBase {
   private final BooleanSupplier hasTarget;
@@ -34,16 +32,12 @@ public class ShootWithVision extends CommandBase {
   public void initialize() {
     shoot.initialize();
     hasPressedButton = false;
-    // TODO log distance to file w/ Timestamp
-//    double distanceToHub = distance.getAsDouble() - Units.inchesToMeters(kCameraToBumperInches);
-//    double visionRPS = metersToRPS(distanceToHub);
-//    if (hasTarget.getAsBoolean()) shooter.setSetpoint(visionRPS);
-//    System.out.println(distanceToHub + " meters @ shooting at " + visionRPS + " rps");
+    updateSetpoint();
   }
 
   @Override
   public void execute() {
-    if (shoot.getButtonPressed()) updateSetPoint();
+    if (shoot.getButtonPressed()) updateSetpointOnButton();
     shoot.execute();
   }
 
@@ -59,15 +53,19 @@ public class ShootWithVision extends CommandBase {
     return 41.1 * Math.pow(feet, 0.247);
   }
 
-  private void updateSetPoint() {
+  private void updateSetpointOnButton() {
     if (hasPressedButton) return;
+    updateSetpoint();
+    hasPressedButton = true;
+  }
+
+  private void updateSetpoint() {
     if (hasTarget.getAsBoolean()) {
-      double distanceMeters = distance.getAsDouble();
+      double distanceMeters = distance.getAsDouble() / 1.5;
       double rps = metersToRPS(distanceMeters);
       shooter.setSetpoint(rps);
       System.out.println("Distance: " + distanceMeters + " and shooting @ " + rps + " rps");
     }
     System.out.println("No recorded distance and shooting @ " + shooter.getSpeed() + " rps");
-    hasPressedButton = true;
   }
 }
