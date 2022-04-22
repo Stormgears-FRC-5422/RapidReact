@@ -16,76 +16,80 @@ import static frc.robot.Constants.kMagicVisionConstant;
 import static frc.robot.Constants.kShooterSetpointChangingThreshold;
 
 public class ShootWithVision extends CommandBase implements Loggable {
-    private final BooleanSupplier hasTarget;
-    private final DoubleSupplier distance;
+  private final BooleanSupplier hasTarget;
+  private final DoubleSupplier distance;
   @Log.Exclude private final Shooter shooter;
   @Log.Exclude private final Shoot shoot;
-    private DoubleArrayLogEntry shooterDistanceRPSLog;
-
   double magicConstant;
   double shooterSetpointChangingThreshold;
+  private DoubleArrayLogEntry shooterDistanceRPSLog;
 
-    public ShootWithVision(
-            Shooter shooter, Shoot shoot, BooleanSupplier hasTarget, DoubleSupplier distance, DoubleArrayLogEntry shooterDistanceRPSLog) {
-        this.shooter = shooter;
-        this.shoot = shoot;
-        this.hasTarget = hasTarget;
-        this.distance = distance;
+  public ShootWithVision(
+      Shooter shooter,
+      Shoot shoot,
+      BooleanSupplier hasTarget,
+      DoubleSupplier distance,
+      DoubleArrayLogEntry shooterDistanceRPSLog) {
+    this.shooter = shooter;
+    this.shoot = shoot;
+    this.hasTarget = hasTarget;
+    this.distance = distance;
     magicConstant = kMagicVisionConstant;
     shooterSetpointChangingThreshold = kShooterSetpointChangingThreshold;
-        if (shooterDistanceRPSLog != null) this.shooterDistanceRPSLog = shooterDistanceRPSLog;
-        for (Subsystem requirement : shoot.getRequirements()) {
-            addRequirements(requirement);
-        }
+    if (shooterDistanceRPSLog != null) this.shooterDistanceRPSLog = shooterDistanceRPSLog;
+    for (Subsystem requirement : shoot.getRequirements()) {
+      addRequirements(requirement);
     }
+  }
 
-    @Override
-    public void initialize() {
-        shoot.initialize();
-        updateSetpoint(true);
-    }
+  @Override
+  public void initialize() {
+    shoot.initialize();
+    updateSetpoint(true);
+  }
 
-    @Override
-    public void execute() {
-        shoot.execute();
-        updateSetpoint(false);
-    }
+  @Override
+  public void execute() {
+    shoot.execute();
+    updateSetpoint(false);
+  }
 
-    @Override
-    public void end(boolean interrupted) {
-        shoot.end(interrupted);
-    }
+  @Override
+  public void end(boolean interrupted) {
+    shoot.end(interrupted);
+  }
 
-    private double metersToRPS(double meters) {
-        double feet = Units.metersToFeet(meters);
-        // 41.1x^0.247
-        return 41.1 * Math.pow(feet, 0.247);
-    }
+  private double metersToRPS(double meters) {
+    double feet = Units.metersToFeet(meters);
+    // 41.1x^0.247
+    return 41.1 * Math.pow(feet, 0.247);
+  }
 
   // TODO if setpoint still oscillating, make moving average with 20 samples, and update average
   // with samples... only update setpoint if the average is + or - 0.5 rps
   private void updateSetpoint(boolean change) {
-        if (hasTarget.getAsBoolean()) {
-            double distanceMeters = distance.getAsDouble() / magicConstant;
-            double rps = metersToRPS(distanceMeters);
-      if (change || Math.abs(shooter.setpoint() - rps) > shooterSetpointChangingThreshold)
+    if (hasTarget.getAsBoolean()) {
+      double distanceMeters = distance.getAsDouble() / magicConstant;
+      double rps = metersToRPS(distanceMeters);
+      if (change || Math.abs(shooter.setpoint() - rps) > shooterSetpointChangingThreshold) {
         shooter.setSetpoint(rps);
-            try {
-                System.out.println("Distance: " + distanceMeters + " and shooting @ " + rps + " rps");
-                double[] logEntry = new double[]{distanceMeters, rps};
-                shooterDistanceRPSLog.append(logEntry);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else
-            try {
-                System.out.println("No recorded distance and shooting @ " + shooter.getSpeed() + " rps");
-                double[] logEntry = new double[]{0, shooter.getSpeed()};
-                shooterDistanceRPSLog.append(logEntry);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-    }
+        try {
+          System.out.println("Distance: " + distanceMeters + " and shooting @ " + rps + " rps");
+          double[] logEntry = new double[] {distanceMeters, rps};
+          shooterDistanceRPSLog.append(logEntry);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    } else
+      try {
+        System.out.println("No recorded distance and shooting @ " + shooter.getSpeed() + " rps");
+        double[] logEntry = new double[] {0, shooter.setpoint()};
+        shooterDistanceRPSLog.append(logEntry);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+  }
 
   @Config(defaultValueNumeric = 1.8)
   public void setMagicConstant(double magicConstant) {
