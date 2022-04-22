@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
   private static DoubleArrayLogEntry shooterDistanceRPSLog;
   private RobotContainer robotContainer;
 
-  public static DoubleArrayLogEntry getShooterDistanceRPSLog() {
+  public DoubleArrayLogEntry getShooterDistanceRPSLog() {
     try {
       return shooterDistanceRPSLog;
     } catch (Exception e) {
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
     }
 
     // Make Robot Container
-    robotContainer = new RobotContainer();
+    robotContainer = new RobotContainer(shooterDistanceRPSLog);
 
     // Oblog logging
     Logger.configureLoggingAndConfig(robotContainer, false);

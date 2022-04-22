@@ -18,7 +18,7 @@ public class Autonomous extends SequentialCommandGroup {
       Load load, Shoot shoot, StormDrive drive, Feeder feeder, Shooter shooter, Lights lights) {
     this.load = load;
     LoadOne loadOne = new LoadOne(load, load.feeder::getAbsoluteLimit);
-    CommandBase shoot1 = new Shoot(feeder, shooter, () -> true, lights).until(this::limit);
+    CommandBase shoot1 = new Shoot(feeder, shooter, lights).until(this::limit);
     ShootOne shootOne = new ShootOne(shoot, load.feeder::getAbsoluteLimit);
     addCommands(
         loadOne,
