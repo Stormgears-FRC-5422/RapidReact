@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -10,10 +11,6 @@ public class ButtonBoard {
   private static ButtonBoard instance;
   /** Initialize DRIVE JOYSTICK BUTTONS */
   public final JoystickButton precisionButton;
-
-  //  public final JoystickButton reverseButton;
-  //  public final JoystickButton autoDriveTestButton;
-  //  public final JoystickButton autoDriveTestReverseButton;
   public final JoystickButton loadButton;
   public final JoystickButton shootButton;
   public final JoystickButton toggleShootingHeightButton;
@@ -30,7 +27,7 @@ public class ButtonBoard {
   public final JoystickButton climberUP;
   public final JoystickButton climberDown;
   public final JoystickButton pivotMostBackButton;
-  public final JoystickButton pivotFurthestButton;
+  public final JoystickButton autoClimb;
   public final JoystickButton reverseButton;
   public final POVButton liftIntakeButton;
   public final JoystickButton driveWithVisionButton;
@@ -44,22 +41,24 @@ public class ButtonBoard {
     climberUP = new JoystickButton(driveJoystick, YButton);
     climberDown = new JoystickButton(driveJoystick, AButton);
     pivotMostBackButton = new JoystickButton(driveJoystick, BButton);
-    pivotFurthestButton = new JoystickButton(driveJoystick, XButton);
+    autoClimb = new JoystickButton(driveJoystick, XButton);
     reverseButton = new JoystickButton(driveJoystick, littleLeftButton);
-    driveWithVisionButton = new JoystickButton(driveJoystick, rightBumper);
     // ********************************
     // Put Secondary Joystick settings here
     // ********************************
+    driveWithVisionButton = new JoystickButton(secondaryJoystick, YButton);
     shootWithVisionButton = new JoystickButton(secondaryJoystick, rightBumper);
     shootButton = new JoystickButton(secondaryJoystick, stickLeftButton);
     loadButton = new JoystickButton(secondaryJoystick, leftBumper);
     toggleShootingHeightButton = new JoystickButton(secondaryJoystick, stickRightButton);
-    homePivotButton = new POVButton(secondaryJoystick, 180);
-    homeClimberButton = new POVButton(secondaryJoystick, 180);
-    homeClimbing = new POVButton(secondaryJoystick, 180);
     manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
     coordinatingClimberButton = new POVButton(secondaryJoystick, 0);
     liftIntakeButton = new POVButton(secondaryJoystick, 90);
+    homeClimbing = new POVButton(secondaryJoystick, 180);
+
+
+    homePivotButton = new POVButton(secondaryJoystick, 180);
+    homeClimberButton = new POVButton(secondaryJoystick, 180);
   }
 
   public static ButtonBoard getInstance(GenericHID driveJoystick, GenericHID secondaryJoystick) {

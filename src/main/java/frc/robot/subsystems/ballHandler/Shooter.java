@@ -64,7 +64,12 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   public void runToSpeed(double pidOutput) {
-    motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), 0));
+    motor.setVoltage(pidOutput + feedforward.calculate(setpoint(), setpoint() - getSpeed()));
+  }
+
+  public void halfSpeed() {
+    //TODO Constants
+    motor.setVoltage(9);
   }
 
   public enum Height {

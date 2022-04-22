@@ -17,7 +17,6 @@ import static frc.robot.subsystems.ballHandler.Shooter.Height;
 public class Shoot extends PIDCommand implements Loggable {
   private final Feeder feeder;
   private final Shooter shooter;
-  private final BooleanSupplier buttonPressed;
   //  @Config private final InstantCommand toggleShooter = new InstantCommand(this::toggleMode);
   @Config.PIDController(name = "Shooter Controller")
   private final PIDController pidController = getController();
@@ -28,7 +27,7 @@ public class Shoot extends PIDCommand implements Loggable {
   private double lastSpeed = 0;
   @Log private double speedDif = 0;
 
-  public Shoot(Feeder feeder, Shooter shooter, BooleanSupplier buttonPressed, Lights lights) {
+  public Shoot(Feeder feeder, Shooter shooter, Lights lights) {
     super(
         new PIDController(kShooterP, kShooterI, kShooterD),
         shooter::getSpeed,
@@ -38,14 +37,12 @@ public class Shoot extends PIDCommand implements Loggable {
         feeder);
     this.feeder = feeder;
     this.shooter = shooter;
-    this.buttonPressed = buttonPressed;
     if (lights != null) this.lights = lights;
   }
 
   @Override
   public void initialize() {
     feeder.setLimit(true);
-    //    shooter.resetExponential();
     lastSpeed = shooter.getSpeed();
     if (lights != null) lights.setShooting(true);
   }
@@ -55,7 +52,7 @@ public class Shoot extends PIDCommand implements Loggable {
     super.execute();
     speedDif = Math.abs(lastSpeed - shooter.getSpeed());
     this.isReady = isReady(kShooterTolerance);
-    feeder.setLimit(!(isReady && buttonPressed.getAsBoolean()));
+    feeder.setLimit(!isReady);
     if (!speedWithin(kShooterkITolerance)) getController().reset();
     feeder.shootOn();
     lastSpeed = shooter.getSpeed();
@@ -64,7 +61,6 @@ public class Shoot extends PIDCommand implements Loggable {
   @Override
   public void end(boolean interrupted) {
     feeder.off();
-    shooter.off();
     if (lights != null) lights.setShooting(false);
   }
 
@@ -74,19 +70,12 @@ public class Shoot extends PIDCommand implements Loggable {
   }
 
   private boolean isReady(double percentTolerance) {
-    //    return shooter.getExponentialSpeed() >= ((1 - (percentTolerance / 100)) *
-    // shooter.setpoint())
-    //        && shooter.getExponentialSpeed() <= ((1 + (percentTolerance / 100)) *
-    // shooter.setpoint());
-    return speedWithin(percentTolerance) && speedDif < 0.2;
+    //TODO Constant
+    return speedWithin(percentTolerance) && speedDif < 0.1;
   }
 
   public void toggleMode() {
     if (shooter.mode == Height.LOW) shooter.mode = Height.HIGH;
     else shooter.mode = Height.LOW;
-  }
-
-  public boolean getButtonPressed() {
-    return buttonPressed.getAsBoolean();
   }
 }

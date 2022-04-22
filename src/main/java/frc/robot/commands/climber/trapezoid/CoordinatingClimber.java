@@ -56,7 +56,7 @@ public class CoordinatingClimber extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return climber.leftPosition() < Constants.kClimberMidpoint
-        && climber.rightPosition() < Constants.kClimberMidpoint;
+    return climber.leftPosition() < 0.1
+        && climber.rightPosition() < 0.1;
   }
 }
