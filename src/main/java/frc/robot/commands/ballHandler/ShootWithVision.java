@@ -21,10 +21,10 @@ public class ShootWithVision extends CommandBase implements Loggable {
   private final DoubleSupplier distance;
   @Log.Exclude private final Shooter shooter;
   @Log.Exclude private final Shoot shoot;
-  private final MovingAverage setpointMovingAverage;
+  @Log(methodName = "getValue") private final MovingAverage setpointMovingAverage;
   private double magicConstant;
-  private DoubleArrayLogEntry shooterDistanceRPSLog;
   private double shooterSetpointChangingThreshold;
+  private DoubleArrayLogEntry shooterDistanceRPSLog;
 
   public ShootWithVision(
       Shooter shooter,
