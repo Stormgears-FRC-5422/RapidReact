@@ -9,8 +9,6 @@ import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
-import java.util.function.BooleanSupplier;
-
 import static frc.robot.Constants.*;
 import static frc.robot.subsystems.ballHandler.Shooter.Height;
 
@@ -70,8 +68,7 @@ public class Shoot extends PIDCommand implements Loggable {
   }
 
   private boolean isReady(double percentTolerance) {
-    //TODO Constant
-    return speedWithin(percentTolerance) && speedDif < 0.1;
+    return speedWithin(percentTolerance) && speedDif < kStableShooterSpeed;
   }
 
   public void toggleMode() {

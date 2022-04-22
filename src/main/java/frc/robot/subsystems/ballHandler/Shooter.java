@@ -68,8 +68,7 @@ public class Shooter extends SubsystemBase implements Loggable {
   }
 
   public void halfSpeed() {
-    //TODO Constants
-    motor.setVoltage(9);
+    motor.setVoltage(kShooterRampUpVoltage);
   }
 
   public enum Height {

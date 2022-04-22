@@ -51,9 +51,8 @@ public class DriveWithVision extends CommandBase implements Loggable {
   }
 
   private double pidOut() {
-    //TODO Constant 0.75
-    double pidOut = MathUtil.clamp(turnController.calculate(1.2, vision.getYaw()), -.5, .5);
-    //TODO Constants
-    return Math.abs(pidOut) > 0.05 ? pidOut : 0;
+    double pidOut =
+        MathUtil.clamp(turnController.calculate(kVisionShootingOffset, vision.getYaw()), -.5, .5);
+    return Math.abs(pidOut) > kVisionAlignMinimumPercentOutput ? pidOut : 0;
   }
 }

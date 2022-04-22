@@ -92,6 +92,9 @@ public final class Constants {
   public static final double kShooterTolerance = StormProp.getNumber("shootTolerance", 0.0);
   public static final double kShooterkITolerance =
       StormProp.getNumber("shooterIntegralTolerance", 0.0);
+  public static final double kStableShooterSpeed = StormProp.getNumber("stableShooterSpeed", 0.0);
+  public static final double kShooterRampUpVoltage =
+      StormProp.getNumber("shooterRampUpVoltage", 0d);
 
   public static final int kClimberLeftId = StormProp.getInt("climberLeftId", -1);
   public static final int kClimberRightId = StormProp.getInt("climberRightId", -1);
@@ -141,6 +144,11 @@ public final class Constants {
       StormProp.getNumber("climberSoftLimitReverse", 0.0);
   public static final double kPivotForwardLimit = StormProp.getNumber("pivotSoftLimitForward", 0.0);
   public static final double kPivotReverseLimit = StormProp.getNumber("pivotSoftLimitReverse", 0.0);
+
+  public static final double kCoordingatingClimberEndPosition =
+      StormProp.getNumber("coordinatingClimberEndPosition", 0.0);
+  public static final double kCoordinatingClimberRestTime =
+      StormProp.getNumber("coordinatingClimberRestTime", 0d);
 
   public static final double kDriveProfileLeftP = StormProp.getNumber("driveProfileLeftP", 0.0);
   public static final double kDriveProfileLeftI = StormProp.getNumber("driveProfileLeftI", 0.0);
@@ -219,6 +227,13 @@ public final class Constants {
   public static final double kVisionDriveD = StormProp.getNumber("visionDriveD", 0d);
   public static final double kCameraToBumperInches =
       StormProp.getNumber("cameraToBumperInches", 0d);
+  public static final double kMagicVisionConstant = StormProp.getNumber("magicVisionConstant", 0d);
+  public static final double kShooterSetpointChangingThreshold =
+      StormProp.getNumber("shooterSetpointChangingThreshold", 0d);
+  public static final double kVisionShootingOffset =
+      StormProp.getNumber("visionShootingOffset", 0d);
+  public static final double kVisionAlignMinimumPercentOutput =
+      StormProp.getNumber("visionAlignMinimumPercentOutput", 0d);
 
   private Constants() {
     throw new IllegalStateException("Do not make a Constants class");

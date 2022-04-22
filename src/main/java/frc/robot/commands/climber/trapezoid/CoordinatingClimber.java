@@ -3,11 +3,13 @@ package frc.robot.commands.climber.trapezoid;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.climber.ClimbingSubsystem;
 import frc.robot.subsystems.climber.HangerConstraints;
 import frc.utils.LRSpeeds;
 import frc.utils.joysticks.StormXboxController;
+
+import static frc.robot.Constants.kCoordinatingClimberRestTime;
+import static frc.robot.Constants.kCoordingatingClimberEndPosition;
 
 public class CoordinatingClimber extends CommandBase {
   ClimbingSubsystem climber;
@@ -39,7 +41,7 @@ public class CoordinatingClimber extends CommandBase {
 
   @Override
   public void execute() {
-    if (timer.hasElapsed(0.5)) climber.setSpeed(moveDown);
+    if (timer.hasElapsed(kCoordinatingClimberRestTime)) climber.setSpeed(moveDown);
     else climber.setSpeed(new LRSpeeds(0, 0));
     pivotState.position = HangerConstraints.getPivotPosition(climber.leftPosition());
     pivot.leftPID(pivotState);
@@ -56,7 +58,7 @@ public class CoordinatingClimber extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return climber.leftPosition() < 0.1
-        && climber.rightPosition() < 0.1;
+    return climber.leftPosition() < kCoordingatingClimberEndPosition
+        && climber.rightPosition() < kCoordingatingClimberEndPosition;
   }
 }

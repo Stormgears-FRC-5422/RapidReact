@@ -4,7 +4,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Robot;
 import frc.robot.subsystems.ballHandler.Shooter;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
@@ -12,6 +11,9 @@ import io.github.oblarg.oblog.annotations.Log;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+
+import static frc.robot.Constants.kMagicVisionConstant;
+import static frc.robot.Constants.kShooterSetpointChangingThreshold;
 
 @Log.Exclude
 public class ShootWithVision extends CommandBase implements Loggable {
@@ -23,11 +25,8 @@ public class ShootWithVision extends CommandBase implements Loggable {
     private final Shoot shoot;
     private DoubleArrayLogEntry shooterDistanceRPSLog;
 
-    @Config
-    double magicConstant = 1.8;
-    @Config
-    double changingThreshhold = 10;
-
+  @Config double magicConstant = kMagicVisionConstant;
+  @Config double shooterSetpointChangingThreshold = kShooterSetpointChangingThreshold;
 
     public ShootWithVision(
             Shooter shooter, Shoot shoot, BooleanSupplier hasTarget, DoubleSupplier distance, DoubleArrayLogEntry shooterDistanceRPSLog) {
@@ -66,13 +65,10 @@ public class ShootWithVision extends CommandBase implements Loggable {
 
     private void updateSetpoint(boolean change) {
         if (hasTarget.getAsBoolean()) {
-            //TODO Constants
             double distanceMeters = distance.getAsDouble() / magicConstant;
             double rps = metersToRPS(distanceMeters);
-            //TODO Constants
-            if(change ){//|| Math.abs(shooter.setpoint() - rps) > changingThreshhold) {
-                shooter.setSetpoint(rps);
-            }
+      if (change || Math.abs(shooter.setpoint() - rps) > shooterSetpointChangingThreshold)
+        shooter.setSetpoint(rps);
             try {
                 System.out.println("Distance: " + distanceMeters + " and shooting @ " + rps + " rps");
                 double[] logEntry = new double[]{distanceMeters, rps};
