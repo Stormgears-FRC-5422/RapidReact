@@ -62,7 +62,9 @@ public class ShootWithVision extends CommandBase implements Loggable {
         return 41.1 * Math.pow(feet, 0.247);
     }
 
-    private void updateSetpoint(boolean change) {
+  // TODO if setpoint still oscillating, make moving average with 20 samples, and update average
+  // with samples... only update setpoint if the average is + or - 0.5 rps
+  private void updateSetpoint(boolean change) {
         if (hasTarget.getAsBoolean()) {
             double distanceMeters = distance.getAsDouble() / magicConstant;
             double rps = metersToRPS(distanceMeters);
