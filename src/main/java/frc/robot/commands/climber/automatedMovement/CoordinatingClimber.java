@@ -1,4 +1,4 @@
-package frc.robot.commands.climber.trapezoid;
+package frc.robot.commands.climber.automatedMovement;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
@@ -20,11 +20,9 @@ public class CoordinatingClimber extends CommandBase {
   LRSpeeds moveDown = new LRSpeeds(1, 1);
   Timer timer = new Timer();
 
-  public CoordinatingClimber(
-      ClimbingSubsystem climber, ClimbingSubsystem pivot, StormXboxController joystick) {
+  public CoordinatingClimber(ClimbingSubsystem climber, ClimbingSubsystem pivot) {
     this.climber = climber;
     this.pivot = pivot;
-    this.joystick = joystick;
 
     addRequirements(climber, pivot);
     climberState = new TrapezoidProfile.State(0, 0);

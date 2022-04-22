@@ -1,4 +1,4 @@
-package frc.robot.commands.climber.trapezoid;
+package frc.robot.commands.climber.automatedMovement;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -8,7 +8,7 @@ import io.github.oblarg.oblog.annotations.Log;
 import static frc.robot.Constants.kClimberMaxAccelerationSeconds;
 import static frc.robot.Constants.kClimberMaxVelocity;
 
-public class PositionClimber extends TrapezoidalClimbingCommand {
+public class PositionClimber extends ClimbingPIDPosition {
   @Log.Exclude Climber climber;
 
   boolean isMovingForward = false;

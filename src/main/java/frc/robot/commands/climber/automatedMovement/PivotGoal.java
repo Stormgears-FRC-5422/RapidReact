@@ -1,4 +1,4 @@
-package frc.robot.commands.climber.trapezoid;
+package frc.robot.commands.climber.automatedMovement;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.Constants;

@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -26,7 +25,7 @@ public class ButtonBoard {
   public final POVButton coordinatingClimberButton;
   public final JoystickButton climberUP;
   public final JoystickButton climberDown;
-  public final JoystickButton pivotMostBackButton;
+  public final JoystickButton backBend;
   public final JoystickButton autoClimb;
   public final JoystickButton reverseButton;
   public final POVButton liftIntakeButton;
@@ -40,8 +39,8 @@ public class ButtonBoard {
     precisionButton = new JoystickButton(driveJoystick, leftBumper);
     climberUP = new JoystickButton(driveJoystick, YButton);
     climberDown = new JoystickButton(driveJoystick, AButton);
-    pivotMostBackButton = new JoystickButton(driveJoystick, BButton);
-    autoClimb = new JoystickButton(driveJoystick, XButton);
+    autoClimb = new JoystickButton(driveJoystick, BButton);
+    backBend = new JoystickButton(driveJoystick, XButton);
     reverseButton = new JoystickButton(driveJoystick, littleLeftButton);
     // ********************************
     // Put Secondary Joystick settings here

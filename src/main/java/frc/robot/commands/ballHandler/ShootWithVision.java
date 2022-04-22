@@ -15,18 +15,15 @@ import java.util.function.DoubleSupplier;
 import static frc.robot.Constants.kMagicVisionConstant;
 import static frc.robot.Constants.kShooterSetpointChangingThreshold;
 
-@Log.Exclude
 public class ShootWithVision extends CommandBase implements Loggable {
     private final BooleanSupplier hasTarget;
     private final DoubleSupplier distance;
-    @Log.Exclude
-    private final Shooter shooter;
-    @Log.Exclude
-    private final Shoot shoot;
+  @Log.Exclude private final Shooter shooter;
+  @Log.Exclude private final Shoot shoot;
     private DoubleArrayLogEntry shooterDistanceRPSLog;
 
-  @Config double magicConstant = kMagicVisionConstant;
-  @Config double shooterSetpointChangingThreshold = kShooterSetpointChangingThreshold;
+  double magicConstant;
+  double shooterSetpointChangingThreshold;
 
     public ShootWithVision(
             Shooter shooter, Shoot shoot, BooleanSupplier hasTarget, DoubleSupplier distance, DoubleArrayLogEntry shooterDistanceRPSLog) {
@@ -34,6 +31,8 @@ public class ShootWithVision extends CommandBase implements Loggable {
         this.shoot = shoot;
         this.hasTarget = hasTarget;
         this.distance = distance;
+    magicConstant = kMagicVisionConstant;
+    shooterSetpointChangingThreshold = kShooterSetpointChangingThreshold;
         if (shooterDistanceRPSLog != null) this.shooterDistanceRPSLog = shooterDistanceRPSLog;
         for (Subsystem requirement : shoot.getRequirements()) {
             addRequirements(requirement);
@@ -85,4 +84,14 @@ public class ShootWithVision extends CommandBase implements Loggable {
                 e.printStackTrace();
             }
     }
+
+  @Config(defaultValueNumeric = 1.8)
+  public void setMagicConstant(double magicConstant) {
+    this.magicConstant = magicConstant;
+  }
+
+  @Config(defaultValueNumeric = 5)
+  public void setShooterSetpointChangingThreshold(double shooterSetpointChangingThreshold) {
+    this.shooterSetpointChangingThreshold = shooterSetpointChangingThreshold;
+  }
 }
