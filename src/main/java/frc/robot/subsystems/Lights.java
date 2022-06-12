@@ -39,14 +39,14 @@ public class Lights extends SubsystemBase {
                     quarterColor = new Color8Bit(0, 0, 48);
                     break;
                 default:
-                    fullColor = new Color8Bit(96, 96, 96);
-                    halfColor = new Color8Bit(0, 0, 72);
-                    quarterColor = new Color8Bit(0, 0, 48);
+                    fullColor = new Color8Bit(64, 64, 64);
+                    halfColor = new Color8Bit(48, 48, 48);
+                    quarterColor = new Color8Bit(32, 32, 32);
             }
         } else {
-            fullColor = new Color8Bit(96, 96, 96);
-            halfColor = new Color8Bit(0, 0, 72);
-            quarterColor = new Color8Bit(0, 0, 48);
+            fullColor = new Color8Bit(64, 64, 64);
+            halfColor = new Color8Bit(48, 48, 48);
+            quarterColor = new Color8Bit(32, 32, 32);
         }
     }
 

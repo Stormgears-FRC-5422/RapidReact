@@ -26,6 +26,10 @@ public class Vision extends SubsystemBase {
     return hasTarget() ? getTarget().getYaw() : 0;
   }
 
+  public double getArea() {
+    return hasTarget() ? getTarget().getArea() : 0;
+  }
+
   public double getDistance() {
     if (hasTarget()) {
       double pitch = getTarget().getPitch();

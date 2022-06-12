@@ -19,7 +19,7 @@ public class DoubleBallAuto extends SequentialCommandGroup {
         new ParallelCommandGroup(
             new DriveDistanceProfile(1.5d, 2d, 1d, drive),
             new ProxyScheduleCommand(load).withTimeout(5)),
-        new DriveWithVision(drive, () -> 0, () -> 0.7, vision).withTimeout(2),
+        new DriveWithVision(drive, () -> 0, () -> 0.5, vision).withTimeout(3.5),
         new ProxyScheduleCommand(shootWithVision));
   }
 

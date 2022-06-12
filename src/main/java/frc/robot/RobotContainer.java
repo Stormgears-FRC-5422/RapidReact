@@ -59,7 +59,7 @@ public class RobotContainer {
   @Log.Include private Pivot pivot;
 
   private SlewDrive slewDrive;
-  private DriveWithVision driveWithVision;
+  @Log.Include private DriveWithVision driveWithVision;
   @Log private Shoot shoot;
   private ShootWithVision shootWithVision;
   private DoubleArrayLogEntry shooterDistanceRPSLog;
@@ -173,7 +173,7 @@ public class RobotContainer {
       if (kUseFeeder && kUseShooter)
         shootWithVision =
             new ShootWithVision(
-                shooter, shoot, vision::hasTarget, vision::getDistance, shooterDistanceRPSLog);
+                shooter, shoot, vision::hasTarget, vision::getDistance, shooterDistanceRPSLog, vision::getArea);
     }
     if (kUseFeeder && kUsePivot && kUseIntake && kUseDrive && kUseVision)
       autonomous = new DoubleBallAuto(load, drive, vision, shootWithVision);
