@@ -2,8 +2,6 @@ package frc.robot.commands.ballHandler.auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.commands.ballHandler.Shoot;
-import frc.robot.subsystems.ballHandler.Feeder;
-import frc.robot.subsystems.ballHandler.Shooter;
 
 public class ShootOne extends CommandBase {
 
@@ -25,7 +23,7 @@ public class ShootOne extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return !shoot.feeder.getRawLimit();
+    return !shoot.getAbsoluteLimit();
     }
 
     @Override
