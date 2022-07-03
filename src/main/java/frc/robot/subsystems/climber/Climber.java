@@ -1,149 +1,139 @@
 package frc.robot.subsystems.climber;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.utils.LRSpeeds;
-import frc.utils.filters.ExponentialAverage;
-import frc.utils.motorcontrol.StormSpark;
+import com.revrobotics.SparkMaxLimitSwitch;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.*;
 
-public class Climber extends SubsystemBase {
-    private final StormSpark leftClimber = new StormSpark(kClimberLeftId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final StormSpark rightClimber = new StormSpark(kClimberRightId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private LRSpeeds speeds;
+@Log.Exclude
+public class Climber extends ClimbingSubsystem {
 
-    private boolean goingHome = false;
-    private boolean leftHome = false;
-    private boolean rightHome = false;
-    private boolean hasBeenHomed = false;
+  private final ElevatorFeedforward feedforward;
 
-    private final ExponentialAverage leftCurrent;
-    private final ExponentialAverage rightCurrent;
+  private final SparkMaxLimitSwitch leftReverseHardLimitSwitch;
+  private final SparkMaxLimitSwitch leftForwardHardLimitSwitch;
+  private final SparkMaxLimitSwitch rightReverseHardLimitSwitch;
+  private final SparkMaxLimitSwitch rightForwardHardLimitSwitch;
 
-    public Climber() {
-        System.out.println("Climber()");
-        speeds = new LRSpeeds();
+  public Climber() {
+    super(
+        kClimberLeftId,
+        kClimberRightId,
+        kClimberLeftInverted,
+        kClimberRightInverted,
+        kClimberRotationsPerUnitLength,
+        new PIDController(kLeftClimberP, kLeftClimberI, kLeftClimberD),
+        new PIDController(kRightClimberP, kRightClimberI, kRightClimberD),
+        kClimberHomeCurrentLimit,
+        kClimberHomeSetSpeed,
+        kClimberCushion,
+        kClimberCushionFloor);
 
-        leftClimber.setInverted(kClimberLeftInverted);
-        leftClimber.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        leftClimber.setOpenLoopRampRate(0.25);
+    feedforward = new ElevatorFeedforward(0.5, 0, kNeo550NominalVoltage / kClimberMaxVelocity, 0);
 
-        rightClimber.setInverted(kClimberRightInverted);
-        rightClimber.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        rightClimber.setOpenLoopRampRate(0.25);
+    leftReverseHardLimitSwitch =
+        leftMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    leftForwardHardLimitSwitch =
+        leftMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    rightReverseHardLimitSwitch =
+        rightMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    rightForwardHardLimitSwitch =
+        rightMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+  }
 
-        leftCurrent = new ExponentialAverage(leftClimber::getOutputCurrent, 2);
-        rightCurrent = new ExponentialAverage(rightClimber::getOutputCurrent, 2);
+  @Override
+  void setSoftLimits() {
+    setSoftLimits(kClimberForwardLimit, kClimberReverseLimit);
+  }
 
-        // Optimistic - we need to zero if the robot has been off...
-        enableLimits();
+  public void onlyHardLimits() {
+    disableSoftLimits();
+  }
+
+  @Override
+  public void goHome() {
+    onlyHardLimits();
+    super.goHome();
+  }
+
+  @Override
+  public void periodic() {
+
+    if (hasBeenHomed && !overrideLimits) {
+      if (leftPosition() < kClimberMidpoint) {
+        leftReverseHardLimitSwitch.enableLimitSwitch(false);
+        leftForwardHardLimitSwitch.enableLimitSwitch(true);
+      } else {
+        leftReverseHardLimitSwitch.enableLimitSwitch(true);
+        leftForwardHardLimitSwitch.enableLimitSwitch(false);
+      }
+      if (rightPosition() < kClimberMidpoint) {
+        rightReverseHardLimitSwitch.enableLimitSwitch(false);
+        rightForwardHardLimitSwitch.enableLimitSwitch(true);
+      } else {
+        rightReverseHardLimitSwitch.enableLimitSwitch(true);
+        rightForwardHardLimitSwitch.enableLimitSwitch(false);
+      }
     }
 
-    @Override
-    public void periodic() {
-        double lC = leftCurrent.update();
-        double rC = rightCurrent.update();
-
-        if (goingHome) {
-            if (lC >= kClimberHomeCurrentLimit) {
-                System.out.println("Left climber Home");
-                leftHome = true;
-            }
-            if (rC >= kClimberHomeCurrentLimit) {
-                System.out.println("Right climber Home");
-                rightHome = true;
-            }
-        }
-
-        // This assumes nothing is moving these components after the home sequence
-        leftClimber.set(leftHome ? 0 : speeds.left());
-        rightClimber.set(rightHome ? 0 : speeds.right());
-
-        SmartDashboard.putNumber("climber left current", lC);
-        SmartDashboard.putNumber("climber right current", rC);
-        SmartDashboard.putNumber("climber left position", leftClimber.getEncoder().getPosition());
-        SmartDashboard.putNumber("climber right position", rightClimber.getEncoder().getPosition());
+    if (goingHome) {
+      leftHome = leftHome || leftReverseHardLimitSwitch.isPressed();
+      rightHome = rightHome || rightReverseHardLimitSwitch.isPressed();
     }
+    super.periodic();
+  }
 
-    public void stop() {
-        setSpeed(LRSpeeds.stop());
-    }
+  @Override
+  public boolean isHome() {
+    boolean leftTriggered = leftReverseHardLimitSwitch.isPressed();
+    boolean rightTriggered = rightReverseHardLimitSwitch.isPressed();
 
-    public LRSpeeds getSpeed() {
-        return new LRSpeeds(leftClimber.get(), rightClimber.get());
-    }
+    if (leftTriggered && rightTriggered) System.out.println("BOTH LIMITS ARE pressed");
 
-    public void setSpeed(LRSpeeds lrSpeed) {
-        if (hasBeenHomed) {
-            this.speeds = lrSpeed;
-            if (speeds.left() != 0) leftHome = false;
-            if (speeds.right() != 0) rightHome = false;
-        } else {
-            System.out.println("Don't move the climbers without homing first");
-        }
-    }
+    return (leftTriggered && rightTriggered) || super.isHome();
+  }
 
-    public void zero() {
-        leftClimber.getEncoder().setPosition(0.0);
-        rightClimber.getEncoder().setPosition(0.0);
+  @Override
+  public double feedForward(double velocity) {
+    return feedforward.calculate(velocity);
+  }
 
-        setLimits(-20.0f, -200.0f,-20.0f, -200.0f);
-        enableLimits();
+  @Override
+  public void disableAllLimits() {
+    disableSoftLimits();
+    disableAllHardLimits();
+  }
 
-        // Reset flags related to home sequence
-        leftHome = false;
-        rightHome = false;
-        goingHome = false;
+  @Override
+  public void enableAllLimits() {
+    enableSoftLimits();
+    enableHardLimits();
+  }
 
-        System.out.println("Climber.zero()");
-    }
+  public void enableHardLimits() {
+    overrideLimits = false;
+    // The rest should be automatic in periodic
+  }
 
+  public void disableAllHardLimits() {
+    overrideLimits = true;
+    leftReverseHardLimitSwitch.enableLimitSwitch(false);
+    leftForwardHardLimitSwitch.enableLimitSwitch(false);
+    rightForwardHardLimitSwitch.enableLimitSwitch(false);
+    rightForwardHardLimitSwitch.enableLimitSwitch(false);
+  }
 
-    public void goHome() {
-        goingHome = true;
+  public boolean isReverseLimitTripped() {
+    return (leftReverseHardLimitSwitch.isPressed() && rightReverseHardLimitSwitch.isPressed())
+        && leftReverseHardLimitSwitch.isLimitSwitchEnabled()
+        && rightReverseHardLimitSwitch.isLimitSwitchEnabled();
+  }
 
-        // Don't call setSpeed directly. That will mess up the home sequence.
-        speeds = new LRSpeeds(kClimberHomeSetSpeed, kClimberHomeSetSpeed);
-    }
-
-    public boolean isHome() {
-        if (leftHome && rightHome) {
-            hasBeenHomed = true;
-        }
-
-        return leftHome && rightHome;
-    }
-
-    public void disableLimits() {
-        leftClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
-        leftClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
-        rightClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
-        rightClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
-        System.out.println("Climber.disableLimits()");
-    }
-
-    public void enableLimits() {
-        leftClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
-        leftClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
-        rightClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
-        rightClimber.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
-        System.out.println("Climber.enableLimits()");
-    }
-
-    public void setLimits(float forwardLeft, float reverseLeft, float forwardRight, float reverseRight) {
-        leftClimber.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardLeft);
-        leftClimber.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseLeft);
-        rightClimber.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, forwardRight);
-        rightClimber.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, reverseRight);
-        System.out.println("Climber.setLimits()");
-    }
-
-
-
-
+  public boolean isForwardLimitTripped() {
+    return (leftForwardHardLimitSwitch.isPressed() && rightForwardHardLimitSwitch.isPressed())
+        && leftForwardHardLimitSwitch.isLimitSwitchEnabled()
+        && rightForwardHardLimitSwitch.isLimitSwitchEnabled();
+  }
 }
-

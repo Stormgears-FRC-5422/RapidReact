@@ -1,8 +1,10 @@
 package frc.utils;
 
 import edu.wpi.first.math.Pair;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class LRSpeeds extends Pair<Double, Double> {
+public class LRSpeeds extends Pair<Double, Double> implements Loggable {
 
     Pair<Boolean, Boolean> disable = new Pair<>(false, false);
 
@@ -14,12 +16,14 @@ public class LRSpeeds extends Pair<Double, Double> {
         this(0,0);
     }
 
-    public double left() {
+  @Log(name = "Left Speed")
+  public double left() {
         if (Boolean.TRUE.equals(disable.getFirst())) return 0;
         return getFirst();
     }
 
-    public double right() {
+  @Log(name = "Right Speed")
+  public double right() {
         if (Boolean.TRUE.equals(disable.getSecond())) return 0;
         return getSecond();
     }

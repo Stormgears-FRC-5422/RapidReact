@@ -1,66 +1,78 @@
 package frc.robot.commands.ballHandler;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.ballHandler.Feeder;
 import frc.robot.subsystems.ballHandler.Shooter;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.*;
 import static frc.robot.subsystems.ballHandler.Shooter.Height;
 
-public class Shoot extends PIDCommand {
+public class Shoot extends PIDCommand implements Loggable {
+  private final Feeder feeder;
+  private final Shooter shooter;
+  //  @Config private final InstantCommand toggleShooter = new InstantCommand(this::toggleMode);
+  @Config.PIDController(name = "Shooter Controller")
+  private final PIDController pidController = getController();
 
-    public final Feeder feeder;
-    private final Shooter shooter;
+  private Lights lights;
+  @Log private boolean isReady;
 
-    public Shoot(Feeder feeder, Shooter shooter) {
-        super(
-                new PIDController(kShooterP, kShooterI, kShooterD),
-                shooter::getSpeed,
-                shooter::setpoint,
-                shooter::runToSpeed,
-                shooter, feeder
-        );
-        this.feeder = feeder;
-        this.shooter = shooter;
-        Shuffleboard.getTab("Shoot Command").add(this);
-    }
+  private double lastSpeed = 0;
+  @Log private double speedDif = 0;
 
-    @Override
-    public void initialize() {
-        feeder.setLimit(true);
-    }
+  public Shoot(Feeder feeder, Shooter shooter, Lights lights) {
+    super(
+        new PIDController(kShooterP, kShooterI, kShooterD),
+        shooter::getSpeed,
+        shooter::setpoint,
+        shooter::runToSpeed,
+        shooter,
+        feeder);
+    this.feeder = feeder;
+    this.shooter = shooter;
+    if (lights != null) this.lights = lights;
+  }
 
-    @Override
-    public void execute() {
-        super.execute();
-        feeder.setLimit(!isReady(kShooterTolerance));
-        if (!isReady(kShooterkITolerance)) getController().reset();
-        feeder.on();
-    }
+  @Override
+  public void initialize() {
+    feeder.setLimit(true);
+    lastSpeed = shooter.getSpeed();
+    if (lights != null) lights.setShooting(true);
+  }
 
-    @Override
-    public void end(boolean interrupted) {
-        feeder.off();
-        shooter.off();
-    }
+  @Override
+  public void execute() {
+    super.execute();
+    speedDif = Math.abs(lastSpeed - shooter.getSpeed());
+    this.isReady = isReady(kShooterTolerance);
+    feeder.setLimit(!isReady);
+    if (!speedWithin(kShooterkITolerance)) getController().reset();
+    feeder.shootOn();
+    lastSpeed = shooter.getSpeed();
+  }
 
-    private boolean isReady(double percentTolerance) {
-        return shooter.getSpeed() >= ((1 - (percentTolerance / 100)) * shooter.setpoint()) && shooter.getSpeed() <= ((1 + (percentTolerance / 100)) * shooter.setpoint());
-    }
+  @Override
+  public void end(boolean interrupted) {
+    feeder.off();
+    if (lights != null) lights.setShooting(false);
+  }
 
-    public void toggleMode() {
-        if (shooter.mode == Height.LOW) shooter.mode = Height.HIGH;
-        else shooter.mode = Height.LOW;
-    }
+  private boolean speedWithin(double percentTolerance) {
+    return shooter.getSpeed() >= ((1 - (percentTolerance / 100)) * shooter.setpoint())
+        && shooter.getSpeed() <= ((1 + (percentTolerance / 100)) * shooter.setpoint());
+  }
 
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("I Value", getController()::getI, getController()::setI);
-        builder.addDoubleProperty("P Value", getController()::getP, getController()::setP);
-        builder.addDoubleProperty("D Value", getController()::getD, getController()::setD);
-        builder.addBooleanProperty("limit", () -> isReady(kShooterTolerance), null);
-    }
+  private boolean isReady(double percentTolerance) {
+    return speedWithin(percentTolerance) && speedDif < kStableShooterSpeed;
+  }
+
+  public void toggleMode() {
+    if (shooter.mode == Height.LOW) shooter.mode = Height.HIGH;
+    else shooter.mode = Height.LOW;
+  }
 }

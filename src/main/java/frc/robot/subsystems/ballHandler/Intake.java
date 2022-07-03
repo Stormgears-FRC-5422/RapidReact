@@ -10,18 +10,24 @@ import static frc.robot.Constants.kIntakeSpeed;
 
 public class Intake extends SubsystemBase {
 
-    private final StormSpark motor = new StormSpark(kIntakeId, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private final StormSpark motor =
+      new StormSpark(
+          kIntakeId, CANSparkMaxLowLevel.MotorType.kBrushless, StormSpark.MotorKind.k550);
 
-    public Intake() {
-        motor.setInverted(true);
-        motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    }
+  public Intake() {
+    motor.setInverted(true);
+    motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+  }
 
-    public void on() {
-        motor.set(kIntakeSpeed);
-    }
+  public void on() {
+    motor.set(kIntakeSpeed);
+  }
 
-    public void off() {
-        motor.set(0);
-    }
+  public void off() {
+    motor.set(0);
+  }
+
+  public void reverse() {
+    motor.set(-kIntakeSpeed);
+  }
 }

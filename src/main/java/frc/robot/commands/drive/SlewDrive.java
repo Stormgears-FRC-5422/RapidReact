@@ -4,77 +4,107 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.utils.drive.StormDrive;
-import frc.utils.joysticks.StormXboxController;
+
+import java.util.function.DoubleSupplier;
 
 import static frc.robot.Constants.*;
 
 public class SlewDrive extends CommandBase {
-    private final StormDrive drive;
-    private final StormXboxController joystick;
-    private final DifferentialDrive differentialDrive;
+  private final StormDrive drive;
+  private final DoubleSupplier X;
+  private final DifferentialDrive differentialDrive;
+  private final double prevTurnSlewRate;
+  protected SlewRateLimiter limiter;
+  protected SlewRateLimiter turnLimiter;
+  private double prevSlewRate;
+  private DoubleSupplier Z;
+  private boolean ignoreZSquaring = false;
 
-    private double prevSlewRate;
-    private double prevTurnSlewRate;
+  public SlewDrive(StormDrive drive, DoubleSupplier X, DoubleSupplier Z) {
+    System.out.println("Just created the SlewDrive command");
+    addRequirements(drive);
 
-    protected SlewRateLimiter limiter;
-    protected SlewRateLimiter turnLimiter;
+    this.drive = drive;
+    this.X = X;
+    this.Z = Z;
+    differentialDrive = drive.getDifferentialDrive();
 
-    public SlewDrive(StormDrive drive, StormXboxController joystick) {
-        System.out.println("Just created the SlewDrive command");
-        addRequirements(drive);
+    prevSlewRate = drive.getSlewRate();
+    prevTurnSlewRate = drive.getTurnSlewRate();
+    System.out.println(
+        "Initial slewRate: " + prevSlewRate + "  initial turnSlewRate: " + prevTurnSlewRate);
 
-        this.drive = drive;
-        this.joystick = joystick;
-        differentialDrive = drive.getDifferentialDrive();
+    limiter = new SlewRateLimiter(prevSlewRate);
+    turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
+  }
 
-        prevSlewRate = drive.getSlewRate();
-        prevTurnSlewRate = drive.getTurnSlewRate();
-        System.out.println("Initial slewRate: " + prevSlewRate + "  initial turnSlewRate: " + prevTurnSlewRate);
+  @Override
+  public void initialize() {
+    System.out.println(
+        "INITIALINITIALINITIALINITIALINITIALINITIALINITIALINITIALINITIALINITIALINITIAL");
+  }
 
-        limiter = new SlewRateLimiter(prevSlewRate);
-        turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
+  @Override
+  public void execute() {
+    double targetSpeed = X.getAsDouble();
+    double targetZRotation = Z.getAsDouble();
+
+    if (drive.getSlewRate() != prevSlewRate) {
+      System.out.println("updated slewRate: " + prevSlewRate);
+      prevSlewRate = drive.getSlewRate();
+      limiter = new SlewRateLimiter(prevSlewRate);
     }
 
-    @Override
-    public void execute() {
-        double targetSpeed = (drive.getPrecision() ? kXPrecision : 1 ) * joystick.getTriggerSpeed();
-        double targetZRotation = (drive.getPrecision() ? kZPrecision : 1 ) * joystick.getLeftJoystickX();
+    //    if (drive.getTurnSlewRate() != prevTurnSlewRate) {
+    //      System.out.println("updated turnSlewRate: " + prevSlewRate);
+    //      prevTurnSlewRate = drive.getTurnSlewRate();
+    //      turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
+    //    }
 
-        if (drive.getSlewRate() != prevSlewRate) {
-            System.out.println("updated slewRate: " + prevSlewRate);
-            prevSlewRate = drive.getSlewRate();
-            limiter = new SlewRateLimiter(prevSlewRate);
-        }
+    targetSpeed = limiter.calculate(targetSpeed);
+    //    targetZRotation = turnLimiter.calculate(targetZRotation);
 
-        if (drive.getTurnSlewRate() != prevTurnSlewRate) {
-            System.out.println("updated turnSlewRate: " + prevSlewRate);
-            prevTurnSlewRate = drive.getTurnSlewRate();
-            turnLimiter = new SlewRateLimiter(prevTurnSlewRate);
-        }
-
-        targetSpeed=limiter.calculate(targetSpeed);
-        targetZRotation=turnLimiter.calculate(targetZRotation);
-
-        if (kSquareDriveInputs) {
-            targetSpeed = Math.copySign(targetSpeed * targetSpeed, targetSpeed);
-            targetZRotation = Math.copySign(targetZRotation * targetZRotation, targetZRotation);
-        }
-
-        //System.out.println("targetSpeed: " + targetSpeed + ", targetZRotation: " + targetZRotation);
-        if (kDriveStyle.equalsIgnoreCase("curvature"))
-            differentialDrive.curvatureDrive(targetSpeed, targetZRotation,true);
-        else
-            differentialDrive.arcadeDrive(targetSpeed, targetZRotation, false); // inputs already squared above
-
-
-
+    if (kSquareDriveInputs) {
+      targetSpeed = Math.copySign(targetSpeed * targetSpeed, targetSpeed);
+      targetZRotation =
+          !ignoreZSquaring
+              ? Math.copySign(targetZRotation * targetZRotation, targetZRotation)
+              : targetZRotation;
     }
 
-    @Override
-    public void end(boolean interrupted) {}
+    if (kDriveStyle.equalsIgnoreCase("curvature"))
+      differentialDrive.curvatureDrive(
+          (drive.getReverse() ? -1 : 1) * (drive.getPrecision() ? kXPrecision : 1) * targetSpeed,
+          (drive.getReverse() ? -1 : 1)
+              * (drive.getPrecision() ? kZPrecision : 1)
+              * targetZRotation,
+          true);
+    else
+      differentialDrive.arcadeDrive(
+          (drive.getReverse() ? -1 : 1) * (drive.getPrecision() ? kXPrecision : 1) * targetSpeed,
+          (drive.getReverse() ? -1 : 1)
+              * (drive.getPrecision() ? kZPrecision : 1)
+              * targetZRotation); // inputs already squared above
+  }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+  public void setZ(DoubleSupplier newZ, boolean ignoreZSquaring) {
+    Z = newZ;
+    this.ignoreZSquaring = ignoreZSquaring;
+  }
+
+  public DoubleSupplier getZ() {
+    return Z;
+  }
+
+  public void setZ(DoubleSupplier newZ) {
+    setZ(newZ, false);
+  }
+
+  @Override
+  public void end(boolean interrupted) {}
+
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }

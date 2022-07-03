@@ -4,14 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import io.github.oblarg.oblog.Logger;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static frc.robot.Constants.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,7 +21,17 @@ import static frc.robot.Constants.*;
  * project.
  */
 public class Robot extends TimedRobot {
+  private static DoubleArrayLogEntry shooterDistanceRPSLog;
   private RobotContainer robotContainer;
+
+  public DoubleArrayLogEntry getShooterDistanceRPSLog() {
+    try {
+      return shooterDistanceRPSLog;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -31,10 +42,25 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
 
-    System.out.println("Robot starting at " + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
-    robotContainer = new RobotContainer();
-  }
+    System.out.println(
+        "Robot starting at "
+            + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
 
+    // WPIlib logging
+    try {
+      DataLogManager.start();
+      DataLog log = DataLogManager.getLog();
+      shooterDistanceRPSLog = new DoubleArrayLogEntry(log, "/shooter/vision");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    // Make Robot Container
+    robotContainer = new RobotContainer(shooterDistanceRPSLog);
+
+    // Oblog logging
+    Logger.configureLoggingAndConfig(robotContainer, false);
+  }
 
   /**
    * This function is called every robot packet, no matter the mode. Use this for items like
@@ -46,6 +72,17 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    Logger.updateEntries();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    robotPeriodic();
+  }
+
+  @Override
+  public void simulationInit() {
+    super.simulationInit();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -58,29 +95,29 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    CommandScheduler.getInstance().schedule(robotContainer.getAutonomousCommandGroup());
+    robotContainer.feederCoast(); // sets to coast
+    robotContainer.getAutonomous().schedule();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    CommandScheduler.getInstance().run();
-  }
+  public void autonomousPeriodic() {}
 
   @Override
   public void teleopInit() {
-      if (kDiagnostic && kUseFeeder) robotContainer.getLiftIntake().schedule();
+    //    if (kDiagnostic && kUseFeeder) robotContainer.getLiftIntake().schedule();
+    //    CommandScheduler.getInstance().schedule(robotContainer.getHomingSequence());
+    CommandScheduler.getInstance().cancelAll();
+    robotContainer.setDrive();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
+    // Cancels all running commands at the start of test mode.//
   }
 
   /** This function is called periodically during test mode. */

@@ -1,25 +1,20 @@
 package frc.utils.drive;
 
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import java.util.Map;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
 import static frc.robot.Constants.kSlewRate;
 import static frc.robot.Constants.kTurnSlewRate;
 import static java.lang.Math.abs;
 
-public abstract class StormDrive extends SubsystemBase {
+public abstract class StormDrive extends SubsystemBase implements Loggable {
   protected boolean reverse = false;
-  protected boolean precision = false;
+  @Log protected boolean precision = false;
   protected double slewRateValue;
   protected double turnSlewRateValue;
-
 
   public abstract DifferentialDrive getDifferentialDrive();
 
@@ -56,66 +51,67 @@ public abstract class StormDrive extends SubsystemBase {
     precision = !precision;
   }
 
-  public void setCoastMode() {
+  public void setCoastMode() {}
 
-  }
-
-  public void setBrakeMode() {
-    
-  }
+  public void setBrakeMode() {}
 
   // Set the PID reference
-  public void setPositionReference(double setPoint) {};
+  public void setPositionReference(double setPoint) {}
+
   // Set the PID reference
-  public void setPositionReferenceWithVelocity(double setPoint, double velocity) {};
+  public void setPositionReferenceWithVelocity(double setPoint, double velocity) {}
+
   // Reset the encoder position
-  public void resetPosition() {};
+  public void resetPosition() {}
+
   // Set the acceleration profile
-  public void setMaxAccel(double acceleration) {};
+  public void setMaxAccel(double acceleration) {}
+
   // Set the velocity profile
-  public void setMaxVelocity(double velocity) {};
-  public void setTurnPositionReferenceWithVelocity(double measurement, double setPoint, double velocity) {};
-  
+  public void setMaxVelocity(double velocity) {}
+
+  public void setTurnPositionReferenceWithVelocity(
+      double measurement, double setPoint, double velocity) {}
+
   // provide method to access encoder distance
   public double getDistance() {
-    return(0);
+    return (0);
   }
   // provide method to access encoder velocity
   public double getVelocity() {
-    return(0);
+    return (0);
   }
 
   protected abstract MotorController[] getMotors();
 
   public double getSlewRate() {
-    return(slewRateValue);
+    return (slewRateValue);
   }
 
   public double getTurnSlewRate() {
-    return(turnSlewRateValue);
+    return (turnSlewRateValue);
   }
 
   protected void setupSlewFactors() {
     slewRateValue = kSlewRate;
     turnSlewRateValue = kTurnSlewRate;
 
-    NetworkTableEntry shuffleSlewRate = Shuffleboard.getTab("Control")
-            .add("Drive Slew Rate", slewRateValue)
-            .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max",  2 * slewRateValue))
-            .getEntry();
+    //    NetworkTableEntry shuffleSlewRate = Shuffleboard.getTab("Control")
+    //            .add("Drive Slew Rate", slewRateValue)
+    //            .withWidget(BuiltInWidgets.kNumberSlider)
+    //            .withProperties(Map.of("min", 0, "max",  2 * slewRateValue))
+    //            .getEntry();
 
-    NetworkTableEntry mShuffleTurnSlewRate = Shuffleboard.getTab("Control")
-            .add("Turn Slew Rate", turnSlewRateValue)
-            .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max", 2 * turnSlewRateValue))
-            .getEntry();
+    //    NetworkTableEntry mShuffleTurnSlewRate = Shuffleboard.getTab("Control")
+    //            .add("Turn Slew Rate", turnSlewRateValue)
+    //            .withWidget(BuiltInWidgets.kNumberSlider)
+    //            .withProperties(Map.of("min", 0, "max", 2 * turnSlewRateValue))
+    //            .getEntry();
 
-    shuffleSlewRate.addListener(event -> slewRateValue = event.value.getDouble(),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-    mShuffleTurnSlewRate.addListener(event -> turnSlewRateValue = event.value.getDouble(),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+    //    shuffleSlewRate.addListener(event -> slewRateValue = event.value.getDouble(),
+    //            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+    //
+    //    mShuffleTurnSlewRate.addListener(event -> turnSlewRateValue = event.value.getDouble(),
+    //            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
   }
-
 }

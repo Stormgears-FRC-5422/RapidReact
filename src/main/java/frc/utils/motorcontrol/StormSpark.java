@@ -2,62 +2,96 @@ package frc.utils.motorcontrol;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
-import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+
+import static frc.robot.Constants.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class StormSpark extends CANSparkMax {
-    private static final int currentLimit = Constants.kCurrentLimit;
-    private static final double temperatureRampThreshold = Constants.kTemperatureRampThreshold;
-    private static final double temperatureRampLimit = Constants.kTemperatureRampLimit;
-    private final double delta;
-    private double scale = 1.0;
-    private long count = 0;
+  private static final double temperatureRampThreshold = kTemperatureRampThreshold;
+  private static final double temperatureRampLimit = kTemperatureRampLimit;
+  private final MotorKind motorKind;
+  private final double delta;
+  private int currentLimit;
+  private double scale = 1.0;
+  private long count = 0;
+  private double groupTemperature;
 
-    public StormSpark(int deviceID, MotorType type) {
-        super(deviceID, type);
+  public StormSpark(int deviceID, MotorType type, MotorKind kind) {
+    super(deviceID, type);
 
-        restoreFactoryDefaults();
-        setSmartCurrentLimit(currentLimit);
+    this.motorKind = kind;
 
-        delta = Math.min(temperatureRampLimit - temperatureRampThreshold, 1.0); // Safety margin - don't want divide by 0!
+    switch (motorKind) {
+      case kNeo:
+        currentLimit = kSparkMaxCurrentLimit;
+        break;
+      case k550:
+        currentLimit = kSparkMaxCurrentLimit550;
+        break;
     }
 
-    @Override
-    // We should probably have a way to coordinate this ramp among multiple motors
-    // The drive class already does this for its set speed, but the robot will pull left or right if
-    // left and right motors are getting different results in this method.
-    public void set(double speed) {
-        // if the temperature is too high, start ramping down.
-        // reduce speed to 0 at temperatureRampLimit
-        // start ramping down at temperatureRampThreshold
+    restoreFactoryDefaults();
+    setSmartCurrentLimit(currentLimit);
 
-        double temp = getMotorTemperature();
+    delta =
+        min(
+            temperatureRampLimit - temperatureRampThreshold,
+            1.0); // Safety margin - don't want divide by 0!
+  }
 
-        if (temp > temperatureRampThreshold) {
-            speed *= Math.max((temperatureRampLimit - temp) / delta, 0.0);
-            if (count++ % 100 == 0) System.out.println("Id " + this.getDeviceId() + " safety control - factor " + speed);
-        }
+  public static void check(REVLibError command) {
+    if (command != REVLibError.kOk) {
+      DriverStation.reportWarning("WARNING: SparkMax action failed!", true);
+    }
+  }
 
-        super.set(scale * speed);
+  public static void check(REVLibError command, String logMessage) {
+    if (command != REVLibError.kOk) {
+      DriverStation.reportWarning("WARNING: SparkMax action failed: " + logMessage, true);
+    }
+  }
 
+  @Override
+  // We should probably have a way to coordinate this ramp among multiple motors
+  // The drive class already does this for its set speed, but the robot will pull left or right if
+  // left and right motors are getting different results in this method.
+  public void set(double speed) {
+    // if the temperature is too high, start ramping down.
+    // reduce speed to 0 at temperatureRampLimit
+    // start ramping down at temperatureRampThreshold
+
+    double temp = max(getMotorTemperature(), groupTemperature);
+
+    if (temp > temperatureRampThreshold) {
+      speed *= max((temperatureRampLimit - temp) / delta, 0.0);
+      if (count++ % 100 == 0)
+        System.out.println(
+            "Id "
+                + this.getDeviceId()
+                + " safety control - speed: "
+                + speed
+                + " temperature:"
+                + temp);
     }
 
-    // Should be between 0.0 and 1.0 - to account for oddities in the drive train
-    // e.g. two different gear ratios
-    public void setSpeedScale(double scale) {
-        this.scale = MathUtil.clamp(scale, 0, 1.0);
-    }
+    super.set(scale * speed);
+  }
 
-    public static void check(REVLibError command) {
-        if (command != REVLibError.kOk) {
-            DriverStation.reportWarning("WARNING: SparkMax action failed!", true);
-        }
-    }
+  // Should be between 0.0 and 1.0 - to account for oddities in the drive train
+  // e.g. two different gear ratios
+  public void setSpeedScale(double scale) {
+    this.scale = MathUtil.clamp(scale, 0, 1.0);
+  }
 
-    public static void check(REVLibError command, String logMessage) {
-        if (command != REVLibError.kOk) {
-            DriverStation.reportWarning("WARNING: SparkMax action failed: " + logMessage, true);
-        }
-    }
+  public void setGroupTemperature(double temperature) {
+    groupTemperature = temperature;
+  }
+
+  public enum MotorKind {
+    kNeo,
+    k550
+  }
 }

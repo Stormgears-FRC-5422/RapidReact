@@ -1,82 +1,67 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.utils.joysticks.StormXboxController;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
-import static frc.robot.Constants.*;
+import static frc.utils.joysticks.StormXboxController.*;
 
 public class ButtonBoard {
-    private static ButtonBoard instance;
+  private static ButtonBoard instance;
+  /** Initialize DRIVE JOYSTICK BUTTONS */
+  public final JoystickButton precisionButton;
+  public final JoystickButton loadButton;
+  public final JoystickButton shootButton;
+  public final JoystickButton toggleShootingHeightButton;
+  /** Initialize SECONDARY JOYSTICK BUTTONS */
+  //  public final JoystickButton trapezoidClimber;
 
-    public static ButtonBoard getInstance(GenericHID driveJoystick, GenericHID secondaryJoystick) {
-        if (instance == null) instance = new ButtonBoard(driveJoystick, secondaryJoystick);
-        return instance;
-    }
+  //  public final JoystickButton trapezoidPivot;
+  public final POVButton homeClimbing;
 
-    /**
-     * Initialize DRIVE JOYSTICK BUTTONS
-     */
-    public final JoystickButton precisionButton;
-    public final JoystickButton reverseButton;
+  public final POVButton homeClimberButton;
+  public final POVButton homePivotButton;
+  public final JoystickButton manualClimberButton;
+  public final POVButton coordinatingClimberButton;
+  public final JoystickButton climberUP;
+  public final JoystickButton climberDown;
+  public final JoystickButton backBend;
+  public final JoystickButton autoClimb;
+  public final JoystickButton reverseButton;
+  public final POVButton liftIntakeButton;
+  public final JoystickButton driveWithVisionButton;
+  public final JoystickButton shootWithVisionButton;
 
-    public final JoystickButton navXAlignButton;
+  private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
+    // ********************************
+    // Put Drive Joystick settings here
+    // ********************************
+    precisionButton = new JoystickButton(driveJoystick, leftBumper);
+    climberUP = new JoystickButton(driveJoystick, YButton);
+    climberDown = new JoystickButton(driveJoystick, AButton);
+    autoClimb = new JoystickButton(driveJoystick, BButton);
+    backBend = new JoystickButton(driveJoystick, XButton);
+    reverseButton = new JoystickButton(driveJoystick, littleLeftButton);
+    // ********************************
+    // Put Secondary Joystick settings here
+    // ********************************
+    driveWithVisionButton = new JoystickButton(secondaryJoystick, YButton);
+    shootWithVisionButton = new JoystickButton(secondaryJoystick, rightBumper);
+    shootButton = new JoystickButton(secondaryJoystick, stickLeftButton);
+    loadButton = new JoystickButton(secondaryJoystick, leftBumper);
+    toggleShootingHeightButton = new JoystickButton(secondaryJoystick, stickRightButton);
+    manualClimberButton = new JoystickButton(secondaryJoystick, BButton);
+    coordinatingClimberButton = new POVButton(secondaryJoystick, 0);
+    liftIntakeButton = new POVButton(secondaryJoystick, 90);
+    homeClimbing = new POVButton(secondaryJoystick, 180);
 
-    public final JoystickButton autoDriveTestButton;
-    public final JoystickButton autoDriveTestReverseButton;
 
-    public final JoystickButton loadButton;
-    public final JoystickButton shootButton;
-    public final JoystickButton toggleShootingHeightButton;
-    public final JoystickButton enableLiftIntakeButton;
+    homePivotButton = new POVButton(secondaryJoystick, 180);
+    homeClimberButton = new POVButton(secondaryJoystick, 180);
+  }
 
-    /**
-     * Initialize SECONDARY JOYSTICK BUTTONS
-     */
-    public final JoystickButton manualClimberButton;
-    public final JoystickButton homeClimberButton;
-    public final JoystickButton homePivotButton;
-
-//    public final JoystickButton selectIntakeButton;
-//    public final JoystickButton selectFeederButton;
-//    public final JoystickButton selectShooterButton;
-//    public final JoystickButton climbLeftUpButton;
-//    public final JoystickButton climbLeftDownButton;
-//    public final JoystickButton climbRightUpButton;
-//    public final JoystickButton climbRightDownButton;
-
-    private ButtonBoard(GenericHID driveJoystick, GenericHID secondaryJoystick) {
-        // ********************************
-        // Put Drive Joystick settings here
-        // ********************************
-        precisionButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
-        reverseButton = new JoystickButton(driveJoystick, StormXboxController.AButton);
-        navXAlignButton = new JoystickButton(driveJoystick, StormXboxController.stickRightButton);
-        autoDriveTestButton = new JoystickButton(driveJoystick, StormXboxController.littleLeftButton);
-        autoDriveTestReverseButton = new JoystickButton(driveJoystick, StormXboxController.littleRightButton);
-
-        shootButton = new JoystickButton(driveJoystick, StormXboxController.rightBumper);
-        loadButton = new JoystickButton(driveJoystick, StormXboxController.leftBumper);
-        toggleShootingHeightButton = new JoystickButton(driveJoystick, StormXboxController.stickLeftButton);
-
-        enableLiftIntakeButton = new JoystickButton(driveJoystick, StormXboxController.XButton);
-
-        // ********************************
-        // Put Secondary Joystick settings here
-        // ********************************
-        manualClimberButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
-        homePivotButton = new JoystickButton(secondaryJoystick, StormXboxController.stickRightButton);
-        homeClimberButton = new JoystickButton(secondaryJoystick, StormXboxController.stickLeftButton);
-
-//        selectIntakeButton = new JoystickButton(secondaryJoystick, StormXboxController.BButton);
-//        selectFeederButton = new JoystickButton(secondaryJoystick, StormXboxController.XButton);
-//        selectShooterButton = new JoystickButton(secondaryJoystick, StormXboxController.YButton);
-
-//        climbLeftUpButton = new JoystickButton(secondaryJoystick, StormXboxController.leftBumper);
-//        climbLeftDownButton = new JoystickButton(secondaryJoystick, StormXboxController.leftTrigger);
-//        climbRightUpButton = new JoystickButton(secondaryJoystick, StormXboxController.rightBumper);
-//        climbRightDownButton = new JoystickButton(secondaryJoystick, StormXboxController.rightTrigger);
-    }
-
+  public static ButtonBoard getInstance(GenericHID driveJoystick, GenericHID secondaryJoystick) {
+    if (instance == null) instance = new ButtonBoard(driveJoystick, secondaryJoystick);
+    return instance;
+  }
 }

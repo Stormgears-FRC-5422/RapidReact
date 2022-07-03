@@ -9,46 +9,46 @@ import frc.utils.motorcontrol.StormTalon;
 import static frc.robot.Constants.*;
 
 public class TalonDrive extends StormDrive {
-    private final DifferentialDrive differentialDrive;
+  private final DifferentialDrive differentialDrive;
 
-    private final StormTalon masterLeft = new StormTalon(kMasterLeftId);
-    private final StormTalon masterRight = new StormTalon(kMasterRightId);
-    private final StormTalon slaveLeft = new StormTalon(kSlaveLeftId);
-    private final StormTalon slaveRight = new StormTalon(kSlaveRightId);
+  private final StormTalon masterLeft = new StormTalon(kMasterLeftId);
+  private final StormTalon masterRight = new StormTalon(kMasterRightId);
+  private final StormTalon slaveLeft = new StormTalon(kSlaveLeftId);
+  private final StormTalon slaveRight = new StormTalon(kSlaveRightId);
 
-    public TalonDrive() {
-      slaveLeft.follow(masterLeft);
-      slaveRight.follow(masterRight);
+  public TalonDrive() {
+    slaveLeft.follow(masterLeft);
+    slaveRight.follow(masterRight);
 
-      slaveLeft.setNeutralMode(NeutralMode.Coast);
-      masterRight.setNeutralMode(NeutralMode.Coast);
-      masterLeft.setNeutralMode(NeutralMode.Coast);
-      slaveRight.setNeutralMode(NeutralMode.Coast);
+    slaveLeft.setNeutralMode(NeutralMode.Coast);
+    masterRight.setNeutralMode(NeutralMode.Coast);
+    masterLeft.setNeutralMode(NeutralMode.Coast);
+    slaveRight.setNeutralMode(NeutralMode.Coast);
 
-      slaveLeft.setInverted(kLeftSideInverted);
-      masterLeft.setInverted(kLeftSideInverted);
-      masterRight.setInverted(kRightSideInverted);
-      slaveRight.setInverted(kRightSideInverted);
+    slaveLeft.setInverted(kLeftSideInverted);
+    masterLeft.setInverted(kLeftSideInverted);
+    masterRight.setInverted(kRightSideInverted);
+    slaveRight.setInverted(kRightSideInverted);
 
-        // The scale can't be > 1.0 - if that's what we're given, flip the sense by reducing
-        // the other side of the drive
-        if (kRightSideSpeedScale > 1.0) {
-            masterLeft.setSpeedScale(1.0/kRightSideSpeedScale);
-            slaveLeft.setSpeedScale(1.0/kRightSideSpeedScale);
-        } else {
-            masterRight.setSpeedScale(kRightSideSpeedScale);
-            slaveRight.setSpeedScale(kRightSideSpeedScale);
-        }
-
-        differentialDrive = new DifferentialDrive(masterLeft, masterRight);
-          differentialDrive.setSafetyEnabled(true);
+    // The scale can't be > 1.0 - if that's what we're given, flip the sense by reducing
+    // the other side of the drive
+    if (kRightSideSpeedScale > 1.0) {
+      masterLeft.setSpeedScale(1.0 / kRightSideSpeedScale);
+      slaveLeft.setSpeedScale(1.0 / kRightSideSpeedScale);
+    } else {
+      masterRight.setSpeedScale(kRightSideSpeedScale);
+      slaveRight.setSpeedScale(kRightSideSpeedScale);
     }
 
-    public DifferentialDrive getDifferentialDrive() {
-          return differentialDrive;
-      }
+    differentialDrive = new DifferentialDrive(masterLeft, masterRight);
+    differentialDrive.setSafetyEnabled(true);
+  }
 
-    protected MotorController[] getMotors() {
-      return new MotorController[] {masterLeft, masterRight, slaveLeft, slaveRight};
-    }
+  public DifferentialDrive getDifferentialDrive() {
+    return differentialDrive;
+  }
+
+  protected MotorController[] getMotors() {
+    return new MotorController[] {masterLeft, masterRight, slaveLeft, slaveRight};
+  }
 }

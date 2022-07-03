@@ -3,8 +3,9 @@ package frc.utils.joysticks;
 
 import edu.wpi.first.wpilibj.Joystick;
 
-import static frc.robot.Constants.*;
-import static java.lang.Math.*;
+import static frc.robot.Constants.kStickNullSize;
+import static java.lang.Math.abs;
+import static java.lang.Math.signum;
 
 public class StormXboxController extends Joystick implements DriveJoystick {
 
@@ -52,36 +53,20 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     @Override
     public double getTriggerSpeed(){ return getRawAxis(rightTrigger) - getRawAxis(leftTrigger); }
 
-    public boolean getAisPressed() { return getRawButtonPressed(AButton); }
-
-    public boolean getBisPressed() {
-        return getRawButtonPressed(BButton);
+    public boolean getAButtonIsHeld() {
+        return getRawButton(AButton);
     }
 
-    public boolean getXisPressed() {
-        return getRawButtonPressed(XButton);
+    public boolean getBButtonIsHeld() {
+        return getRawButton(BButton);
     }
 
-    public boolean getYisPressed() {
-        return getRawButtonPressed(YButton);
+    public boolean getXButtonIsHeld() {
+    return getRawButton(XButton);
     }
 
-    public boolean getBackIsPressed() {
-        return getRawButtonPressed(littleLeftButton);
-    }
-    
-    public boolean getRightBumperIsPressed() {return getRawButtonPressed(rightBumper); }
-
-    public boolean getLeftBumperIsPressed() {
-        return getRawButtonPressed(leftBumper);
-    }
-
-    public boolean getRotateIsPressed() {
-        return getRawButtonPressed(littleRightButton);
-    }
-
-    public boolean getAlignedIsPressed(){
-        return getRawButtonPressed(stickLeftButton);
+    public boolean getYButtonIsHeld() {
+    return getRawButton(YButton);
     }
 
     public boolean getRightBumperIsHeld() {return getRawButton(rightBumper); }
@@ -89,6 +74,14 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     public boolean getLeftBumperIsHeld() {
         return getRawButton(leftBumper);
     }
+
+    public boolean getRightLittleButtonIsHeld() {
+    return getRawButton(littleRightButton);
+  }
+
+    public boolean getLeftLittleButtonIsHeld() {
+    return getRawButton(littleLeftButton);
+  }
 
     public double getLeftJoystickX() {
         return applyNullZone(getRawAxis(leftXAxis));
@@ -103,4 +96,28 @@ public class StormXboxController extends Joystick implements DriveJoystick {
     public double getRightJoystickY() {
         return applyNullZone(getRawAxis(rightYAxis));
     }
+
+    public boolean getBisPressed() {
+        return getRawButtonPressed(BButton);
+    }
+
+    public boolean getBackIsPressed() {
+        return getRawButtonPressed(littleLeftButton);
+    }
+
+    public boolean getRightBumperIsPressed() {return getRawButtonPressed(rightBumper); }
+
+    public boolean getLeftBumperIsPressed() {
+        return getRawButtonPressed(leftBumper);
+    }
+
+    public boolean getRotateIsPressed() {
+        return getRawButtonPressed(littleRightButton);
+    }
+
+    public boolean getAlignedIsPressed(){
+        return getRawButtonPressed(stickLeftButton);
+    }
+
+
 }
